@@ -15,9 +15,10 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 public class ThirtySecondSnippets implements ApplicationListener, InputProcessor {
     SpriteBatch batch;
-    Texture img, background;
-    Sprite sprite;
+    Texture threadlet, background, scissors;
+    Sprite player_sprite, scissors_sprite;
     float posX, posY;
+    float scissorsX, scissorsY;
     float width, height;
     float bgx;
     long lastTimeBg;
@@ -32,14 +33,18 @@ public class ThirtySecondSnippets implements ApplicationListener, InputProcessor
             bgx = 800;
             
             batch = new SpriteBatch();
-            img = new Texture("smallcat.png");
+            threadlet = new Texture("smallcat.png");
             background = new Texture("backgroundstars.jpg");
-            sprite = new Sprite(img);
-
-            posX = width/8 - sprite.getWidth()/2;
-            posY = height/2 - sprite.getHeight()/2;
-            sprite.setPosition(posX,posY);
+            scissors = new Texture("scissors.png");
+            player_sprite = new Sprite(threadlet);
+            scissors_sprite = new Sprite(scissors);
             
+            posX = width/8 - player_sprite.getWidth()/2;
+            posY = height/2 - player_sprite.getHeight()/2;
+            scissorsX = width * .65f - player_sprite.getWidth()/2;
+            scissorsY = height * .75f - player_sprite.getHeight()/2;
+            player_sprite.setPosition(posX,posY);
+            scissors_sprite.setPosition(scissorsX,scissorsY);
             // set lastTimeBg to current time
             lastTimeBg = TimeUtils.nanoTime();
 
@@ -55,33 +60,34 @@ public class ThirtySecondSnippets implements ApplicationListener, InputProcessor
 
             if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
                 if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT))
-                    sprite.translateX(-1f);
+                    player_sprite.translateX(-1f);
                 else
-                    sprite.translateX(-10.0f);
+                    player_sprite.translateX(-10.0f);
             }
             if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && checkPlayerX((int)posX)){
                 if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT))
-                    sprite.translateX(1f);
+                    player_sprite.translateX(1f);
                 else
-                    sprite.translateX(10.0f);
+                    player_sprite.translateX(10.0f);
             }
             if(Gdx.input.isKeyPressed(Input.Keys.UP)){
                 if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT))
-                    sprite.translateY(1f);
+                    player_sprite.translateY(1f);
                 else
-                    sprite.translateY(10.0f);
+                    player_sprite.translateY(10.0f);
             }
             if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
                 if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT))
-                    sprite.translateY(-1f);
+                    player_sprite.translateY(-1f);
                 else
-                    sprite.translateY(-10.0f);
+                    player_sprite.translateY(-10.0f);
             }
             
             // move the separator each 1s
             if(TimeUtils.nanoTime() - lastTimeBg > 100000000){
                     // move the separator 50px
                     bgx -= 50;
+                    scissors_sprite.translateX(-10f);
                     // set the current time to lastTimeBg
                     lastTimeBg = TimeUtils.nanoTime();
             }
@@ -90,27 +96,31 @@ public class ThirtySecondSnippets implements ApplicationListener, InputProcessor
             if(bgx == 0){
                     bgx = 800;
             }
+            if(scissors_sprite.getX() <= -220){
+                    scissors_sprite.setX(650);
+            }
 
             batch.begin();
 
             batch.draw(background, bgx - 800, 0);
             batch.draw(background, bgx, 0);
             
-            sprite.draw(batch);
+            player_sprite.draw(batch);
+            scissors_sprite.draw(batch);
             batch.end();
     }
         
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             if(button == Buttons.LEFT && checkPlayerX(screenX)){
-                posX = screenX - sprite.getWidth();
-                posY = Gdx.graphics.getHeight() - screenY - sprite.getHeight()/2;
-                sprite.setPosition(posX,posY);
+                posX = screenX - player_sprite.getWidth();
+                posY = Gdx.graphics.getHeight() - screenY - player_sprite.getHeight()/2;
+                player_sprite.setPosition(posX,posY);
             }
             if(button == Buttons.RIGHT){
-                posX = Gdx.graphics.getWidth()/2 - sprite.getWidth()/2;
-                posY = Gdx.graphics.getHeight()/2 - sprite.getHeight()/2;
-                sprite.setPosition(posX,posY);
+                posX = Gdx.graphics.getWidth()/2 - player_sprite.getWidth()/2;
+                posY = Gdx.graphics.getHeight()/2 - player_sprite.getHeight()/2;
+                player_sprite.setPosition(posX,posY);
             }
             return false;
         }
@@ -168,10 +178,10 @@ public class ThirtySecondSnippets implements ApplicationListener, InputProcessor
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         if(pointer == Buttons.LEFT){
             if (checkPlayerX(screenX))
-                posX = screenX - sprite.getWidth();
+                posX = screenX - player_sprite.getWidth();
  
-            posY = Gdx.graphics.getHeight() - screenY - sprite.getHeight()/2;
-            sprite.setPosition(posX,posY);
+            posY = Gdx.graphics.getHeight() - screenY - player_sprite.getHeight()/2;
+            player_sprite.setPosition(posX,posY);
         }
         return true;
     }
@@ -188,7 +198,7 @@ public class ThirtySecondSnippets implements ApplicationListener, InputProcessor
     }
     
     public boolean checkPlayerX(int screenX){
-        float mouseX = screenX - sprite.getWidth();
+        float mouseX = screenX - player_sprite.getWidth();
         if (mouseX <= Gdx.graphics.getWidth()/6){
             return true;
         }
