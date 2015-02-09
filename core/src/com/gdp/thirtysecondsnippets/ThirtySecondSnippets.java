@@ -118,11 +118,7 @@ public class ThirtySecondSnippets implements ApplicationListener, InputProcessor
 
     @Override
     public void resize(int width, int height) {
-        width = Gdx.graphics.getWidth();
-        height = Gdx.graphics.getHeight();
-        posX = width/8 - sprite.getWidth()/2;
-        posY = height/2 - sprite.getHeight()/2;
-        sprite.setPosition(posX,posY);
+        
     }
 
     @Override
@@ -137,7 +133,7 @@ public class ThirtySecondSnippets implements ApplicationListener, InputProcessor
 
     @Override
     public void dispose() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Good day kind sir.");
     }
 
     @Override
