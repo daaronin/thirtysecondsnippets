@@ -61,6 +61,7 @@ public class ThirtySecondSnippets extends ApplicationAdapter implements InputPro
 
     @Override
     public void create() {
+        Music m = null;
         try {
             String filename = "music.mp3";
             InputStream is = new URL("https://p.scdn.co/mp3-preview/f297e1aadb597acce8c23981c11106ecd0a53c2f").openStream();
@@ -77,14 +78,17 @@ public class ThirtySecondSnippets extends ApplicationAdapter implements InputPro
             FileOutputStream fos = new FileOutputStream(handle.file());
             bytes.writeTo(fos);
 
-            Music m = Gdx.audio.newMusic(handle);
-            m.play();
+            m = Gdx.audio.newMusic(handle);
             System.out.println(bytes.size());
         } catch (MalformedURLException ex) {
             Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
         } 
+        
+        MusicDB db = new MusicDB();
+        db.getTrackByGenre("pop");
+        
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
 
@@ -178,6 +182,10 @@ public class ThirtySecondSnippets extends ApplicationAdapter implements InputPro
         lastTimeBg = TimeUtils.nanoTime();
 
         Gdx.input.setInputProcessor(this);
+        
+        if(m != null){
+            //m.play();
+        }
 
     }
 
@@ -190,7 +198,7 @@ public class ThirtySecondSnippets extends ApplicationAdapter implements InputPro
         
         float ydir = posY - (body.getPosition().y* PIXELS_TO_METERS);
         float xdir = posX -(body.getPosition().x* PIXELS_TO_METERS);
-        System.out.println(ydir + " : " + xdir);
+        //System.out.println(ydir + " : " + xdir);
         //body.applyForceToCenter(new Vector2(0,ydir/10), true);
         //body.applyForceToCenter(new Vector2(xdir/10,0), true);
         
