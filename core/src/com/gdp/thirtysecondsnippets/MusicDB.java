@@ -3,85 +3,109 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.gdp.thirtysecondsnippets;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net;
-import com.badlogic.gdx.Net.HttpMethods;
-import com.badlogic.gdx.Net.HttpRequest;
-import com.badlogic.gdx.Net.HttpResponse;
-import com.badlogic.gdx.Net.HttpResponseListener;
-import com.badlogic.gdx.net.HttpParametersUtils;
-import com.badlogic.gdx.net.HttpStatus;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  *
  * @author George McDaid
  */
 public class MusicDB {
-    
-    private HttpRequest request = new HttpRequest();
+
     private String base_url = "http://3ss.app:8000/musicdb.php";
     private String key = "9JmgB8pQANJwsuH7";
-    
+    private final String USER_AGENT = "Mozilla/5.0";
+
     private static int SUCCESS = 7;
     private static int FAILURE = 6;
-    
-    public MusicDB(){
-    
+
+    public MusicDB() {
+
     }
-    
-    public Track getTrackByGenre(String genre){
+
+    public Track getTrackByGenre(String genre) {
         Track t = new Track();
-        
-        request.reset();
-        request.setMethod(HttpMethods.POST);
-        request.setUrl(base_url);
-        
-        Map parameters = new HashMap();
-        parameters.put("getTrackByGenre", "true");
-        parameters.put("key", key);
-        parameters.put("genre", genre);
-        
-        request.setContent(HttpParametersUtils.convertHttpParameters(parameters));
-        
-        Gdx.net.sendHttpRequest (request, new HttpResponseListener() {
-            @Override
-            public void handleHttpResponse(HttpResponse httpResponse) {
-                JsonValue root = new JsonReader().parse(httpResponse.getResultAsString());
-                int response_code = root.getInt("response_code", 0);
-                String response = root.getString("message", "No Message Found");
-               
-                HttpStatus status = httpResponse.getStatus();
-                if (status.getStatusCode() >= 200 && status.getStatusCode() < 300) {
-                    if(response_code == SUCCESS){
-                        System.out.println(response_code + ": " + response);
-                    }else if(response_code == FAILURE){
-                        failed(new Throwable("Failure: " + response));
-                    }else{
-                        failed(new Throwable("Unknown Response"));
-                    }
-                }else{
-                    failed(new Throwable("HTTP Status " + status.getStatusCode()));
-                }
-            }
 
-            @Override
-            public void failed(Throwable t) {
-                    System.out.println(t.getMessage());
-            }
+        List<NameValuePair> parameters = new ArrayList<NameValuePair>(1);
+        parameters.add(new BasicNameValuePair("getTrackByGenre", "true"));
+        parameters.add(new BasicNameValuePair("key", key));
+        parameters.add(new BasicNameValuePair("genre", "genre"));
 
-            @Override
-            public void cancelled() {
-                System.out.println("R: Cancel");
+        String response = sendPost(parameters);
+        
+        JsonValue root = new JsonReader().parse(response);
+        int response_code = root.getInt("response_code", 0);
+        String message = root.getString("message", "No Message Found");
+        
+        try{
+            if (response_code == SUCCESS) {
+                Json json = new Json();
+                message = message.replace("\\\"", "\"");
+                message = message.replace("\\", "");
+                
+                t = json.fromJson(Track.class, message);
+
+            } else if (response_code == FAILURE) {
+                throw new Exception("Failure: " + response_code);
+            } else {
+                throw new Exception("Unknown Response");
             }
-        });
+        } catch (Exception ex) {
+            Logger.getLogger(MusicDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         return t;
+    }
+
+    private String sendPost(List<NameValuePair> parameters) {
+        String res_body = "";
+        HttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost(base_url);
+        try {
+            post.setEntity(new UrlEncodedFormEntity(parameters));
+
+            HttpResponse response = client.execute(post);
+            int code = response.getStatusLine().getStatusCode();
+            if (code < 200 && code >= 300) {
+                throw new Exception("Problem with request: " + code);
+            }
+
+            BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            String line = "";
+
+            while ((line = rd.readLine()) != null) {
+                res_body += line.trim();
+            }
+
+            System.out.println("body" + res_body);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(MusicDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return res_body;
+
     }
 }

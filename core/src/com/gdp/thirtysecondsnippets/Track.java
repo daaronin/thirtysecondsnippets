@@ -10,7 +10,7 @@ package com.gdp.thirtysecondsnippets;
  *
  * @author George McDaid
  */
-public class Track {
+public class Track{
 
     public void setPopularity(int popularity) {
         this.popularity = popularity;
@@ -78,5 +78,7 @@ public class Track {
 
     public int getPopularity() {
         return popularity;
-    }
+    }   
+
+    
 }

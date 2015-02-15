@@ -1,7 +1,6 @@
 package com.gdp.thirtysecondsnippets;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
@@ -20,7 +19,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -63,8 +61,11 @@ public class ThirtySecondSnippets extends ApplicationAdapter implements InputPro
     public void create() {
         Music m = null;
         try {
+            MusicDB db = new MusicDB();
+            Track track = db.getTrackByGenre("pop");
+            
             String filename = "music.mp3";
-            InputStream is = new URL("https://p.scdn.co/mp3-preview/f297e1aadb597acce8c23981c11106ecd0a53c2f").openStream();
+            InputStream is = new URL(track.getPreview_url()).openStream();
             BufferedInputStream stream = new BufferedInputStream(is);
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             FileHandle handle = Gdx.files.external(filename);
@@ -85,9 +86,6 @@ public class ThirtySecondSnippets extends ApplicationAdapter implements InputPro
         } catch (IOException ex) {
             Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
         } 
-        
-        MusicDB db = new MusicDB();
-        db.getTrackByGenre("pop");
         
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
@@ -184,7 +182,7 @@ public class ThirtySecondSnippets extends ApplicationAdapter implements InputPro
         Gdx.input.setInputProcessor(this);
         
         if(m != null){
-            //m.play();
+            m.play();
         }
 
     }
