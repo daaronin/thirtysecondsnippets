@@ -63,6 +63,7 @@ public class ThirtySecondSnippets extends ApplicationAdapter implements InputPro
         try {
             MusicDB db = new MusicDB();
             Track track = db.getTrackByGenre("pop");
+            System.out.println(track.getArtist() + " | " + track.getName());
             
             String filename = "music.mp3";
             InputStream is = new URL(track.getPreview_url()).openStream();

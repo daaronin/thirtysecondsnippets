@@ -53,11 +53,13 @@ public class MusicDB {
 
         String response = sendPost(parameters);
         
-        JsonValue root = new JsonReader().parse(response);
-        int response_code = root.getInt("response_code", 0);
-        String message = root.getString("message", "No Message Found");
-        
         try{
+            
+            JsonValue root = new JsonReader().parse(response);
+            int response_code = root.getInt("response_code", 0);
+            String message = root.getString("message", "No Message Found");
+        
+        
             if (response_code == SUCCESS) {
                 Json json = new Json();
                 message = message.replace("\\\"", "\"");
@@ -96,8 +98,6 @@ public class MusicDB {
             while ((line = rd.readLine()) != null) {
                 res_body += line.trim();
             }
-
-            System.out.println("body" + res_body);
 
         } catch (IOException e) {
             e.printStackTrace();
