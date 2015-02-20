@@ -1,0 +1,8 @@
+{
+    "com.badlogic.gdx.graphics.g2d.BitmapFont": {
+        "font": { "file": "fonts/font.fnt" },
+    },
+    "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": { 
+        "default": { "up": "green" , "down": "purple", "font": font, "pressedOffsetY": -4 }
+    }
+}
