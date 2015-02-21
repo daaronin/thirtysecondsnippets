@@ -78,6 +78,44 @@ public class MusicDB {
         
         return t;
     }
+    
+    public ArrayList<Genre> getGenres(){
+        ArrayList<Genre> genres = new ArrayList<Genre>();
+        
+        List<NameValuePair> parameters = new ArrayList<NameValuePair>(1);
+        parameters.add(new BasicNameValuePair("getGenres", "true"));
+        parameters.add(new BasicNameValuePair("key", key));
+
+        String response = sendPost(parameters);
+        
+        try{
+            
+            JsonValue root = new JsonReader().parse(response);
+            int response_code = root.getInt("response_code", 0);
+            String message = root.getString("message", "No Message Found");
+        
+        
+            if (response_code == SUCCESS) {
+                Json json = new Json();
+                message = message.replace("\\\"", "\"");
+                message = message.replace("\\", "");
+                
+                Results res;
+                res = json.fromJson(Results.class, message);
+                
+                genres = res.getResults();
+                
+            } else if (response_code == FAILURE) {
+                throw new Exception("Failure: " + response_code);
+            } else {
+                throw new Exception("Unknown Response");
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(MusicDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return genres;
+    }
 
     private String sendPost(List<NameValuePair> parameters) {
         String res_body = "";
