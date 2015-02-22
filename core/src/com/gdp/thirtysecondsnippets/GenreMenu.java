@@ -38,10 +38,11 @@ public class GenreMenu implements Screen{
     
     @Override
     public void show() {
-        MusicDB db = new MusicDB();
-        ArrayList<Genre> genres = db.getGenres();
+        final MusicDB db = new MusicDB();
+        final ArrayList<Genre> genres = db.getGenres();
         
         for(int i = 0;i < genres.size();i++){
+            final int current = i;
             if(i == ((genres.size() + genres.size()%2)/2)){
                 table.row();
             }
@@ -54,7 +55,8 @@ public class GenreMenu implements Screen{
                     //Same way we moved here from the Splash Screen
                     //We set it to new Splash because we got no other screens
                     //otherwise you put the screen there where you want to go
-                    System.out.println("Play");
+                    Track t = db.getTrackByGenreID(genres.get(current).getId());
+                    System.out.println(t.toString());
                 }
             });
 

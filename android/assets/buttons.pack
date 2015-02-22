@@ -5,21 +5,21 @@ filter: Nearest,Nearest
 repeat: none
 green
   rotate: false
-  xy: 1, 743
+  xy: 1, 757
   size: 800, 240
   orig: 800, 240
   offset: 0, 0
   index: -1
 purple
   rotate: false
-  xy: 1, 501
+  xy: 1, 515
   size: 800, 240
   orig: 800, 240
   offset: 0, 0
   index: -1
 rainbow
   rotate: false
-  xy: 1, 259
+  xy: 803, 757
   size: 800, 240
   orig: 800, 240
   offset: 0, 0
@@ -27,7 +27,7 @@ rainbow
 font
   rotate: false
   xy: 1, 1
-  size: 256, 256
-  orig: 256, 256
+  size: 512, 512
+  orig: 512, 512
   offset: 0, 0
-  index: 0
+  index: -1
