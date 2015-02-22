@@ -79,6 +79,42 @@ public class MusicDB {
         return t;
     }
     
+    public Track getTrackByGenreID(int id) {
+        Track t = new Track();
+
+        List<NameValuePair> parameters = new ArrayList<NameValuePair>(1);
+        parameters.add(new BasicNameValuePair("getTrackByGenreID", "true"));
+        parameters.add(new BasicNameValuePair("key", key));
+        parameters.add(new BasicNameValuePair("id", String.valueOf(id)));
+
+        String response = sendPost(parameters);
+        
+        try{
+            
+            JsonValue root = new JsonReader().parse(response);
+            int response_code = root.getInt("response_code", 0);
+            String message = root.getString("message", "No Message Found");
+        
+        
+            if (response_code == SUCCESS) {
+                Json json = new Json();
+                message = message.replace("\\\"", "\"");
+                message = message.replace("\\", "");
+                
+                t = json.fromJson(Track.class, message);
+
+            } else if (response_code == FAILURE) {
+                throw new Exception("Failure: " + response_code + " | " + message);
+            } else {
+                throw new Exception("Unknown Response");
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(MusicDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return t;
+    }
+    
     public ArrayList<Genre> getGenres(){
         ArrayList<Genre> genres = new ArrayList<Genre>();
         

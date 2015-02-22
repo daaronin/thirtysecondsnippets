@@ -78,7 +78,12 @@ public class Track{
 
     public int getPopularity() {
         return popularity;
-    }   
+    }
+    
+    @Override
+    public String toString(){
+        return name+" by "+artist;
+    }
 
     
 }
