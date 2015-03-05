@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.gdp.thirtysecondsnippets.TSS;
 import com.gdp.thirtysecondsnippets.ThirtySecondSnippets;
 
 public class AndroidLauncher extends AndroidApplication {
@@ -11,6 +12,7 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		initialize(new ThirtySecondSnippets(), config);
+                config.useImmersiveMode = true;
+                initialize(new TSS(), config);
 	}
 }

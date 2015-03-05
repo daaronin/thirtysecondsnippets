@@ -2,7 +2,17 @@
     "com.badlogic.gdx.graphics.g2d.BitmapFont": {
         "font": { "file": "fonts/font.fnt" },
     },
+    "com.badlogic.gdx.graphics.g2d.BitmapFont": {
+        "ast": { "file": "fonts/ast.fnt" },
+    },
+    "com.badlogic.gdx.graphics.g2d.BitmapFont": {
+        "about": { "file": "fonts/about.fnt" },
+    },
     "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": { 
-        "default": { "up": "green" , "down": "purple", "font": font, "pressedOffsetY": -4 }
+        "green": { "up": "greenup" , "down": "greendown", "font": font, "pressedOffsetY": -4 },
+        "blue": { "up": "blueup" , "down": "bluedown", "font": font, "pressedOffsetY": -4 },
+        "orange": { "up": "orangeup" , "down": "orangedown", "font": font, "pressedOffsetY": -4 }
+        "setting": { "up": "sq_blue_up" , "down": "sq_blue_down", "font": ast, "pressedOffsetY": -26, "unpressedOffsetY": -23, "unpressedOffsetX": 4, "pressedOffsetX": 4}
+        "about": { "up": "sq_green_up" , "down": "sq_green_down", "font": about, "pressedOffsetY": -1, "unpressedOffsetY": 2}
     }
 }
