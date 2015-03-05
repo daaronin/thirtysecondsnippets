@@ -3,31 +3,115 @@ buttons.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-green
+bg_blur
   rotate: false
-  xy: 1, 757
-  size: 800, 240
-  orig: 800, 240
+  xy: 1, 581
+  size: 2400, 1440
+  orig: 2400, 1440
   offset: 0, 0
   index: -1
-purple
+bg
   rotate: false
-  xy: 1, 515
-  size: 800, 240
-  orig: 800, 240
+  xy: 2403, 1121
+  size: 1348, 900
+  orig: 1348, 900
   offset: 0, 0
   index: -1
-rainbow
+title
   rotate: false
-  xy: 803, 757
-  size: 800, 240
-  orig: 800, 240
+  xy: 2403, 465
+  size: 1409, 654
+  orig: 1409, 654
   offset: 0, 0
   index: -1
 font
   rotate: false
-  xy: 1, 1
+  xy: 1, 67
   size: 512, 512
   orig: 512, 512
+  offset: 0, 0
+  index: -1
+bluedown
+  rotate: false
+  xy: 515, 357
+  size: 800, 222
+  orig: 800, 222
+  offset: 0, 0
+  index: -1
+blueup
+  rotate: false
+  xy: 515, 133
+  size: 800, 222
+  orig: 800, 222
+  offset: 0, 0
+  index: -1
+greendown
+  rotate: false
+  xy: 1317, 357
+  size: 800, 222
+  orig: 800, 222
+  offset: 0, 0
+  index: -1
+greenup
+  rotate: false
+  xy: 1317, 133
+  size: 800, 222
+  orig: 800, 222
+  offset: 0, 0
+  index: -1
+orangedown
+  rotate: false
+  xy: 2119, 241
+  size: 800, 222
+  orig: 800, 222
+  offset: 0, 0
+  index: -1
+orangeup
+  rotate: false
+  xy: 2921, 241
+  size: 800, 222
+  orig: 800, 222
+  offset: 0, 0
+  index: -1
+sq_blue_down
+  rotate: false
+  xy: 3753, 1799
+  size: 227, 222
+  orig: 227, 222
+  offset: 0, 0
+  index: -1
+sq_blue_up
+  rotate: false
+  xy: 3753, 1575
+  size: 227, 222
+  orig: 227, 222
+  offset: 0, 0
+  index: -1
+sq_green_down
+  rotate: false
+  xy: 3753, 1351
+  size: 227, 222
+  orig: 227, 222
+  offset: 0, 0
+  index: -1
+sq_green_up
+  rotate: false
+  xy: 3753, 1127
+  size: 227, 222
+  orig: 227, 222
+  offset: 0, 0
+  index: -1
+ast
+  rotate: false
+  xy: 1, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+about
+  rotate: false
+  xy: 515, 99
+  size: 32, 32
+  orig: 32, 32
   offset: 0, 0
   index: -1

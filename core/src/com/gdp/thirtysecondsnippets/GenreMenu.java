@@ -11,6 +11,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -18,9 +19,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  *
@@ -28,18 +32,25 @@ import java.util.ArrayList;
  */
 public class GenreMenu implements Screen{
     
+    private Game tss;
+    
     private Stage stage = new Stage();
     private Table table = new Table();
-
-    private Skin skin = new Skin(Gdx.files.internal("skin.json"),
-        new TextureAtlas(Gdx.files.internal("buttons.pack")));
-
     
+    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons.pack"));
+
+    private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
+
+    public GenreMenu(Game tss){
+        this.tss = tss;
+    }
     
     @Override
     public void show() {
         final MusicDB db = new MusicDB();
         final ArrayList<Genre> genres = db.getGenres();
+        
+        final String[] colors = {"green", "orange", "blue"};
         
         for(int i = 0;i < genres.size();i++){
             final int current = i;
@@ -47,7 +58,7 @@ public class GenreMenu implements Screen{
                 table.row();
             }
             
-            TextButton button = new TextButton(genres.get(i).getName(), skin);
+            TextButton button = new TextButton(genres.get(i).getName(), skin.get(colors[i%colors.length], TextButtonStyle.class));
             
             button.addListener(new ChangeListener(){
                 @Override
@@ -67,13 +78,16 @@ public class GenreMenu implements Screen{
             
         }
         
-        Table table_parent = new Table();
-        ScrollPane pane = new ScrollPane(table);
-        table_parent.add(pane);
-
-        stage.addActor(table_parent);
-        table_parent.setFillParent(true);
+        Table table_root = new Table();
+        table_root.setBackground(skin.get("bg", Drawable.class));
         
+        ScrollPane pane = new ScrollPane(table);
+        table_root.add(pane).expand().fill();
+       
+        stage.addActor(table_root);
+        
+        table_root.setFillParent(true);
+        table_root.setDebug(true);
 
         Gdx.input.setInputProcessor(stage);
 
