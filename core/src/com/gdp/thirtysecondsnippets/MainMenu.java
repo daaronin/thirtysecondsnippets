@@ -57,6 +57,13 @@ public class MainMenu implements Screen{
                 }
             });
         
+        about.addListener(new ChangeListener(){
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    Gdx.net.openURI("http://30secondsnippets-gmcdaid.rhcloud.com/");
+                }
+            });
+        
         table.add(title).top().center().width(Value.percentWidth(.9f)).height(Value.percentHeight(.45f)).padTop(20).colspan(2);
         table.row();
         table.add(play).height(100).width(340).expandY().colspan(2);
@@ -66,7 +73,7 @@ public class MainMenu implements Screen{
         
         table.setBackground(skin.getDrawable("bg_blur"));
         table.setFillParent(true);
-        table.debug();
+        //table.debug();
         
         stage.addActor(table);
         
