@@ -32,7 +32,7 @@ import org.apache.http.message.BasicNameValuePair;
  */
 public class MusicDB {
 
-    private String base_url = "http://30secondsnippets-gmcdaid.rhcloud.com/musicdb.php";
+    private String base_url = "http://3ss.app:8000/musicdb.php";
     private String key = "9JmgB8pQANJwsuH7";
     private final String USER_AGENT = "Mozilla/5.0";
 
