@@ -215,7 +215,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
     @Override
     public boolean scrolled(int amount) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public boolean checkPlayerX(int screenX) {
