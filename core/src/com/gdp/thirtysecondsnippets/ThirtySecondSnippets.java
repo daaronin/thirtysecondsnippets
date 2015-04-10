@@ -33,6 +33,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.utils.TimeUtils;
+import java.awt.Point;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -41,6 +42,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -77,7 +79,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     ArrayList<Sprite> scissorSprites = new ArrayList<Sprite>();
     ArrayList<Body> scissorBodies = new ArrayList<Body>();
     
-    ArrayList<Integer> queueToRemove = new ArrayList<Integer>();
+    ArrayList<Point> queueToRemove = new ArrayList<Point>();
+    
     
     Box2DDebugRenderer debugRenderer;
     OrthographicCamera camera;
@@ -243,7 +246,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     public Sprite createScissorsSprite(float posX, float posY, String orientation){
        Sprite newScissorSprite =  new Sprite(scissor6);
        if ("down".equals(orientation)){
-            newScissorSprite.setPosition(posX - newScissorSprite.getWidth() / 2, posY);
+            newScissorSprite.setPosition(posX - newScissorSprite.getWidth() / 2, posY - newScissorSprite.getHeight() / 2);
             newScissorSprite.setRotation(0);
         } else if ("up".equals(orientation)){
             newScissorSprite.setPosition(posX - newScissorSprite.getWidth() / 2, 0 - newScissorSprite.getHeight() / 2);
@@ -256,7 +259,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     }
     
     public Body createScissorsBody(String orientation){
-        float x = width * 2;
+        float x = width + 200;
         float y = height;
         Sprite scissors_sprite;
         
@@ -352,9 +355,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     public ArrayList<Body> createRope(ArrayList<Sprite> sprites){
         ArrayList<Body> segments = new ArrayList<Body>();
-        RevoluteJoint[] joints = new RevoluteJoint[sprites.size()-1];
-        RevoluteJoint[] secondaryjoints = new RevoluteJoint[sprites.size()-1];
-        RevoluteJoint[] tertiaryjoints = new RevoluteJoint[sprites.size()-1];
+        ArrayList<RevoluteJoint> joints = new ArrayList<RevoluteJoint>();
         
         BodyDef segmentDef = new BodyDef();
         segmentDef.type = BodyType.DynamicBody;
@@ -381,20 +382,16 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         jointDef.localAnchorA.x = -sprites.get(1).getWidth()/2/PIXELS_TO_METERS;
         jointDef.localAnchorB.x = sprites.get(1).getWidth()/2/PIXELS_TO_METERS;
         
-        for (int i = 0; i < joints.length-1; i++){
+        for (int i = 0; i < sprites.size()-1; i++){
             jointDef.bodyA = segments.get(i);
             jointDef.bodyB = segments.get(i + 1);
-            joints[i] = (RevoluteJoint) world.createJoint(jointDef);
-            secondaryjoints[i] = (RevoluteJoint) world.createJoint(jointDef);
-            tertiaryjoints[i] = (RevoluteJoint) world.createJoint(jointDef);
+            joints.add((RevoluteJoint) world.createJoint(jointDef));
         }
         
         jointDef.bodyA = body;        
         jointDef.bodyB = segments.get(0);
 
-        joints[joints.length -1] = (RevoluteJoint) world.createJoint(jointDef);
-        secondaryjoints[secondaryjoints.length - 1] = (RevoluteJoint) world.createJoint(jointDef);
-        tertiaryjoints[tertiaryjoints.length - 1] = (RevoluteJoint) world.createJoint(jointDef);
+        joints.add((RevoluteJoint) world.createJoint(jointDef));
         
         return segments;
     }
@@ -495,7 +492,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if(m != null){
             m.play();
         }
-        threadSprites = createSprites(7);
+        threadSprites = createSprites(10);
         threadBodies = createRope(threadSprites);
         
         world.setContactListener(new ContactListener() {
@@ -579,6 +576,10 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) - threadSprites.get(i).getHeight()/2);
         
             threadSprites.get(i).setRotation((float)Math.toDegrees(threadBodies.get(i).getAngle()));
+            
+            if (threadSprites.get(i).getX() <= -220){
+                queueToRemove.add(new Point(i,1));
+            }
         }
         
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -594,7 +595,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 scissorBodies.get(i).setLinearVelocity(new Vector2(scissors_speed,0f));
                 if (scissorSprites.get(i).getY() >= 0){
                     if (scissorSprites.get(i).getTexture() == scissor1 || scissorSprites.get(i).getTexture() == scissor2){
-                        scissorBodies.get(i).setTransform(scissorBodies.get(i).getPosition().x, 6.2f, scissorBodies.get(i).getAngle());
+                        scissorBodies.get(i).setTransform(scissorBodies.get(i).getPosition().x, 5.8f, scissorBodies.get(i).getAngle());
                     } else {
                         scissorBodies.get(i).setTransform(scissorBodies.get(i).getPosition().x, 15, scissorBodies.get(i).getAngle());
                     }
@@ -607,14 +608,21 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 }
 
                 if (scissorSprites.get(i).getX() <= -220) {
-                   queueToRemove.add(i);
+                   queueToRemove.add(new Point(i,0));
                 }
             }
             if (queueToRemove.size() > 0){
                 System.out.println("Queue Size: " + queueToRemove.size());
-                for (Integer ref : queueToRemove){
-                    scissorBodies.remove(scissorBodies.get(ref));
-                    scissorSprites.remove(scissorSprites.get(ref));
+                for (int i = 0; i < queueToRemove.size(); i++){
+                    System.out.println("Item in Queue: " + queueToRemove.get(i).x + "," + queueToRemove.get(i).y);
+                    int ref = queueToRemove.get(i).x;
+                    if (queueToRemove.get(i).y == 0){
+                        scissorBodies.remove(scissorBodies.get(ref));
+                        scissorSprites.remove(scissorSprites.get(ref));
+                    } else if (queueToRemove.get(i).y == 1 && ref < threadBodies.size()){
+                        threadBodies.remove(threadBodies.get(ref));
+                        threadSprites.remove(threadSprites.get(ref));
+                    }
                 }
                 queueToRemove.clear();
             }
