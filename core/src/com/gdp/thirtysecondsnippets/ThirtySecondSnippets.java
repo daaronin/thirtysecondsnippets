@@ -32,6 +32,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
+import com.badlogic.gdx.physics.box2d.joints.RopeJoint;
+import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 import com.badlogic.gdx.utils.TimeUtils;
 import java.awt.Point;
 import java.io.BufferedInputStream;
@@ -49,19 +51,25 @@ import java.util.logging.Logger;
 public class ThirtySecondSnippets implements InputProcessor, Screen {
 
     SpriteBatch batch;
-    Texture threadlet, background, scissor1, scissor2, scissor3, scissor4, scissor5, scissor6, redlet, shortthreadlet;
-    Sprite player_sprite;// scissors_sprite;
+    Texture threadlet, background, scissor1, scissor2, scissor3, scissor4, 
+            scissor5, scissor6, redlet, shortthreadlet, threadedBackground, 
+            colorBackground, shadowBackground, needleYellow, needleGreen, needleBlue;
+    Sprite player_sprite;
     World world;
-    Body body;// scissors_body;
+    Body body;
     int iterator = 6, lastiterator = 5;
-    int timer = 0, timerpace = 15;
+    int timer = 0, timerpaceClosed = 16, timerpaceOpen = 4;
     float posX, posY;
     float scissorsX, scissorsY;
     float scissors_speed = -6f;
     float width, height;
     int screen_top_height = 5;
-    float bgx;
+    float bgx, bgcolorx;
     long lastTimeBg;
+    
+    int counter = 0;
+    boolean growThread = false;
+    boolean growableAllowed = true;
     
     static final short THREAD_BIT = 2;
     static final short HEAD_BIT = 4;
@@ -69,6 +77,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     static final short SCISSOR_BIT = 16;
     static final short NEEDLE_BIT = 32;
     static final short NEEDLE_HOLE_BIT = 64;
+    static final short NO_COLLIDE_BIT = 128;
+    
+    static final float BACKGROUND_SPEED = 14.4f;
     
     ArrayList<JointEdge> jointDeletionList = new ArrayList<JointEdge>();
     boolean jointDestroyable = true;
@@ -78,6 +89,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     ArrayList<Sprite> scissorSprites = new ArrayList<Sprite>();
     ArrayList<Body> scissorBodies = new ArrayList<Body>();
+    
+    ArrayList<Sprite> needleSprites = new ArrayList<Sprite>();
+    ArrayList<Body> needleBodies = new ArrayList<Body>();
     
     ArrayList<Point> queueToRemove = new ArrayList<Point>();
     
@@ -169,11 +183,21 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if (keycode == Input.Keys.S){
             createScissorsBody("up");
         }
+        if (keycode == Input.Keys.Q){
+            createNeedleBody("up");
+        }
+        if (keycode == Input.Keys.A){
+            createNeedleBody("down");
+        }
         if (keycode == Input.Keys.R){
             
             body.setTransform(1.5f,2, 0);
             body.setLinearVelocity(new Vector2(0f,0f));
             body.setAngularVelocity(0);
+        }
+        if (keycode == Input.Keys.G){
+            
+            growThread = true;
         }
         return true;
     }
@@ -230,17 +254,178 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         return false;
     }
     
-    public ArrayList<Sprite> createSprites(int length){
+    public ArrayList<Sprite> createSprites(int length, int startingLength){
         ArrayList<Sprite> sprites = new ArrayList<Sprite>();
-        float startingX = width/4-player_sprite.getWidth()/2;
-        float startingY = height/2-player_sprite.getHeight()/2;
+        float startingX = player_sprite.getX()-player_sprite.getWidth()/2 - startingLength*player_sprite.getWidth();
+        float startingY = player_sprite.getY()-player_sprite.getHeight()/2;
         for (int i = 0; i < length; i++){
             sprites.add(new Sprite(shortthreadlet));
 
             sprites.get(i).setPosition(startingX - sprites.get(i).getWidth(),startingY);
             startingX -= sprites.get(i).getWidth();
         }
+        threadSprites.addAll(sprites);
         return sprites;
+    }
+    
+    public Sprite createNeedleSprite(float posX, float posY, String orientation){
+       
+       Sprite newNeedleSprite =  new Sprite(needleGreen);
+       if ("up".equals(orientation)){
+            newNeedleSprite.setPosition(posX - newNeedleSprite.getWidth() / 2, posY - newNeedleSprite.getHeight() / 2);
+            newNeedleSprite.setRotation(180);
+        } else if ("down".equals(orientation)){
+            newNeedleSprite.setPosition(posX - newNeedleSprite.getWidth() / 2, 0 - newNeedleSprite.getHeight() / 2);
+            newNeedleSprite.setRotation(0);
+        } else {
+            newNeedleSprite.setPosition(posX - newNeedleSprite.getWidth() / 2, posY - newNeedleSprite.getHeight() / 2);
+            newNeedleSprite.setRotation(90);
+        }
+       return newNeedleSprite;
+    }
+    
+    public Body createNeedleBody(String orientation){
+        float x = width + 200;
+        float y = height;
+        Sprite needle_sprite;
+        
+        needle_sprite = createNeedleSprite(x,y, orientation);
+        
+        needleSprites.add(needle_sprite);
+        needleSprites.add(needle_sprite);
+        needleSprites.add(needle_sprite);
+        
+        /*****************************************************************************************************/
+        BodyDef needle_bodyDef = new BodyDef();
+        needle_bodyDef.type = BodyDef.BodyType.KinematicBody;
+
+        if ("down".equals(orientation)){
+            needle_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS, 
+                (needle_sprite.getY() + needle_sprite.getHeight() - 80) / PIXELS_TO_METERS);
+        } else if ("up".equals(orientation)){
+            needle_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS, 
+                (needle_sprite.getY() + 80) / PIXELS_TO_METERS);
+        } else {
+            
+        }
+
+        Body needle_body = world.createBody(needle_bodyDef);
+        PolygonShape needle_shape = new PolygonShape();
+
+        needle_shape.setAsBox(needle_sprite.getWidth()/2 / PIXELS_TO_METERS,  
+                needle_sprite.getHeight() / 64 / PIXELS_TO_METERS);
+        
+        FixtureDef needle_fixtureDef = new FixtureDef();
+        needle_fixtureDef.shape = needle_shape;
+        needle_fixtureDef.density = .1f;
+        needle_fixtureDef.filter.categoryBits = NEEDLE_BIT;
+        needle_fixtureDef.filter.maskBits = THREAD_BIT;
+
+        if ("up".equals(orientation)){
+            needle_body.setTransform(needle_body.getTransform().getPosition(), 110);
+        } else if ("down".equals(orientation)){
+            needle_body.setTransform(needle_body.getTransform().getPosition(), needle_body.getAngle());
+        } else {
+            needle_body.setTransform(needle_body.getTransform().getPosition(), 90);
+        }
+        
+        needle_body.createFixture(needle_fixtureDef);
+        needleBodies.add(needle_body);
+        /*********************************************************************************************************/
+        BodyDef needle_hole_bodyDef = new BodyDef();
+        needle_hole_bodyDef.type = BodyDef.BodyType.DynamicBody;
+
+        
+        if ("down".equals(orientation)){
+            needle_hole_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS, 
+                (needle_sprite.getY() + needle_sprite.getHeight()-50) / PIXELS_TO_METERS);
+        } else if ("up".equals(orientation)){
+            needle_hole_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS, 
+                (needle_sprite.getY() + 50) / PIXELS_TO_METERS);
+        } else {
+            
+        }
+
+        Body needle_hole_body = world.createBody(needle_hole_bodyDef);
+        PolygonShape needle_hole_shape = new PolygonShape();
+
+        needle_hole_shape.setAsBox(needle_sprite.getWidth()/2 / PIXELS_TO_METERS,  
+                needle_sprite.getHeight() / 16 / PIXELS_TO_METERS);
+        
+        FixtureDef needle_hole_fixtureDef = new FixtureDef();
+        needle_hole_fixtureDef.shape = needle_hole_shape;
+        needle_hole_fixtureDef.density = .1f;
+        needle_hole_fixtureDef.filter.categoryBits = NEEDLE_HOLE_BIT;
+        needle_hole_fixtureDef.filter.maskBits = HEAD_BIT;
+
+        if ("up".equals(orientation)){
+            needle_hole_body.setTransform(needle_hole_body.getTransform().getPosition(), 110);
+        } else if ("down".equals(orientation)){
+            needle_hole_body.setTransform(needle_hole_body.getTransform().getPosition(), needle_hole_body.getAngle());
+        } else {
+            needle_hole_body.setTransform(needle_hole_body.getTransform().getPosition(), 90);
+        }
+        
+        needle_hole_body.createFixture(needle_hole_fixtureDef);
+        needleBodies.add(needle_hole_body);
+        /*********************************************************************************************************/ 
+        BodyDef needle_top_bodyDef = new BodyDef();
+        needle_top_bodyDef.type = BodyDef.BodyType.KinematicBody;
+
+        if ("down".equals(orientation)){
+            needle_top_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS, 
+                (needle_sprite.getY() + needle_sprite.getHeight() - 20) / PIXELS_TO_METERS);
+        } else if ("up".equals(orientation)){
+            needle_top_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS, 
+                (needle_sprite.getY() + 20) / PIXELS_TO_METERS);
+        } else {
+            
+        }
+
+        Body needle_top_body = world.createBody(needle_top_bodyDef);
+        PolygonShape needle_top_shape = new PolygonShape();
+
+        needle_top_shape.setAsBox(needle_sprite.getWidth()/2 / PIXELS_TO_METERS,  
+                needle_sprite.getHeight() / 64 / PIXELS_TO_METERS);
+        
+        FixtureDef needle_top_fixtureDef = new FixtureDef();
+        needle_top_fixtureDef.shape = needle_top_shape;
+        needle_top_fixtureDef.density = .1f;
+        needle_top_fixtureDef.filter.categoryBits = NEEDLE_BIT;
+        needle_top_fixtureDef.filter.maskBits = THREAD_BIT;
+
+        if ("up".equals(orientation)){
+            needle_top_body.setTransform(needle_top_body.getTransform().getPosition(), 110);
+        } else if ("down".equals(orientation)){
+            needle_top_body.setTransform(needle_top_body.getTransform().getPosition(), needle_top_body.getAngle());
+        } else {
+            needle_top_body.setTransform(needle_top_body.getTransform().getPosition(), 90);
+        }
+        
+        needle_top_body.createFixture(needle_top_fixtureDef);
+        needleBodies.add(needle_top_body);
+        /*********************************************************************************************************/     
+        ArrayList<RevoluteJoint> joints = new ArrayList<RevoluteJoint>();
+        RevoluteJointDef jointDef = new RevoluteJointDef();
+
+        jointDef.collideConnected = false;
+        jointDef.localAnchorA.y = -needle_sprite.getHeight()/8/PIXELS_TO_METERS;
+        jointDef.localAnchorB.y = needle_sprite.getHeight()/8/PIXELS_TO_METERS;
+        
+        jointDef.bodyA = needle_body;
+        jointDef.bodyB = needle_hole_body;
+        joints.add((RevoluteJoint) world.createJoint(jointDef));
+        
+        jointDef.bodyA = needle_hole_body;
+        jointDef.bodyB = needle_top_body;
+        joints.add((RevoluteJoint) world.createJoint(jointDef));
+        
+        /**********************************************************************************************************/
+        needle_shape.dispose();
+        needle_top_shape.dispose();
+        needle_hole_shape.dispose();
+        
+        return needle_body;
     }
     
     public Sprite createScissorsSprite(float posX, float posY, String orientation){
@@ -304,7 +489,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         Texture tex;
         
         if (iterator == 6){
-            if (timer == timerpace){
+            if (timer == timerpaceClosed){
                 lastiterator = 6;
                 iterator = 5;
                 timer = 0;
@@ -312,7 +497,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 timer++;
             }
         } else if (iterator == 1){
-            if (timer == timerpace){
+            if (timer == timerpaceOpen){
                 lastiterator = 1;
                 iterator = 2;
                 timer = 0;
@@ -353,16 +538,16 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         return tex;
     }
     
-    public ArrayList<Body> createRope(ArrayList<Sprite> sprites){
+    public ArrayList<Body> createRope(ArrayList<Sprite> sprites, int startingLength){
         ArrayList<Body> segments = new ArrayList<Body>();
         ArrayList<RevoluteJoint> joints = new ArrayList<RevoluteJoint>();
+        //ArrayList<RopeJoint> ropeJoints = new ArrayList<RopeJoint>();
         
         BodyDef segmentDef = new BodyDef();
         segmentDef.type = BodyType.DynamicBody;
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(sprites.get(1).getWidth()/2 / PIXELS_TO_METERS, sprites.get(1).getHeight()
-                       /2 / PIXELS_TO_METERS);
-        
+        shape.setAsBox(sprites.get(0).getWidth()/2 / PIXELS_TO_METERS, sprites.get(0).getHeight()
+                        /2 / PIXELS_TO_METERS);
         for (int i = 0; i < sprites.size(); i++){
             segments.add(world.createBody(segmentDef));
             segmentDef.position.set((sprites.get(i).getX() + sprites.get(i).getWidth()/2) / 
@@ -378,21 +563,31 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         }
         shape.dispose();
         RevoluteJointDef jointDef = new RevoluteJointDef();
+        //RopeJointDef ropeJointDef = new RopeJointDef();
         jointDef.collideConnected = false;
-        jointDef.localAnchorA.x = -sprites.get(1).getWidth()/2/PIXELS_TO_METERS;
-        jointDef.localAnchorB.x = sprites.get(1).getWidth()/2/PIXELS_TO_METERS;
+        jointDef.localAnchorA.x = -sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
+        jointDef.localAnchorB.x = sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
+        //ropeJointDef.localAnchorA.x = -sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
+        //ropeJointDef.localAnchorB.x = sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
+        
         
         for (int i = 0; i < sprites.size()-1; i++){
             jointDef.bodyA = segments.get(i);
             jointDef.bodyB = segments.get(i + 1);
             joints.add((RevoluteJoint) world.createJoint(jointDef));
+            //ropeJointDef.bodyA = segments.get(i);
+            //ropeJointDef.bodyB = segments.get(i + 1);
+            //ropeJoints.add((RopeJoint) world.createJoint(ropeJointDef));
         }
-        
-        jointDef.bodyA = body;        
-        jointDef.bodyB = segments.get(0);
-
-        joints.add((RevoluteJoint) world.createJoint(jointDef));
-        
+        if (startingLength == 0){
+            jointDef.bodyA = body;        
+            jointDef.bodyB = segments.get(0);
+            joints.add((RevoluteJoint) world.createJoint(jointDef));
+        } else {
+            jointDef.bodyA = threadBodies.get(threadBodies.size()-1);        
+            jointDef.bodyB = segments.get(0);
+            joints.add((RevoluteJoint) world.createJoint(jointDef));
+        }
         return segments;
     }
 
@@ -403,7 +598,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if (!dansTryingToGetWorkDone){
             try {
                 MusicDB db = new MusicDB();
-                Track track = db.getTrackByGenre("rock");
+                Track track = db.getTrackByGenre("pop");
                 System.out.println(track.getArtist() + " | " + track.getName());
 
                 String filename = "music.mp3";
@@ -441,20 +636,31 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         //camera.viewportHeight = height/PIXELS_TO_METERS;
         camera.position.set(width/2f, height/2f, 0);
        
-        bgx = 800;
+        bgx = 144;
+        bgcolorx = 2016;
         
         batch = new SpriteBatch();
-        shortthreadlet = new Texture("shortthread.png");
-        threadlet = new Texture("thread.png");
+        shortthreadlet = new Texture("shortthreadhighcontrast_alt.png");
+        threadlet = new Texture("shortthreadhighcontrast2_alt.png");
         redlet = new Texture("redthread.png");
-        background = new Texture("backgroundstars.jpg");
+        
+        background = new Texture("tallback.png");
+        threadedBackground = new Texture("threadstall.png");
+        colorBackground = new Texture("rainbow.png");
+        shadowBackground = new Texture("shadowmap3.png");
+        
+        needleGreen = new Texture("needlegreen.png");
+        needleBlue = new Texture("needleblue.png");
+        needleYellow = new Texture("needleyellow.png");
+        
+        
         scissor1 = new Texture("scissor1.png");
         scissor2 = new Texture("scissor2.png");
         scissor3 = new Texture("scissor3.png");
         scissor4 = new Texture("scissor4.png");
         scissor5 = new Texture("scissor5.png");
         scissor6 = new Texture("scissor6.png");
-        player_sprite = new Sprite(shortthreadlet);
+        player_sprite = new Sprite(threadlet);
 
         player_sprite.setPosition(width/3-player_sprite.getWidth()/2,height/2-player_sprite.getHeight()/2);
    
@@ -492,8 +698,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if(m != null){
             m.play();
         }
-        threadSprites = createSprites(10);
-        threadBodies = createRope(threadSprites);
+        threadSprites = createSprites(5, 0);
+        threadBodies = createRope(threadSprites, 0);
         
         world.setContactListener(new ContactListener() {
 
@@ -502,26 +708,41 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             @Override
             public void beginContact(Contact contact) {
                 
-                if (contact.getFixtureB().getFilterData().categoryBits == THREAD_BIT && jointDestroyable){
+                if (contact.getFixtureB().getFilterData().categoryBits == THREAD_BIT 
+                        && contact.getFixtureA().getFilterData().categoryBits == BLADE_BIT && jointDestroyable){
                     for (int i = 0; i < contact.getFixtureB().getBody().getJointList().size; i+=2){
                         if (!jointDeletionList.contains(contact.getFixtureB().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureB().getBody().getJointList().get(i));
+                            jointDestroyable = false;
                         }
                     }
-                    jointDestroyable = false;
                 }
-                if (contact.getFixtureA().getFilterData().categoryBits == THREAD_BIT && jointDestroyable){
+                if (contact.getFixtureA().getFilterData().categoryBits == THREAD_BIT 
+                        && contact.getFixtureB().getFilterData().categoryBits == BLADE_BIT&& jointDestroyable){
                     for (int i = 0; i < contact.getFixtureA().getBody().getJointList().size; i+=2){
                         if (!jointDeletionList.contains(contact.getFixtureA().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureA().getBody().getJointList().get(i));
+                            jointDestroyable = false;
                         }
                     }
-                    jointDestroyable = false;
                 }
                 
-                player_sprite.setTexture(redlet);
-                for (Sprite threadSprite : threadSprites) {
-                    threadSprite.setTexture(redlet);
+                if ((contact.getFixtureA().getFilterData().categoryBits == HEAD_BIT 
+                        && contact.getFixtureB().getFilterData().categoryBits == NEEDLE_HOLE_BIT)){
+                    contact.getFixtureB().getFilterData().categoryBits = NO_COLLIDE_BIT;
+                    contact.getFixtureB().getFilterData().maskBits = NO_COLLIDE_BIT;
+                    if (growableAllowed){
+                        growThread = true;
+                        growableAllowed = false;
+                    }
+                } else if ((contact.getFixtureB().getFilterData().categoryBits == HEAD_BIT 
+                        && contact.getFixtureA().getFilterData().categoryBits == NEEDLE_HOLE_BIT)){
+                    contact.getFixtureA().getFilterData().categoryBits = NO_COLLIDE_BIT;
+                    contact.getFixtureA().getFilterData().maskBits = NO_COLLIDE_BIT;
+                    if (growableAllowed){
+                        growThread = true;
+                        growableAllowed = false;
+                    }
                 }
                 
             }
@@ -530,15 +751,47 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             //Each object is returned as a fixture
             @Override
             public void endContact(Contact contact) {
-                player_sprite.setTexture(shortthreadlet);
-                for (Sprite threadSprite : threadSprites) {
-                    threadSprite.setTexture(shortthreadlet);
-                }
+                
             }
 
             @Override
             public void preSolve(Contact contact, Manifold oldManifold) {
-                System.out.println("Presolve.");
+                System.out.println("Presolve: #" + counter++);
+                if (contact.getFixtureB().getFilterData().categoryBits == THREAD_BIT && contact.getFixtureA().getFilterData().categoryBits == BLADE_BIT && jointDestroyable){
+                    for (int i = 0; i < contact.getFixtureB().getBody().getJointList().size; i+=2){
+                        if (!jointDeletionList.contains(contact.getFixtureB().getBody().getJointList().get(i))){
+                            jointDeletionList.add(contact.getFixtureB().getBody().getJointList().get(i));
+                            jointDestroyable = false;
+                        }
+                    }
+                    
+                }
+                if (contact.getFixtureA().getFilterData().categoryBits == THREAD_BIT && contact.getFixtureB().getFilterData().categoryBits == BLADE_BIT&& jointDestroyable){
+                    for (int i = 0; i < contact.getFixtureA().getBody().getJointList().size; i+=2){
+                        if (!jointDeletionList.contains(contact.getFixtureA().getBody().getJointList().get(i))){
+                            jointDeletionList.add(contact.getFixtureA().getBody().getJointList().get(i));
+                            jointDestroyable = false;
+                        }
+                    }
+                }
+                
+                if ((contact.getFixtureA().getFilterData().categoryBits == HEAD_BIT 
+                        && contact.getFixtureB().getFilterData().categoryBits == NEEDLE_HOLE_BIT)){
+                    contact.getFixtureB().getFilterData().categoryBits = NO_COLLIDE_BIT;
+                    contact.getFixtureB().getFilterData().maskBits = NO_COLLIDE_BIT;
+                    if (growableAllowed){
+                        growThread = true;
+                        growableAllowed = false;
+                    }
+                } else if ((contact.getFixtureB().getFilterData().categoryBits == HEAD_BIT 
+                        && contact.getFixtureA().getFilterData().categoryBits == NEEDLE_HOLE_BIT)){
+                    contact.getFixtureA().getFilterData().categoryBits = NO_COLLIDE_BIT;
+                    contact.getFixtureA().getFilterData().maskBits = NO_COLLIDE_BIT;
+                    if (growableAllowed){
+                        growThread = true;
+                        growableAllowed = false;
+                    }
+                }
             }
 
             @Override
@@ -571,13 +824,25 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         
             scissorSprites.get(i).setRotation((float)Math.toDegrees(scissorBodies.get(i).getAngle()));
         }
+        
+        for (int i = 0; i < needleSprites.size(); i++){
+            needleSprites.get(i).setPosition((needleBodies.get(i).getPosition().x * PIXELS_TO_METERS) - needleSprites.get(i).getWidth()/2 , 
+                (needleSprites.get(i).getY()));
+        
+            needleSprites.get(i).setRotation((float)Math.toDegrees(needleBodies.get(i).getAngle()));
+            
+            if ( needleBodies.get(i).getPosition().x <= 0){
+                queueToRemove.add(new Point(i,2));
+            }
+        }
+        
         for (int i = 0; i < threadSprites.size(); i++){
             threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth()/2 , 
                 (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) - threadSprites.get(i).getHeight()/2);
         
             threadSprites.get(i).setRotation((float)Math.toDegrees(threadBodies.get(i).getAngle()));
             
-            if (threadSprites.get(i).getX() <= -220){
+            if (threadSprites.get(i).getX() <= 0 || threadBodies.get(i).getPosition().x <= 0){
                 queueToRemove.add(new Point(i,1));
             }
         }
@@ -590,7 +855,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         }
         
         if (TimeUtils.nanoTime() - lastTimeBg > 100000000) {
-            bgx -= 50;
+            bgx -= BACKGROUND_SPEED;
+            bgcolorx -= BACKGROUND_SPEED;
             for (int i = 0; i < scissorBodies.size(); i++){
                 scissorBodies.get(i).setLinearVelocity(new Vector2(scissors_speed,0f));
                 if (scissorSprites.get(i).getY() >= 0){
@@ -611,17 +877,46 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                    queueToRemove.add(new Point(i,0));
                 }
             }
+            
+            for (int i = 0; i < needleBodies.size(); i++){
+                needleBodies.get(i).setLinearVelocity(new Vector2(scissors_speed,0f));
+            }
+            
+            if (growThread){
+                System.out.println("Trying to grow Thread");
+                if (threadBodies.size() < 5 && threadSprites.size() < 5){
+                    System.out.println("Body Size before: " + threadBodies.size());
+                    System.out.println("Sprite Size before: " + threadSprites.size());
+                    threadBodies.addAll(createRope(createSprites(1, threadBodies.size()), threadBodies.size()));
+                    System.out.println("Body Size after: " + threadBodies.size());
+                    System.out.println("Sprite Size after: " + threadSprites.size());
+                }
+                growThread = false;
+                growableAllowed = true;
+            }
             if (queueToRemove.size() > 0){
                 System.out.println("Queue Size: " + queueToRemove.size());
-                for (int i = 0; i < queueToRemove.size(); i++){
+                for (int i = queueToRemove.size()-1; i >= 0; i--){
                     System.out.println("Item in Queue: " + queueToRemove.get(i).x + "," + queueToRemove.get(i).y);
                     int ref = queueToRemove.get(i).x;
                     if (queueToRemove.get(i).y == 0){
                         scissorBodies.remove(scissorBodies.get(ref));
                         scissorSprites.remove(scissorSprites.get(ref));
-                    } else if (queueToRemove.get(i).y == 1 && ref < threadBodies.size()){
-                        threadBodies.remove(threadBodies.get(ref));
-                        threadSprites.remove(threadSprites.get(ref));
+                    } else if (queueToRemove.get(i).y == 1){
+                        if (ref < threadBodies.size()){
+                            threadBodies.get(ref).getJointList().clear();
+                            threadBodies.remove(threadBodies.get(ref));
+                        }
+                        if (ref < threadSprites.size()){
+                            threadSprites.remove(threadSprites.get(ref));
+                        }
+                    } else if (queueToRemove.get(i).y == 2){
+                        if (ref < needleBodies.size()){
+                            needleBodies.remove(needleBodies.get(ref));
+                        }
+                        if (ref < needleSprites.size()){
+                            needleSprites.remove(needleSprites.get(ref));
+                        }
                     }
                 }
                 queueToRemove.clear();
@@ -629,8 +924,11 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             lastTimeBg = TimeUtils.nanoTime();
         }
 
-        if (bgx == 0) {
-            bgx = 800;
+        if (bgx <= 0) {
+            bgx = 144;
+        }
+        if (bgcolorx <= 0){
+            bgcolorx = 2016;
         }
         
         batch.setProjectionMatrix(camera.combined);
@@ -647,12 +945,40 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             jointDeletionList.clear();
             jointDestroyable = true;
         }
+        if (threadBodies.isEmpty() && body.getJointList().size > 0){
+            world.destroyJoint(body.getJointList().peek().joint);
+        }
         
         batch.begin();
         if(drawSprite){
-            batch.draw(background, bgx - 800, 0);
+            batch.draw(background, bgx + 144*8, 0);
+            batch.draw(background, bgx + 144*7, 0);
+            batch.draw(background, bgx + 144*6, 0);
+            batch.draw(background, bgx + 144*5, 0);            
+            batch.draw(background, bgx + 144*4, 0);
+            batch.draw(background, bgx + 144*3, 0);
+            batch.draw(background, bgx + 144*2, 0);
+            batch.draw(background, bgx + 144, 0);
             batch.draw(background, bgx, 0);
+            batch.draw(background, bgx - 144, 0);
+            
+            batch.draw(colorBackground, bgcolorx, 0);
+            batch.draw(colorBackground, bgcolorx - 2016, 0);
+            
+            batch.draw(threadedBackground, bgx + 144*8, 0);
+            batch.draw(threadedBackground, bgx + 144*7, 0);
+            batch.draw(threadedBackground, bgx + 144*6, 0);
+            batch.draw(threadedBackground, bgx + 144*5, 0);            
+            batch.draw(threadedBackground, bgx + 144*4, 0);
+            batch.draw(threadedBackground, bgx + 144*3, 0);
+            batch.draw(threadedBackground, bgx + 144*2, 0);
+            batch.draw(threadedBackground, bgx + 144, 0);
+            batch.draw(threadedBackground, bgx, 0);
+            batch.draw(threadedBackground, bgx - 144, 0);
         
+            batch.draw(shadowBackground, bgcolorx, 0);
+            batch.draw(shadowBackground, bgcolorx - 2016, 0);
+            
             batch.draw(player_sprite, player_sprite.getX(), player_sprite.getY(),player_sprite.getOriginX(),
                        player_sprite.getOriginY(), player_sprite.getWidth(),player_sprite.getHeight(),
                        player_sprite.getScaleX(),player_sprite.getScaleY(),player_sprite.getRotation());
@@ -661,6 +987,12 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 batch.draw(scissors_sprite, scissors_sprite.getX(), scissors_sprite.getY(),scissors_sprite.getOriginX(),
                            scissors_sprite.getOriginY(), scissors_sprite.getWidth(),scissors_sprite.getHeight(),
                            scissors_sprite.getScaleX(),scissors_sprite.getScaleY(),scissors_sprite.getRotation());
+            }
+            
+            for (Sprite needle_sprite : needleSprites){
+                batch.draw(needle_sprite, needle_sprite.getX(), needle_sprite.getY(),needle_sprite.getOriginX(),
+                           needle_sprite.getOriginY(), needle_sprite.getWidth(),needle_sprite.getHeight(),
+                           needle_sprite.getScaleX(),needle_sprite.getScaleY(),needle_sprite.getRotation());
             }
             
             for (Sprite threadSprite : threadSprites) {
