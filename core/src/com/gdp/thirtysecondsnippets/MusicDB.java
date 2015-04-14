@@ -49,7 +49,7 @@ public class MusicDB {
         List<NameValuePair> parameters = new ArrayList<NameValuePair>(1);
         parameters.add(new BasicNameValuePair("getTrackByGenre", "true"));
         parameters.add(new BasicNameValuePair("key", key));
-        parameters.add(new BasicNameValuePair("genre", "genre"));
+        parameters.add(new BasicNameValuePair("genre", genre));
 
         String response = sendPost(parameters);
         
@@ -59,7 +59,6 @@ public class MusicDB {
             int response_code = root.getInt("response_code", 0);
             String message = root.getString("message", "No Message Found");
         
-        
             if (response_code == SUCCESS) {
                 Json json = new Json();
                 message = message.replace("\\\"", "\"");
@@ -68,7 +67,7 @@ public class MusicDB {
                 t = json.fromJson(Track.class, message);
 
             } else if (response_code == FAILURE) {
-                throw new Exception("Failure: " + response_code);
+                throw new Exception("Failure: " + response_code + " | " + message);
             } else {
                 throw new Exception("Unknown Response");
             }

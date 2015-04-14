@@ -55,6 +55,14 @@ public class MainMenu implements Screen{
                     GenreMenu menu = new GenreMenu(tss);
                     tss.setScreen(menu);
                 }
+        });
+        
+        setting.addListener(new ChangeListener(){
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    SettingsMenu menu = new SettingsMenu(tss);
+                    tss.setScreen(menu);
+                }
             });
         
         about.addListener(new ChangeListener(){

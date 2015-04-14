@@ -7,6 +7,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
@@ -51,6 +52,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     Sprite player_sprite;// scissors_sprite;
     World world;
     Body body;// scissors_body;
+    Preferences prefs = Gdx.app.getPreferences("30SSSettings");
     int iterator = 6, lastiterator = 5;
     int timer = 0, timerpace = 15;
     float posX, posY;
@@ -60,6 +62,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     int screen_top_height = 5;
     float bgx;
     long lastTimeBg;
+    int beats = 0;
+    boolean down = true;
     
     static final short THREAD_BIT = 2;
     static final short HEAD_BIT = 4;
@@ -88,10 +92,14 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     float torque = 0.0f;
     boolean drawSprite = true;
     boolean drawBoxes = false;
+    private float musicvolume = 1;
+    private float soundfxvol = 1;
+    private long change;
+    private long lastTime;
     
     final float PIXELS_TO_METERS = 100f;
     
-    boolean dansTryingToGetWorkDone = true;
+    boolean dansTryingToGetWorkDone = false;
     private Game tss;
 
     public ThirtySecondSnippets(Game tss){
@@ -401,13 +409,22 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
     @Override
     public void show() {
+        this.loadSettings();
         //Gets track from Spotify
         Music m = null;
         if (!dansTryingToGetWorkDone){
             try {
                 MusicDB db = new MusicDB();
-                Track track = db.getTrackByGenre("rock");
-                System.out.println(track.getArtist() + " | " + track.getName());
+                Track track = db.getTrackByGenre("pop");
+                System.out.println(track.getArtist() + " | " + track.getName() + " | T:" + track.getTempo());
+                
+                beats = (int) (track.getTempo()/60);
+                
+                if(beats <= 0){
+                    beats = 1;
+                }
+                
+                System.out.println("Beats: " + beats);
 
                 String filename = "music.mp3";
                 InputStream is = new URL(track.getPreview_url()).openStream();
@@ -493,6 +510,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         Gdx.input.setInputProcessor(this);
         
         if(m != null){
+            m.setVolume(this.musicvolume);
             m.play();
         }
         threadSprites = createSprites(7);
@@ -549,12 +567,34 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 System.out.println("postsolve");
             }
     });
+        
+        lastTime = System.currentTimeMillis();
     }
 
     @Override
     public void render(float f) {
         camera.update();
         world.step(1f/60f, 6, 2);
+        
+        change += System.currentTimeMillis() - lastTime;
+        
+        lastTime = System.currentTimeMillis();
+        
+        if(change >= 1000){
+            for(int i = 0;i<beats;i++){
+                if(down){
+                    createScissorsBody("down");
+                }else{
+                    createScissorsBody("up");
+                }
+                
+                down = !down;
+            }
+            
+            change = 0;
+        }
+        
+        
         
         body.applyTorque(torque,true);
         
@@ -666,6 +706,11 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if (drawBoxes){
             debugRenderer.render(world, debugMatrix);
         }
+    }
+    
+    public void loadSettings(){
+        this.musicvolume = prefs.getFloat("musicvol", 20) / 20;
+        this.soundfxvol = prefs.getFloat("soundsfxvol", 20) / 20;
     }
 
     @Override

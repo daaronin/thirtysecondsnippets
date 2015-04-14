@@ -8,9 +8,11 @@ package com.gdp.thirtysecondsnippets;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox.CheckBoxStyle;
@@ -21,7 +23,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider.SliderStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 /**
  *
@@ -37,6 +41,7 @@ public class SettingsMenu implements Screen{
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
 
+    Preferences prefs = Gdx.app.getPreferences("30SSSettings");
     
     public SettingsMenu(Game tss){
         this.tss = tss;
@@ -45,28 +50,68 @@ public class SettingsMenu implements Screen{
     @Override
     public void show() {
         ImageButton title = new ImageButton(skin.getDrawable("settings"));
-        Slider slide = new Slider(0f, 20f, 1f, false, skin.get("slider", SliderStyle.class));
+        final Slider musicvolslider = new Slider(0f, 20f, 1f, false, skin.get("slider", SliderStyle.class));
+        
+        musicvolslider.setValue(prefs.getFloat("musicvol", 10));
+        
+        musicvolslider.addListener(new ChangeListener(){
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    prefs.putFloat("musicvol", musicvolslider.getValue());
+                    prefs.flush();
+                }
+        });
         
         SliderStyle style = skin.get("slider", SliderStyle.class);
         style.knobAfter = skin.getDrawable("slider_after");
-        Slider slide2 = new Slider(0f, 20f, 1f, false, style);
+        final Slider soundfxslider = new Slider(0f, 20f, 1f, false, style);
+        soundfxslider.setValue(prefs.getFloat("soundsfxvol", 8));
+        
+        soundfxslider.addListener(new ChangeListener(){
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    prefs.putFloat("soundsfxvol", soundfxslider.getValue());
+                    prefs.flush();
+                }
+        });
         
         CheckBox strobecheck = new CheckBox("", skin.get("strobecheck", CheckBoxStyle.class));
+        
+        strobecheck.addListener(new ChangeListener(){
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    ThirtySecondSnippets game = new ThirtySecondSnippets(tss);
+                    tss.setScreen(game);
+                }
+        });
         
         Label musicvol = new Label("Music Volume ", skin.get("labelb", LabelStyle.class));
         Label soundfxvol = new Label("Sound FX Volume ", skin.get("labelb", LabelStyle.class));
         Label strobelabel = new Label("Strobe?", skin.get("labelb", LabelStyle.class));
         
-        table.add(title).top().padTop(20).colspan(2).width(Value.percentWidth(.5f, table)).height(Value.percentHeight(.3f, table)).expand();
+        TextButton back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
+        
+        back.addListener(new ChangeListener(){
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    MainMenu game = new MainMenu(tss);
+                    tss.setScreen(game);
+                }
+        });
+        
+                
+        table.add(title).top().padTop(2).colspan(2).width(Value.percentWidth(.5f, table)).height(Value.percentHeight(.3f, table));
         table.row();
         table.add(musicvol);//label
-        table.add(slide).center().width(Value.percentWidth(5f)).height(Value.percentHeight(.5f)).padLeft(20);
+        table.add(musicvolslider).center().width(Value.percentWidth(5f)).height(Value.percentHeight(.5f)).padLeft(20);
         table.row();
         table.add(soundfxvol).padTop(40);//label
-        table.add(slide2).center().width(Value.percentWidth(5f)).height(Value.percentHeight(.5f)).padLeft(20).padTop(45);
+        table.add(soundfxslider).center().width(Value.percentWidth(5f)).height(Value.percentHeight(.5f)).padLeft(20).padTop(45);
         table.row();
         table.add(strobelabel).padTop(40).padBottom(40);//label
         table.add(strobecheck).center().width(Value.percentWidth(1f)).height(Value.percentHeight(1f)).padLeft(20).padTop(45).padBottom(40);
+        table.row();
+        table.add(back).height(Value.percentHeight(.30f)).width(Value.percentHeight(.30f));
         
         table.setBackground(skin.getDrawable("bg_blur"));
         table.setFillParent(true);
