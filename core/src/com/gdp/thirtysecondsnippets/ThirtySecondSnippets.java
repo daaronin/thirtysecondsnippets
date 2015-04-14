@@ -60,6 +60,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     float posX, posY;
     float scissorsX, scissorsY;
     
+    int runtimeCounter = 0;
+    
     float width, height;
     int screen_top_height = 5;
     float bgx, bgcolorx;
@@ -80,7 +82,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     static final int SCORE_CONSTANT = 1;
     boolean HYPERTHREADING_MODE = false;
     
-    int tempo = 170;
+    int tempo;
     int lastRand = 0;
     int topSpacer = 0;
     int bottomSpacer = 0;
@@ -97,7 +99,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     static final short NEEDLE_HOLE_BIT = 64;
     static final short NO_COLLIDE_BIT = 128;
     
-    float BACKGROUND_SPEED = tempo/60f*3f;
+    float BACKGROUND_SPEED = 28.8f;
     static final int STARTING_LENGTH = 2;
     static final int MAX_THREAD_LENGTH = 5;
     static final int SPACER_AMOUNT = 2;
@@ -630,7 +632,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     public void spawn(){
         Random rand = new Random();
-        int randNum = rand.nextInt(120);
+        int randNum = rand.nextInt(90);
         //System.out.println(randNum);
         switch (randNum){
             case 0:
@@ -701,12 +703,13 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     public void show() {
         //Gets track from Spotify
         Music m = null;
-        if (!dansTryingToGetWorkDone){
+        if (dansTryingToGetWorkDone){
             try {
                 MusicDB db = new MusicDB();
-                Track track = db.getTrackByGenre("pop");
+                Track track = db.getTrackByGenre("rock");
                 System.out.println(track.getArtist() + " | " + track.getName());
-
+                tempo = (int)track.getTempo();
+                
                 String filename = "music.mp3";
                 InputStream is = new URL(track.getPreview_url()).openStream();
                 BufferedInputStream stream = new BufferedInputStream(is);
@@ -745,7 +748,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         bgx = 144;
         bgcolorx = 2016;
         
-        BACKGROUND_SPEED = tempo/60f*3f;
+        //BACKGROUND_SPEED = tempo/60f*3f;
         SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f;
         
         batch = new SpriteBatch();
@@ -771,8 +774,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         
         font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/font.png"),false);
         
-        timerpaceClosed = tempo/60 * 1;
-        timerpaceOpen = tempo/60 * 12;
+        timerpaceClosed = (300 - tempo)/60 * 1;
+        timerpaceOpen = (300 - tempo)/60 * 12;
         
         player_sprite = new Sprite(threadlet);
 
@@ -942,8 +945,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         
             needleSprites.get(i).setRotation((float)Math.toDegrees(needleBodies.get(i).getAngle()));
             
-            if ( needleBodies.get(i).getPosition().x <= 0){
-                queueToRemove.add(new Point(i,2));
+            if ( needleSprites.get(i).getX() <= 0){
+                //queueToRemove.add(new Point(i,2));
             }
         }
         
@@ -973,8 +976,13 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         }
         
         if (TimeUtils.nanoTime() - lastTimeBg > 100000000) {
+            runtimeCounter++;
             bgx -= BACKGROUND_SPEED;
-            bgcolorx -= BACKGROUND_SPEED;
+            if (HYPERTHREADING_MODE){
+                bgcolorx -= BACKGROUND_SPEED*2;
+            } else {
+                bgcolorx -= BACKGROUND_SPEED;
+            }
             for (int i = 0; i < scissorBodies.size(); i++){
                 scissorBodies.get(i).setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED,0f));
                 if (scissorSprites.get(i).getY() >= 0){
@@ -1070,29 +1078,34 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         //System.out.println(threadBodies.size() + " + " + MAX_THREAD_LENGTH);
         if ((int)threadBodies.size() == MAX_THREAD_LENGTH){
             HYPERTHREADING_MODE = true;
-            BACKGROUND_SPEED = tempo/60f*3f * 2f;
+            //BACKGROUND_SPEED = tempo/60f*3f * 2f;
+            BACKGROUND_SPEED = 28.8f;
             SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f * 2f;
             if (needle_combo < 5){
                 needle_combo = 5;
             }
         } else {
             HYPERTHREADING_MODE = false;
-            BACKGROUND_SPEED = tempo/60f*3f;
+            //BACKGROUND_SPEED = tempo/60f*3f;
+            BACKGROUND_SPEED = 14.4f;
             SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f;
         }
-        
-        if (HYPERTHREADING_MODE){
-            score += SCORE_CONSTANT * threadBodies.size() * needle_combo;
-            score_amount = lbl_score.toString() + score;
-            multiplier = "";
-            bonus = "BONUS: x" + needle_combo;
-            //hyperthreading = "HYPERTHREADING MODE";
+        if (runtimeCounter >= 285){
+            hyperthreading = "FINISH";
         } else {
-            score += SCORE_CONSTANT * threadBodies.size();
-            score_amount = lbl_score.toString() + score;
-            multiplier = "x" + threadBodies.size();
-            bonus = "";
-            //hyperthreading = "";
+            if (HYPERTHREADING_MODE){
+                score += SCORE_CONSTANT * threadBodies.size() * needle_combo;
+                score_amount = lbl_score.toString() + score;
+                multiplier = "";
+                bonus = "BONUS: x" + needle_combo;
+                //hyperthreading = "HYPERTHREADING MODE";
+            } else {
+                score += SCORE_CONSTANT * threadBodies.size();
+                score_amount = lbl_score.toString() + score;
+                multiplier = "x" + threadBodies.size();
+                bonus = "";
+                //hyperthreading = "";
+            }
         }
         //score_amount = lbl_score.toString() + score + "    x" + threadBodies.size();
         
@@ -1151,7 +1164,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             font.draw(batch, score_amount, 0, 50);
             font.draw(batch, multiplier, 500, 50);
             font.draw(batch, bonus, 500, 50);
-            //font.draw(batch, hyperthreading, 0, height-50);
+            font.draw(batch, hyperthreading, 0, height-50);
         }
 
         batch.end();
