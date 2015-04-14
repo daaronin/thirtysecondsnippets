@@ -56,25 +56,34 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     World world;
     Body body;
     int iterator = 6, lastiterator = 5;
-    int timer = 0, timerpaceClosed = 16, timerpaceOpen = 4;
+    int timer = 0, timerpaceClosed = 20, timerpaceOpen = 4;
     float posX, posY;
     float scissorsX, scissorsY;
-    float scissors_speed = -6f;
+    
     float width, height;
     int screen_top_height = 5;
     float bgx, bgcolorx;
     long lastTimeBg;
+    long lastTimeTempo;
     
     BitmapFont font;
     CharSequence lbl_score = "Score: ";
     CharSequence score_amount = "";
+    CharSequence multiplier = "";
+    CharSequence bonus = "";
+    CharSequence hyperthreading = "";
+    
     int score = 0;
     int needle_combo = 1;
     int needle_hit = 0;
-    static final int GROWTH_SUPRESSOR = 4;
+    static final int GROWTH_SUPRESSOR = 3;
     static final int SCORE_CONSTANT = 1;
+    boolean HYPERTHREADING_MODE = false;
     
     int tempo = 170;
+    int lastRand = 0;
+    int topSpacer = 0;
+    int bottomSpacer = 0;
     
     int counter = 0;
     boolean growThread = false;
@@ -88,7 +97,12 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     static final short NEEDLE_HOLE_BIT = 64;
     static final short NO_COLLIDE_BIT = 128;
     
-    static final float BACKGROUND_SPEED = 14.4f;
+    float BACKGROUND_SPEED = tempo/60f*3f;
+    static final int STARTING_LENGTH = 2;
+    static final int MAX_THREAD_LENGTH = 5;
+    static final int SPACER_AMOUNT = 2;
+    
+    float SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f;
     
     ArrayList<JointEdge> jointDeletionList = new ArrayList<JointEdge>();
     boolean jointDestroyable = true;
@@ -280,8 +294,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     public Sprite createNeedleSprite(float posX, float posY, String orientation){
        
        Sprite newNeedleSprite;
-       Random rand = new Random(3);
-       switch (rand.nextInt()){
+       Random rand = new Random();
+       switch (rand.nextInt(3)){
             case 0:
                 newNeedleSprite =  new Sprite(needleGreen);
                 break;
@@ -511,9 +525,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     public Texture animateScissor(){
         Texture tex;
-        
         if (iterator == 6){
-            if (timer == timerpaceClosed){
+            if (timer >= timerpaceOpen){
                 lastiterator = 6;
                 iterator = 5;
                 timer = 0;
@@ -521,7 +534,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 timer++;
             }
         } else if (iterator == 1){
-            if (timer == timerpaceOpen){
+            if (timer >= timerpaceClosed){
                 lastiterator = 1;
                 iterator = 2;
                 timer = 0;
@@ -614,6 +627,75 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         }
         return segments;
     }
+    
+    public void spawn(){
+        Random rand = new Random();
+        int randNum = rand.nextInt(120);
+        //System.out.println(randNum);
+        switch (randNum){
+            case 0:
+                if (bottomSpacer <= 0){
+                    createNeedleBody("down");
+                    lastRand = 0;
+                    bottomSpacer = SPACER_AMOUNT;
+                }
+                topSpacer--;
+                bottomSpacer--;
+                break;
+            case 1:
+                if (topSpacer <= 0){
+                    createNeedleBody("up");
+                    lastRand = 1;
+                    topSpacer = SPACER_AMOUNT;
+                }
+                topSpacer--;
+                bottomSpacer--;
+                break;
+            case 2:
+                if (topSpacer <= 0){
+                    createScissorsBody("down");
+                    lastRand = 2;
+                    topSpacer = SPACER_AMOUNT;
+                }
+                topSpacer--;
+                bottomSpacer--;
+                break;
+            case 3:
+                if (bottomSpacer <= 0){
+                    createScissorsBody("up");
+                    lastRand = 3;
+                    bottomSpacer = SPACER_AMOUNT;
+                }
+                topSpacer--;
+                bottomSpacer--;
+                break;
+            case 4:
+                if (bottomSpacer <= 0){
+                    createScissorsBody("up");
+                    lastRand = 4;
+                    bottomSpacer = SPACER_AMOUNT;
+                }
+                topSpacer--;
+                bottomSpacer--;
+                break;
+            case 5:
+                if (topSpacer <= 0){
+                    createScissorsBody("down");
+                    lastRand = 5;
+                    topSpacer = SPACER_AMOUNT;
+                }
+                topSpacer--;
+                bottomSpacer--;
+                break;
+            case 6:
+                break;
+            case 7:
+                break;
+            default:
+                break;
+        }
+        
+    }
 
     @Override
     public void show() {
@@ -663,6 +745,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         bgx = 144;
         bgcolorx = 2016;
         
+        BACKGROUND_SPEED = tempo/60f*3f;
+        SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f;
+        
         batch = new SpriteBatch();
         shortthreadlet = new Texture("shortthreadhighcontrast_alt.png");
         threadlet = new Texture("shortthreadhighcontrast2_alt.png");
@@ -685,6 +770,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         scissor6 = new Texture("scissor6.png");
         
         font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/font.png"),false);
+        
+        timerpaceClosed = tempo/60 * 1;
+        timerpaceOpen = tempo/60 * 12;
         
         player_sprite = new Sprite(threadlet);
 
@@ -718,13 +806,14 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         debugRenderer = new Box2DDebugRenderer();
         
         lastTimeBg = TimeUtils.nanoTime();
+        lastTimeTempo = TimeUtils.nanoTime();
 
         Gdx.input.setInputProcessor(this);
         
         if(m != null){
             m.play();
         }
-        threadSprites = createSprites(2, 0);
+        threadSprites = createSprites(STARTING_LENGTH, 0);
         threadBodies = createRope(threadSprites, 0);
         
         world.setContactListener(new ContactListener() {
@@ -873,6 +962,13 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         if (TimeUtils.nanoTime() - lastTimeBg > 50000000) {
+            
+        }
+        
+        if (TimeUtils.nanoTime() - lastTimeTempo > (100000000 * 60)/tempo) {
+            //System.out.println("Spawn");
+            spawn();
+            lastTimeTempo = TimeUtils.nanoTime();
             animateScissor();
         }
         
@@ -880,7 +976,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             bgx -= BACKGROUND_SPEED;
             bgcolorx -= BACKGROUND_SPEED;
             for (int i = 0; i < scissorBodies.size(); i++){
-                scissorBodies.get(i).setLinearVelocity(new Vector2(scissors_speed,0f));
+                scissorBodies.get(i).setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED,0f));
                 if (scissorSprites.get(i).getY() >= 0){
                     if (scissorSprites.get(i).getTexture() == scissor1 || scissorSprites.get(i).getTexture() == scissor2){
                         scissorBodies.get(i).setTransform(scissorBodies.get(i).getPosition().x, 5.8f, scissorBodies.get(i).getAngle());
@@ -901,12 +997,12 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             }
             
             for (int i = 0; i < needleBodies.size(); i++){
-                needleBodies.get(i).setLinearVelocity(new Vector2(scissors_speed,0f));
+                needleBodies.get(i).setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED,0f));
             }
             
             if (growThread){
                 System.out.println("Trying to grow Thread");
-                if (threadBodies.size() < 5 && threadSprites.size() < 5){
+                if (threadBodies.size() < MAX_THREAD_LENGTH && threadSprites.size() < MAX_THREAD_LENGTH){
                     System.out.println("Body Size before: " + threadBodies.size());
                     System.out.println("Sprite Size before: " + threadSprites.size());
                     threadBodies.addAll(createRope(createSprites(1, threadBodies.size()), threadBodies.size()));
@@ -970,8 +1066,35 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if (threadBodies.isEmpty() && body.getJointList().size > 0){
             world.destroyJoint(body.getJointList().peek().joint);
         }
-        score += SCORE_CONSTANT * threadBodies.size();
-        score_amount = lbl_score.toString() + score + "    x" + threadBodies.size();
+        
+        //System.out.println(threadBodies.size() + " + " + MAX_THREAD_LENGTH);
+        if ((int)threadBodies.size() == MAX_THREAD_LENGTH){
+            HYPERTHREADING_MODE = true;
+            BACKGROUND_SPEED = tempo/60f*3f * 2f;
+            SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f * 2f;
+            if (needle_combo < 5){
+                needle_combo = 5;
+            }
+        } else {
+            HYPERTHREADING_MODE = false;
+            BACKGROUND_SPEED = tempo/60f*3f;
+            SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f;
+        }
+        
+        if (HYPERTHREADING_MODE){
+            score += SCORE_CONSTANT * threadBodies.size() * needle_combo;
+            score_amount = lbl_score.toString() + score;
+            multiplier = "";
+            bonus = "BONUS: x" + needle_combo;
+            //hyperthreading = "HYPERTHREADING MODE";
+        } else {
+            score += SCORE_CONSTANT * threadBodies.size();
+            score_amount = lbl_score.toString() + score;
+            multiplier = "x" + threadBodies.size();
+            bonus = "";
+            //hyperthreading = "";
+        }
+        //score_amount = lbl_score.toString() + score + "    x" + threadBodies.size();
         
         batch.begin();
         if(drawSprite){
@@ -1026,6 +1149,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             }
             
             font.draw(batch, score_amount, 0, 50);
+            font.draw(batch, multiplier, 500, 50);
+            font.draw(batch, bonus, 500, 50);
+            //font.draw(batch, hyperthreading, 0, height-50);
         }
 
         batch.end();
