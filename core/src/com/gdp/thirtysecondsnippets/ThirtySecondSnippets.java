@@ -1,6 +1,5 @@
 package com.gdp.thirtysecondsnippets;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -13,6 +12,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
@@ -32,8 +32,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
-import com.badlogic.gdx.physics.box2d.joints.RopeJoint;
-import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 import com.badlogic.gdx.utils.TimeUtils;
 import java.awt.Point;
 import java.io.BufferedInputStream;
@@ -44,7 +42,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,6 +64,17 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     int screen_top_height = 5;
     float bgx, bgcolorx;
     long lastTimeBg;
+    
+    BitmapFont font;
+    CharSequence lbl_score = "Score: ";
+    CharSequence score_amount = "";
+    int score = 0;
+    int needle_combo = 1;
+    int needle_hit = 0;
+    static final int GROWTH_SUPRESSOR = 4;
+    static final int SCORE_CONSTANT = 1;
+    
+    int tempo = 170;
     
     int counter = 0;
     boolean growThread = false;
@@ -270,7 +279,22 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     public Sprite createNeedleSprite(float posX, float posY, String orientation){
        
-       Sprite newNeedleSprite =  new Sprite(needleGreen);
+       Sprite newNeedleSprite;
+       Random rand = new Random(3);
+       switch (rand.nextInt()){
+            case 0:
+                newNeedleSprite =  new Sprite(needleGreen);
+                break;
+            case 1:
+                newNeedleSprite =  new Sprite(needleBlue);
+                break;
+            case 2:
+                newNeedleSprite =  new Sprite(needleYellow);
+                break;
+            default:
+                newNeedleSprite =  new Sprite(needleGreen);
+                break;
+       }
        if ("up".equals(orientation)){
             newNeedleSprite.setPosition(posX - newNeedleSprite.getWidth() / 2, posY - newNeedleSprite.getHeight() / 2);
             newNeedleSprite.setRotation(180);
@@ -649,10 +673,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         colorBackground = new Texture("rainbow.png");
         shadowBackground = new Texture("shadowmap3.png");
         
-        needleGreen = new Texture("needlegreen.png");
-        needleBlue = new Texture("needleblue.png");
-        needleYellow = new Texture("needleyellow.png");
-        
+        needleGreen = new Texture("needlegreenoutline.png");
+        needleBlue = new Texture("needleblueoutline.png");
+        needleYellow = new Texture("needleyellowoutline.png");
         
         scissor1 = new Texture("scissor1.png");
         scissor2 = new Texture("scissor2.png");
@@ -660,6 +683,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         scissor4 = new Texture("scissor4.png");
         scissor5 = new Texture("scissor5.png");
         scissor6 = new Texture("scissor6.png");
+        
+        font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/font.png"),false);
+        
         player_sprite = new Sprite(threadlet);
 
         player_sprite.setPosition(width/3-player_sprite.getWidth()/2,height/2-player_sprite.getHeight()/2);
@@ -698,7 +724,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if(m != null){
             m.play();
         }
-        threadSprites = createSprites(5, 0);
+        threadSprites = createSprites(2, 0);
         threadBodies = createRope(threadSprites, 0);
         
         world.setContactListener(new ContactListener() {
@@ -713,6 +739,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     for (int i = 0; i < contact.getFixtureB().getBody().getJointList().size; i+=2){
                         if (!jointDeletionList.contains(contact.getFixtureB().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureB().getBody().getJointList().get(i));
+                            needle_combo = 1;
                             jointDestroyable = false;
                         }
                     }
@@ -722,6 +749,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     for (int i = 0; i < contact.getFixtureA().getBody().getJointList().size; i+=2){
                         if (!jointDeletionList.contains(contact.getFixtureA().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureA().getBody().getJointList().get(i));
+                            needle_combo = 1;
                             jointDestroyable = false;
                         }
                     }
@@ -731,17 +759,25 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                         && contact.getFixtureB().getFilterData().categoryBits == NEEDLE_HOLE_BIT)){
                     contact.getFixtureB().getFilterData().categoryBits = NO_COLLIDE_BIT;
                     contact.getFixtureB().getFilterData().maskBits = NO_COLLIDE_BIT;
-                    if (growableAllowed){
+                    if (growableAllowed && needle_hit > GROWTH_SUPRESSOR){
                         growThread = true;
+                        needle_combo++;
+                        needle_hit = 0;
                         growableAllowed = false;
+                    } else if (growableAllowed && needle_hit <= GROWTH_SUPRESSOR) {
+                        needle_hit++;
                     }
                 } else if ((contact.getFixtureB().getFilterData().categoryBits == HEAD_BIT 
                         && contact.getFixtureA().getFilterData().categoryBits == NEEDLE_HOLE_BIT)){
                     contact.getFixtureA().getFilterData().categoryBits = NO_COLLIDE_BIT;
                     contact.getFixtureA().getFilterData().maskBits = NO_COLLIDE_BIT;
-                    if (growableAllowed){
+                    if (growableAllowed && needle_hit > GROWTH_SUPRESSOR){
                         growThread = true;
+                        needle_combo++;
+                        needle_hit = 0;
                         growableAllowed = false;
+                    } else if (growableAllowed && needle_hit <= GROWTH_SUPRESSOR) {
+                        needle_hit++;
                     }
                 }
                 
@@ -761,6 +797,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     for (int i = 0; i < contact.getFixtureB().getBody().getJointList().size; i+=2){
                         if (!jointDeletionList.contains(contact.getFixtureB().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureB().getBody().getJointList().get(i));
+                            needle_combo = 1;
                             jointDestroyable = false;
                         }
                     }
@@ -770,28 +807,13 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     for (int i = 0; i < contact.getFixtureA().getBody().getJointList().size; i+=2){
                         if (!jointDeletionList.contains(contact.getFixtureA().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureA().getBody().getJointList().get(i));
+                            needle_combo = 1;
                             jointDestroyable = false;
                         }
                     }
                 }
                 
-                if ((contact.getFixtureA().getFilterData().categoryBits == HEAD_BIT 
-                        && contact.getFixtureB().getFilterData().categoryBits == NEEDLE_HOLE_BIT)){
-                    contact.getFixtureB().getFilterData().categoryBits = NO_COLLIDE_BIT;
-                    contact.getFixtureB().getFilterData().maskBits = NO_COLLIDE_BIT;
-                    if (growableAllowed){
-                        growThread = true;
-                        growableAllowed = false;
-                    }
-                } else if ((contact.getFixtureB().getFilterData().categoryBits == HEAD_BIT 
-                        && contact.getFixtureA().getFilterData().categoryBits == NEEDLE_HOLE_BIT)){
-                    contact.getFixtureA().getFilterData().categoryBits = NO_COLLIDE_BIT;
-                    contact.getFixtureA().getFilterData().maskBits = NO_COLLIDE_BIT;
-                    if (growableAllowed){
-                        growThread = true;
-                        growableAllowed = false;
-                    }
-                }
+                
             }
 
             @Override
@@ -948,6 +970,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if (threadBodies.isEmpty() && body.getJointList().size > 0){
             world.destroyJoint(body.getJointList().peek().joint);
         }
+        score += SCORE_CONSTANT * threadBodies.size();
+        score_amount = lbl_score.toString() + score + "    x" + threadBodies.size();
         
         batch.begin();
         if(drawSprite){
@@ -1000,6 +1024,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                         threadSprite.getOriginY(), threadSprite.getWidth(), threadSprite.getHeight(), 
                         threadSprite.getScaleX(), threadSprite.getScaleY(), threadSprite.getRotation());
             }
+            
+            font.draw(batch, score_amount, 0, 50);
         }
 
         batch.end();
