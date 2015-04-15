@@ -30,6 +30,8 @@ import com.badlogic.gdx.physics.box2d.JointEdge;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJoint;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -78,7 +80,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     int score = 0;
     int needle_combo = 1;
     int needle_hit = 0;
-    static final int GROWTH_SUPRESSOR = 3;
+    static final int GROWTH_SUPRESSOR = 1;
     static final int SCORE_CONSTANT = 1;
     boolean HYPERTHREADING_MODE = false;
     
@@ -86,6 +88,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     int lastRand = 0;
     int topSpacer = 0;
     int bottomSpacer = 0;
+    
+    int growthTimer = 0;
     
     int counter = 0;
     boolean growThread = false;
@@ -102,7 +106,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     float BACKGROUND_SPEED = 28.8f;
     static final int STARTING_LENGTH = 2;
     static final int MAX_THREAD_LENGTH = 5;
-    static final int SPACER_AMOUNT = 2;
+    static final int SPACER_AMOUNT = 5;
+    static final int SPAWN_RATE = 60;
+    static final int GROWTH_TIMER_OFFSET = 4;
     
     float SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f;
     
@@ -601,6 +607,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             segments.get(i).createFixture(threadDef);
         }
         shape.dispose();
+        //DistanceJointDef the_joint = new DistanceJointDef();
+        
         RevoluteJointDef jointDef = new RevoluteJointDef();
         //RopeJointDef ropeJointDef = new RopeJointDef();
         jointDef.collideConnected = false;
@@ -614,6 +622,12 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             jointDef.bodyA = segments.get(i);
             jointDef.bodyB = segments.get(i + 1);
             joints.add((RevoluteJoint) world.createJoint(jointDef));
+            
+            //the_joint.localAnchorA.x = -sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
+            //the_joint.localAnchorB.x = sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
+            //the_joint.initialize(segments.get(i), segments.get(i +1), new Vector2(2,2), new Vector2(2,2));
+            //the_joint.collideConnected = false;
+            //world.createJoint(the_joint);
             //ropeJointDef.bodyA = segments.get(i);
             //ropeJointDef.bodyB = segments.get(i + 1);
             //ropeJoints.add((RopeJoint) world.createJoint(ropeJointDef));
@@ -632,7 +646,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     public void spawn(){
         Random rand = new Random();
-        int randNum = rand.nextInt(90);
+        int randNum = rand.nextInt(SPAWN_RATE);
         //System.out.println(randNum);
         switch (randNum){
             case 0:
@@ -690,8 +704,22 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 bottomSpacer--;
                 break;
             case 6:
+                if (topSpacer <= 0){
+                    createNeedleBody("up");
+                    lastRand = 1;
+                    topSpacer = SPACER_AMOUNT;
+                }
+                topSpacer--;
+                bottomSpacer--;
                 break;
             case 7:
+                if (bottomSpacer <= 0){
+                    createNeedleBody("down");
+                    lastRand = 0;
+                    bottomSpacer = SPACER_AMOUNT;
+                }
+                topSpacer--;
+                bottomSpacer--;
                 break;
             default:
                 break;
@@ -851,24 +879,26 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                         && contact.getFixtureB().getFilterData().categoryBits == NEEDLE_HOLE_BIT)){
                     contact.getFixtureB().getFilterData().categoryBits = NO_COLLIDE_BIT;
                     contact.getFixtureB().getFilterData().maskBits = NO_COLLIDE_BIT;
-                    if (growableAllowed && needle_hit > GROWTH_SUPRESSOR){
+                    if (growableAllowed && needle_hit >= GROWTH_SUPRESSOR && growthTimer <= 0){
                         growThread = true;
                         needle_combo++;
                         needle_hit = 0;
                         growableAllowed = false;
-                    } else if (growableAllowed && needle_hit <= GROWTH_SUPRESSOR) {
+                        growthTimer = GROWTH_TIMER_OFFSET;
+                    } else if (growableAllowed && needle_hit < GROWTH_SUPRESSOR) {
                         needle_hit++;
                     }
                 } else if ((contact.getFixtureB().getFilterData().categoryBits == HEAD_BIT 
                         && contact.getFixtureA().getFilterData().categoryBits == NEEDLE_HOLE_BIT)){
                     contact.getFixtureA().getFilterData().categoryBits = NO_COLLIDE_BIT;
                     contact.getFixtureA().getFilterData().maskBits = NO_COLLIDE_BIT;
-                    if (growableAllowed && needle_hit > GROWTH_SUPRESSOR){
+                    if (growableAllowed && needle_hit >= GROWTH_SUPRESSOR && growthTimer <= 0){
                         growThread = true;
                         needle_combo++;
                         needle_hit = 0;
                         growableAllowed = false;
-                    } else if (growableAllowed && needle_hit <= GROWTH_SUPRESSOR) {
+                        growthTimer = GROWTH_TIMER_OFFSET;
+                    } else if (growableAllowed && needle_hit < GROWTH_SUPRESSOR) {
                         needle_hit++;
                     }
                 }
@@ -884,7 +914,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
             @Override
             public void preSolve(Contact contact, Manifold oldManifold) {
-                System.out.println("Presolve: #" + counter++);
+                //System.out.println("Presolve: #" + counter++);
                 if (contact.getFixtureB().getFilterData().categoryBits == THREAD_BIT && contact.getFixtureA().getFilterData().categoryBits == BLADE_BIT && jointDestroyable){
                     for (int i = 0; i < contact.getFixtureB().getBody().getJointList().size; i+=2){
                         if (!jointDeletionList.contains(contact.getFixtureB().getBody().getJointList().get(i))){
@@ -910,7 +940,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
             @Override
             public void postSolve(Contact contact, ContactImpulse impulse) {
-                System.out.println("postsolve");
+                //System.out.println("postsolve");
             }
     });
     }
@@ -951,9 +981,18 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         }
         
         for (int i = 0; i < threadSprites.size(); i++){
-            threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth()/2 , 
-                (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) - threadSprites.get(i).getHeight()/2);
-        
+            if (i == 0){
+                threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth()/2 , 
+                    (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) - threadSprites.get(i).getHeight()/2);
+            } else {
+                float diff = threadSprites.get(i).getY() - threadSprites.get(i - 1).getY();
+                if (diff > 10  || diff < -10){
+                threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth()/2 , 
+                    (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) + diff - threadSprites.get(i).getHeight()/2);
+                }
+                threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth()/2 , 
+                    (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) - threadSprites.get(i).getHeight()/2);
+            }
             threadSprites.get(i).setRotation((float)Math.toDegrees(threadBodies.get(i).getAngle()));
             
             if (threadSprites.get(i).getX() <= 0 || threadBodies.get(i).getPosition().x <= 0){
@@ -977,6 +1016,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         
         if (TimeUtils.nanoTime() - lastTimeBg > 100000000) {
             runtimeCounter++;
+            growthTimer--;
             bgx -= BACKGROUND_SPEED;
             if (HYPERTHREADING_MODE){
                 bgcolorx -= BACKGROUND_SPEED*2;
@@ -1000,7 +1040,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 }
 
                 if (scissorSprites.get(i).getX() <= -220) {
-                   queueToRemove.add(new Point(i,0));
+                   //queueToRemove.add(new Point(i,0));
                 }
             }
             
@@ -1009,21 +1049,21 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             }
             
             if (growThread){
-                System.out.println("Trying to grow Thread");
+                //System.out.println("Trying to grow Thread");
                 if (threadBodies.size() < MAX_THREAD_LENGTH && threadSprites.size() < MAX_THREAD_LENGTH){
-                    System.out.println("Body Size before: " + threadBodies.size());
-                    System.out.println("Sprite Size before: " + threadSprites.size());
+                    //System.out.println("Body Size before: " + threadBodies.size());
+                    //System.out.println("Sprite Size before: " + threadSprites.size());
                     threadBodies.addAll(createRope(createSprites(1, threadBodies.size()), threadBodies.size()));
-                    System.out.println("Body Size after: " + threadBodies.size());
-                    System.out.println("Sprite Size after: " + threadSprites.size());
+                    //System.out.println("Body Size after: " + threadBodies.size());
+                    //System.out.println("Sprite Size after: " + threadSprites.size());
                 }
                 growThread = false;
                 growableAllowed = true;
             }
             if (queueToRemove.size() > 0){
-                System.out.println("Queue Size: " + queueToRemove.size());
+                //System.out.println("Queue Size: " + queueToRemove.size());
                 for (int i = queueToRemove.size()-1; i >= 0; i--){
-                    System.out.println("Item in Queue: " + queueToRemove.get(i).x + "," + queueToRemove.get(i).y);
+                    //System.out.println("Item in Queue: " + queueToRemove.get(i).x + "," + queueToRemove.get(i).y);
                     int ref = queueToRemove.get(i).x;
                     if (queueToRemove.get(i).y == 0){
                         scissorBodies.remove(scissorBodies.get(ref));
@@ -1080,7 +1120,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             HYPERTHREADING_MODE = true;
             //BACKGROUND_SPEED = tempo/60f*3f * 2f;
             BACKGROUND_SPEED = 28.8f;
-            SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f * 2f;
+            SCROLLING_FOREGROUND_SPEED = tempo/60f*-2f * 2f;
             if (needle_combo < 5){
                 needle_combo = 5;
             }
@@ -1088,7 +1128,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             HYPERTHREADING_MODE = false;
             //BACKGROUND_SPEED = tempo/60f*3f;
             BACKGROUND_SPEED = 14.4f;
-            SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f;
+            SCROLLING_FOREGROUND_SPEED = tempo/60f*-2f;
         }
         if (runtimeCounter >= 285){
             hyperthreading = "FINISH";
