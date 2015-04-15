@@ -34,6 +34,8 @@ import com.badlogic.gdx.physics.box2d.joints.DistanceJoint;
 import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
+import com.badlogic.gdx.physics.box2d.joints.RopeJoint;
+import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 import com.badlogic.gdx.utils.TimeUtils;
 import java.awt.Point;
 import java.io.BufferedInputStream;
@@ -586,6 +588,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     public ArrayList<Body> createRope(ArrayList<Sprite> sprites, int startingLength){
         ArrayList<Body> segments = new ArrayList<Body>();
         ArrayList<RevoluteJoint> joints = new ArrayList<RevoluteJoint>();
+        ArrayList<RopeJoint> ropeJoints = new ArrayList<RopeJoint>();
         //ArrayList<RopeJoint> ropeJoints = new ArrayList<RopeJoint>();
         
         BodyDef segmentDef = new BodyDef();
@@ -610,10 +613,16 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         //DistanceJointDef the_joint = new DistanceJointDef();
         
         RevoluteJointDef jointDef = new RevoluteJointDef();
+        RopeJointDef ropeJointDef = new RopeJointDef();
         //RopeJointDef ropeJointDef = new RopeJointDef();
         jointDef.collideConnected = false;
         jointDef.localAnchorA.x = -sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
         jointDef.localAnchorB.x = sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
+        
+        ropeJointDef.collideConnected = false;
+        ropeJointDef.localAnchorA.x = -sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
+        ropeJointDef.localAnchorB.x = sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
+        ropeJointDef.maxLength = sprites.get(0).getWidth()/PIXELS_TO_METERS;
         //ropeJointDef.localAnchorA.x = -sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
         //ropeJointDef.localAnchorB.x = sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
         
@@ -622,6 +631,10 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             jointDef.bodyA = segments.get(i);
             jointDef.bodyB = segments.get(i + 1);
             joints.add((RevoluteJoint) world.createJoint(jointDef));
+            
+            ropeJointDef.bodyA = segments.get(i);
+            ropeJointDef.bodyB = segments.get(i + 1);
+            ropeJoints.add((RopeJoint) world.createJoint(ropeJointDef));
             
             //the_joint.localAnchorA.x = -sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
             //the_joint.localAnchorB.x = sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
@@ -636,10 +649,18 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             jointDef.bodyA = body;        
             jointDef.bodyB = segments.get(0);
             joints.add((RevoluteJoint) world.createJoint(jointDef));
+            
+            ropeJointDef.bodyA = body;
+            ropeJointDef.bodyB = segments.get(0);
+            ropeJoints.add((RopeJoint) world.createJoint(ropeJointDef));
         } else {
             jointDef.bodyA = threadBodies.get(threadBodies.size()-1);        
             jointDef.bodyB = segments.get(0);
             joints.add((RevoluteJoint) world.createJoint(jointDef));
+            
+            ropeJointDef.bodyA = threadBodies.get(threadBodies.size() -1);
+            ropeJointDef.bodyB = segments.get(0);
+            ropeJoints.add((RopeJoint) world.createJoint(ropeJointDef));
         }
         return segments;
     }
@@ -1046,6 +1067,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             
             for (int i = 0; i < needleBodies.size(); i++){
                 needleBodies.get(i).setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED,0f));
+                if (needleBodies.get(i).getPosition().x <= 50){
+                    needleBodies.get(i).getFixtureList().first().getFilterData().maskBits = NO_COLLIDE_BIT;
+                }
             }
             
             if (growThread){
