@@ -1,5 +1,7 @@
 package com.gdp.thirtysecondsnippets;
 
+import analysis.SnippetAnalysis;
+import audio.AudioPlayer;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -36,12 +38,14 @@ import com.badlogic.gdx.utils.TimeUtils;
 import java.awt.Point;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -702,11 +706,11 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     @Override
     public void show() {
         //Gets track from Spotify
-        Music m = null;
+        AudioPlayer player = null;
         if (dansTryingToGetWorkDone){
             try {
                 MusicDB db = new MusicDB();
-                Track track = db.getTrackByGenre("rock");
+                Track track = db.getTrackByGenre("pop");
                 System.out.println(track.getArtist() + " | " + track.getName());
                 tempo = (int)track.getTempo();
                 
@@ -724,9 +728,19 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 }
                 FileOutputStream fos = new FileOutputStream(handle.file());
                 bytes.writeTo(fos);
-
-                m = Gdx.audio.newMusic(handle);
-                System.out.println(bytes.size());
+                
+                fos.flush();
+                fos.close();
+                
+               player = AudioPlayer.createAudioPlayer(handle);
+               
+                
+                SnippetAnalysis analysis = new SnippetAnalysis(Gdx.files.getExternalStoragePath()+"jazz.mp3");
+                List<List<Float>>peaks = analysis.doAnalysis(Gdx.files.getExternalStoragePath()+"jazz.mp3");
+                
+                for(int i = 0;i<peaks.get(0).size();i++){
+                    System.out.println("Index: " + i + " | " + "Time: " + (i * (1024.0 / 44100.0)) + " | Value: " + peaks.get(0).get(i));
+                }                
             } catch (MalformedURLException ex) {
                 Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -813,9 +827,10 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
         Gdx.input.setInputProcessor(this);
         
-        if(m != null){
-            m.play();
+        if(player != null){
+            player.play();
         }
+        
         threadSprites = createSprites(STARTING_LENGTH, 0);
         threadBodies = createRope(threadSprites, 0);
         
