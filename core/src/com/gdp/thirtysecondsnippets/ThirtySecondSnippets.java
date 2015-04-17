@@ -35,7 +35,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.utils.TimeUtils;
-import java.awt.Point;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -122,7 +121,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     ArrayList<Sprite> needleSprites = new ArrayList<Sprite>();
     ArrayList<Body> needleBodies = new ArrayList<Body>();
     
-    ArrayList<Point> queueToRemove = new ArrayList<Point>();
+    ArrayList<Vector2> queueToRemove = new ArrayList<Vector2>();
     
     
     Box2DDebugRenderer debugRenderer;
@@ -735,11 +734,11 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                player = AudioPlayer.createAudioPlayer(handle);
                
                 
-                SnippetAnalysis analysis = new SnippetAnalysis(Gdx.files.getExternalStoragePath()+"jazz.mp3");
-                List<List<Float>>peaks = analysis.doAnalysis(Gdx.files.getExternalStoragePath()+"jazz.mp3");
+                SnippetAnalysis analysis = new SnippetAnalysis(handle.file());
+                List<List<Float>>peaks = analysis.doAnalysis(Gdx.files.getExternalStoragePath()+"music.mp3");
                 
                 for(int i = 0;i<peaks.get(0).size();i++){
-                    System.out.println("Index: " + i + " | " + "Time: " + (i * (1024.0 / 44100.0)) + " | Value: " + peaks.get(0).get(i));
+                    Gdx.app.debug("ANALYSIS", "Index: " + i + " | " + "Time: " + (i * (1024.0 / 44100.0)) + " | Value: " + peaks.get(0).get(i));
                 }                
             } catch (MalformedURLException ex) {
                 Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
@@ -972,7 +971,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             threadSprites.get(i).setRotation((float)Math.toDegrees(threadBodies.get(i).getAngle()));
             
             if (threadSprites.get(i).getX() <= 0 || threadBodies.get(i).getPosition().x <= 0){
-                queueToRemove.add(new Point(i,1));
+                queueToRemove.add(new Vector2(i,1));
             }
         }
         
@@ -1015,7 +1014,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 }
 
                 if (scissorSprites.get(i).getX() <= -220) {
-                   queueToRemove.add(new Point(i,0));
+                   queueToRemove.add(new Vector2(i,0));
                 }
             }
             
@@ -1039,7 +1038,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 System.out.println("Queue Size: " + queueToRemove.size());
                 for (int i = queueToRemove.size()-1; i >= 0; i--){
                     System.out.println("Item in Queue: " + queueToRemove.get(i).x + "," + queueToRemove.get(i).y);
-                    int ref = queueToRemove.get(i).x;
+                    int ref = (int) queueToRemove.get(i).x;
                     if (queueToRemove.get(i).y == 0){
                         scissorBodies.remove(scissorBodies.get(ref));
                         scissorSprites.remove(scissorSprites.get(ref));

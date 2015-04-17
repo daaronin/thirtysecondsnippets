@@ -6,6 +6,7 @@
 package analysis;
 
 import audio.MP3Decoder;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
  */
 public class SnippetAnalysis {
     
-    private FileInputStream FILE = null;
+    private File FILE = null;
     private final int HOP_SIZE = 512;
     private final int HISTORY_SIZE = 50;
     private final float[] multipliers = { 2f, 2f, 2f };
@@ -31,26 +32,19 @@ public class SnippetAnalysis {
         peaks = null;
     }
     
-    public SnippetAnalysis(String file){
-       try {
-            this.FILE = new FileInputStream(file);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(SnippetAnalysis.class.getName()).log(Level.SEVERE, null, ex);
-        }
-       peaks = null;
+    public SnippetAnalysis(File file){
+        this.FILE = file;
+                peaks = null;
     }
     
-    public void setFile(String file){
-        try {
-            this.FILE = new FileInputStream(file);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(SnippetAnalysis.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void setFile(File file){
+        this.FILE = file;
+                peaks = null;
     }
     
     public List<List<Float>> doAnalysis(String s){
         try {
-            MP3Decoder decoder = new MP3Decoder(new FileInputStream( s  ));
+            MP3Decoder decoder = new MP3Decoder(FILE);
             SpectrumProvider spectrumProvider = new SpectrumProvider( decoder, 1024, HOP_SIZE, true );
             float[] spectrum = spectrumProvider.nextSpectrum();
             float[] lastSpectrum = new float[spectrum.length];
