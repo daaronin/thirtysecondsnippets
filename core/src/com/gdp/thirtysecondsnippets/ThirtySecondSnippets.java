@@ -126,7 +126,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     ArrayList<Sprite> needleSprites = new ArrayList<Sprite>();
     ArrayList<Body> needleBodies = new ArrayList<Body>();
     
-    ArrayList<Point> queueToRemove = new ArrayList<Point>();
+    ArrayList<Vector2> queueToRemove = new ArrayList<Vector2>();
     
     
     Box2DDebugRenderer debugRenderer;
@@ -937,7 +937,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             public void preSolve(Contact contact, Manifold oldManifold) {
                 //System.out.println("Presolve: #" + counter++);
                 if (contact.getFixtureB().getFilterData().categoryBits == THREAD_BIT && contact.getFixtureA().getFilterData().categoryBits == BLADE_BIT && jointDestroyable){
-                    for (int i = 0; i < contact.getFixtureB().getBody().getJointList().size; i+=2){
+                    for (int i = 0; i < contact.getFixtureB().getBody().getJointList().size; i++){
                         if (!jointDeletionList.contains(contact.getFixtureB().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureB().getBody().getJointList().get(i));
                             needle_combo = 1;
@@ -947,7 +947,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     
                 }
                 if (contact.getFixtureA().getFilterData().categoryBits == THREAD_BIT && contact.getFixtureB().getFilterData().categoryBits == BLADE_BIT&& jointDestroyable){
-                    for (int i = 0; i < contact.getFixtureA().getBody().getJointList().size; i+=2){
+                    for (int i = 0; i < contact.getFixtureA().getBody().getJointList().size; i++){
                         if (!jointDeletionList.contains(contact.getFixtureA().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureA().getBody().getJointList().get(i));
                             needle_combo = 1;
@@ -1017,7 +1017,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             threadSprites.get(i).setRotation((float)Math.toDegrees(threadBodies.get(i).getAngle()));
             
             if (threadSprites.get(i).getX() <= 0 || threadBodies.get(i).getPosition().x <= 0){
-                queueToRemove.add(new Point(i,1));
+                queueToRemove.add(new Vector2(i,1));
             }
         }
         
@@ -1061,14 +1061,15 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 }
 
                 if (scissorSprites.get(i).getX() <= -220) {
-                   //queueToRemove.add(new Point(i,0));
+                   queueToRemove.add(new Vector2(i,0));
                 }
             }
             
             for (int i = 0; i < needleBodies.size(); i++){
                 needleBodies.get(i).setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED,0f));
-                if (needleBodies.get(i).getPosition().x <= 50){
+                if (needleBodies.get(i).getPosition().x <= 200){
                     needleBodies.get(i).getFixtureList().first().getFilterData().maskBits = NO_COLLIDE_BIT;
+                    needleBodies.get(i).getFixtureList().first().getFilterData().categoryBits = NO_COLLIDE_BIT;
                 }
             }
             
@@ -1088,7 +1089,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 //System.out.println("Queue Size: " + queueToRemove.size());
                 for (int i = queueToRemove.size()-1; i >= 0; i--){
                     //System.out.println("Item in Queue: " + queueToRemove.get(i).x + "," + queueToRemove.get(i).y);
-                    int ref = queueToRemove.get(i).x;
+                    int ref = (int) queueToRemove.get(i).x;
                     if (queueToRemove.get(i).y == 0){
                         scissorBodies.remove(scissorBodies.get(ref));
                         scissorSprites.remove(scissorSprites.get(ref));
