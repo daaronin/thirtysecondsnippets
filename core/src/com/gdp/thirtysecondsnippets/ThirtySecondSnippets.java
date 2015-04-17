@@ -78,6 +78,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     CharSequence multiplier = "";
     CharSequence bonus = "";
     CharSequence hyperthreading = "";
+    CharSequence songTitle = "";
+    CharSequence songArtist = "";
     
     int score = 0;
     int needle_combo = 1;
@@ -757,6 +759,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 MusicDB db = new MusicDB();
                 Track track = db.getTrackByGenre("rock");
                 System.out.println(track.getArtist() + " | " + track.getName());
+                songTitle = track.getName();
+                songArtist = track.getArtist();
                 tempo = (int)track.getTempo();
                 
                 String filename = "music.mp3";
@@ -1158,6 +1162,12 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if (runtimeCounter >= 285){
             hyperthreading = "FINISH";
         } else {
+            if (runtimeCounter >= 30){
+                songTitle = songArtist;
+            }
+            if (runtimeCounter >= 60){
+                songTitle = "";
+            }
             if (HYPERTHREADING_MODE){
                 score += SCORE_CONSTANT * threadBodies.size() * needle_combo;
                 score_amount = lbl_score.toString() + score;
@@ -1229,7 +1239,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             font.draw(batch, score_amount, 0, 50);
             font.draw(batch, multiplier, 500, 50);
             font.draw(batch, bonus, 500, 50);
-            font.draw(batch, hyperthreading, 0, height-50);
+            font.draw(batch, hyperthreading, 0, height);
+            font.draw(batch, songTitle, 0, height);
         }
 
         batch.end();
