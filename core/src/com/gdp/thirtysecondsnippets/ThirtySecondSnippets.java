@@ -1,7 +1,7 @@
 package com.gdp.thirtysecondsnippets;
 
 import analysis.SnippetAnalysis;
-import audio.AudioPlayer;
+import audio.MP3Decoder;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -138,7 +138,17 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     boolean dansTryingToGetWorkDone = true;
     private Game tss;
+    
+    Music m = null;
+    
+    int beatIndex = 0;
+    
+    List<List<Float>> peaks = null;
+    
+    int lastDisplayed = 0;
 
+    int displayInterval = (int) (0.1 / (512.0/44100.0));       
+            
     public ThirtySecondSnippets(Game tss){
         this.tss = tss;
     }
@@ -635,7 +645,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     public void spawn(){
         Random rand = new Random();
-        int randNum = rand.nextInt(90);
+        int randNum = rand.nextInt(6);
         //System.out.println(randNum);
         switch (randNum){
             case 0:
@@ -705,15 +715,17 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     @Override
     public void show() {
         //Gets track from Spotify
-        AudioPlayer player = null;
+       
+       
         if (dansTryingToGetWorkDone){
             try {
                 MusicDB db = new MusicDB();
-                Track track = db.getTrackByGenre("pop");
+                Track track = db.getTrackByGenre("rock");
                 System.out.println(track.getArtist() + " | " + track.getName());
                 tempo = (int)track.getTempo();
                 
                 String filename = "music.mp3";
+                //InputStream is = new URL("https://p.scdn.co/mp3-preview/fcc74d3ce6a2d4f5017a776a30dc3cb3715e85c2").openStream();
                 InputStream is = new URL(track.getPreview_url()).openStream();
                 BufferedInputStream stream = new BufferedInputStream(is);
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -731,15 +743,22 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 fos.flush();
                 fos.close();
                 
-               player = AudioPlayer.createAudioPlayer(handle);
-               
-                
-                SnippetAnalysis analysis = new SnippetAnalysis(handle.file());
-                List<List<Float>>peaks = analysis.doAnalysis(Gdx.files.getExternalStoragePath()+"music.mp3");
-                
-                for(int i = 0;i<peaks.get(0).size();i++){
-                    Gdx.app.debug("ANALYSIS", "Index: " + i + " | " + "Time: " + (i * (1024.0 / 44100.0)) + " | Value: " + peaks.get(0).get(i));
-                }                
+               m = Gdx.audio.newMusic(handle);
+                try {
+//                    MP3Decoder decode = new MP3Decoder(handle, 1024);
+//                    float[] samples = new float[1024];
+//                    decode.readSamples(samples);
+                    
+                SnippetAnalysis analysis = new SnippetAnalysis(handle);
+                peaks = analysis.doAnalysis(handle);
+//                
+//                for(int i = 0;i<peaks.get(0).size();i++){
+//                    //System.out.println("Index: " + i + " | " + "Time: " + (i * (512.0 / 44100.0)) + " | Value: " + peaks.get(0).get(i));
+//                    System.out.println(peaks.get(0).get(i));
+//                }                
+                } catch (Exception ex) {
+                    Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } catch (MalformedURLException ex) {
                 Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -826,9 +845,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
         Gdx.input.setInputProcessor(this);
         
-        if(player != null){
-            player.play();
-        }
+        
         
         threadSprites = createSprites(STARTING_LENGTH, 0);
         threadBodies = createRope(threadSprites, 0);
@@ -898,7 +915,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
             @Override
             public void preSolve(Contact contact, Manifold oldManifold) {
-                System.out.println("Presolve: #" + counter++);
+                //System.out.println("Presolve: #" + counter++);
                 if (contact.getFixtureB().getFilterData().categoryBits == THREAD_BIT && contact.getFixtureA().getFilterData().categoryBits == BLADE_BIT && jointDestroyable){
                     for (int i = 0; i < contact.getFixtureB().getBody().getJointList().size; i+=2){
                         if (!jointDeletionList.contains(contact.getFixtureB().getBody().getJointList().get(i))){
@@ -924,9 +941,11 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
             @Override
             public void postSolve(Contact contact, ContactImpulse impulse) {
-                System.out.println("postsolve");
+                //System.out.println("postsolve");
             }
     });
+        
+        m.play();
     }
 
     @Override
@@ -982,9 +1001,28 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             
         }
         
+        int currentBeat = (int) (m.getPosition() / (512.0/44100.0));
+            
+            if(currentBeat < peaks.get(0).size() && currentBeat > beatIndex){
+                for(int i = beatIndex+1;i<=currentBeat;i++){
+                    
+                    if(peaks.get(0).get(i) > 0 && i - lastDisplayed > displayInterval){
+                        System.out.println(peaks.get(0).get(i));
+                        spawn();
+                        lastDisplayed = i;
+                    }
+                }
+                
+                beatIndex = currentBeat;
+            }
+        
         if (TimeUtils.nanoTime() - lastTimeTempo > (100000000 * 60)/tempo) {
             //System.out.println("Spawn");
-            spawn();
+            //spawn();
+            
+            
+            
+            //System.out.println(m.getPosition());
             lastTimeTempo = TimeUtils.nanoTime();
             animateScissor();
         }
@@ -1035,9 +1073,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 growableAllowed = true;
             }
             if (queueToRemove.size() > 0){
-                System.out.println("Queue Size: " + queueToRemove.size());
+                //System.out.println("Queue Size: " + queueToRemove.size());
                 for (int i = queueToRemove.size()-1; i >= 0; i--){
-                    System.out.println("Item in Queue: " + queueToRemove.get(i).x + "," + queueToRemove.get(i).y);
+                    //System.out.println("Item in Queue: " + queueToRemove.get(i).x + "," + queueToRemove.get(i).y);
                     int ref = (int) queueToRemove.get(i).x;
                     if (queueToRemove.get(i).y == 0){
                         scissorBodies.remove(scissorBodies.get(ref));

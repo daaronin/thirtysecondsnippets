@@ -1,11 +1,10 @@
 package audio;
 
-import java.io.File;
-import java.io.IOException;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import org.tritonus.share.sampled.FloatSampleBuffer;
+import com.badlogic.gdx.audio.analysis.AudioTools;
+import com.badlogic.gdx.audio.io.Mpg123Decoder;
+import com.badlogic.gdx.files.FileHandle;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 
 /**
  * Another mp3 decoder. I got a suspicion that the other one sucks a bit :/
@@ -14,65 +13,42 @@ import org.tritonus.share.sampled.FloatSampleBuffer;
  */
 public class MP3Decoder implements Decoder
 {				
-	AudioInputStream in;
-	FloatSampleBuffer buffer;
+	Mpg123Decoder in;
+	FloatBuffer buffer;
 	byte[] bytes;
+        int sampleWindowSize;
 	
-	public MP3Decoder( File file ) throws Exception
+	public MP3Decoder( FileHandle file , int sampleWindowSize) throws Exception
 	{
-		this.in = AudioSystem.getAudioInputStream(file);
-		AudioFormat baseFormat = this.in.getFormat();
-		AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
-											baseFormat.getSampleRate(), 16,
-											baseFormat.getChannels(),
-											baseFormat.getChannels() * 2,
-											baseFormat.getSampleRate(), false);
-		this.in = AudioSystem.getAudioInputStream(format, this.in);
+		Mpg123Decoder decoder = new Mpg123Decoder(file);
+                System.out.println(decoder.getRate());
+                System.out.println(decoder.getChannels());
+		this.in = decoder;
+                this.sampleWindowSize = sampleWindowSize;
 	}
 
 	@Override
 	public int readSamples(float[] samples) 
 	{
-		if( buffer == null || buffer.getSampleCount() < samples.length )
-		{
-			buffer = new FloatSampleBuffer( in.getFormat().getChannels(), 1024, in.getFormat().getSampleRate() );
-			bytes = new byte[buffer.getByteArrayBufferSize( in.getFormat() )];
-		}
-			
-		int read = 0;			
-		int readBytes = 0;
-		try {
-			readBytes = in.read( bytes, read, bytes.length - read );
-		} catch (IOException e) {
-			return 0;
-		}
-		if( readBytes == -1 )
-			return 0;
-		
-		read += readBytes;
-		while( readBytes != -1 && read != bytes.length )
-		{
-			try {
-				readBytes = in.read( bytes, read, bytes.length - read );
-			} catch (IOException e) {
-				return 0;
-			}
-			read += readBytes;
-		}	
-		
-		int frameCount = bytes.length / in.getFormat().getFrameSize();
-		buffer.setSamplesFromBytes(bytes, 0, in.getFormat(), 0, frameCount);
-		
-		for( int i = 0; i <buffer.getSampleCount(); i++ )
-		{						
-			if( buffer.getChannelCount() == 2 )
-				samples[i] = (buffer.getChannel(0)[i] + buffer.getChannel(1)[i]) / 2;
-			else
-				samples[i] = buffer.getChannel(0)[i];
-		}
-		
-		return buffer.getSampleCount();
+                short[] s_samples = new short[this.sampleWindowSize * this.in.getChannels()];
+                int i = in.readSamples(s_samples, 0, sampleWindowSize * this.in.getChannels());
+                //ShortBuffer new_short = AudioTools.allocateShortBuffer(1024, 1);
+                //AudioTools.convertToMonoShort(shorts, new_short, 1024);
+                //short[] s_samples_new = new_short.array();
+                for(int j = 0;j<s_samples.length;j+=2){
+                    if(this.in.getChannels() == 2){
+                        samples[j/2] = ((float)s_samples[j] + (float)s_samples[j+1]) / 2;
+                    }else{
+                        samples[j] = (float)s_samples[j];
+                    }
+                    //samples[j] = (float)s_samples[j];
+                    //System.out.println(samples[j/2]);
+                }
+                
+                
+                return i;
 	}
 
+ 
 	
 }

@@ -6,6 +6,7 @@
 package analysis;
 
 import audio.MP3Decoder;
+import com.badlogic.gdx.files.FileHandle;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
  */
 public class SnippetAnalysis {
     
-    private File FILE = null;
+    private FileHandle FILE = null;
     private final int HOP_SIZE = 512;
     private final int HISTORY_SIZE = 50;
     private final float[] multipliers = { 2f, 2f, 2f };
@@ -32,19 +33,19 @@ public class SnippetAnalysis {
         peaks = null;
     }
     
-    public SnippetAnalysis(File file){
+    public SnippetAnalysis(FileHandle file){
         this.FILE = file;
                 peaks = null;
     }
     
-    public void setFile(File file){
+    public void setFile(FileHandle file){
         this.FILE = file;
                 peaks = null;
     }
     
-    public List<List<Float>> doAnalysis(String s){
+    public List<List<Float>> doAnalysis(FileHandle FILE){
         try {
-            MP3Decoder decoder = new MP3Decoder(FILE);
+            MP3Decoder decoder = new MP3Decoder(FILE, 1024);
             SpectrumProvider spectrumProvider = new SpectrumProvider( decoder, 1024, HOP_SIZE, true );
             float[] spectrum = spectrumProvider.nextSpectrum();
             float[] lastSpectrum = new float[spectrum.length];
@@ -101,7 +102,12 @@ public class SnippetAnalysis {
                         peaks.get(i).add( (float)0 );
                     }
                 }
+                 
             }
+            
+            for(int i = 0;i<peaks.get(0).size();i++){
+                    //System.out.println(spectralFlux.get(0).get(i) + ", " +thresholds.get(0).get(i) + ", " +peaks.get(0).get(i));
+                } 
         } catch (Exception ex) {
             Logger.getLogger(SnippetAnalysis.class.getName()).log(Level.SEVERE, null, ex);
         }
