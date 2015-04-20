@@ -727,7 +727,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 
                 String filename = "music.mp3";
                 //Thinking of You
-                InputStream is = new URL("https://p.scdn.co/mp3-preview/f95dde5cc2dc74f1070d3247ebd1c35a015ca3ee").openStream();
+                //InputStream is = new URL("https://p.scdn.co/mp3-preview/f95dde5cc2dc74f1070d3247ebd1c35a015ca3ee").openStream();
                 
                 //Only
                 //InputStream is = new URL("https://p.scdn.co/mp3-preview/b0c09984f019d5205c6443ca344f1fc2a2a63aa0").openStream();
@@ -742,7 +742,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 //InputStream is = new URL("https://p.scdn.co/mp3-preview/fcc74d3ce6a2d4f5017a776a30dc3cb3715e85c2").openStream();
                 
                 //Fetched Random
-                //InputStream is = new URL(track.getPreview_url()).openStream();
+                InputStream is = new URL(track.getPreview_url()).openStream();
                 BufferedInputStream stream = new BufferedInputStream(is);
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 FileHandle handle = Gdx.files.external(filename);
