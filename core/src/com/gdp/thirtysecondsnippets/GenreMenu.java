@@ -66,8 +66,8 @@ public class GenreMenu implements Screen{
                     //Same way we moved here from the Splash Screen
                     //We set it to new Splash because we got no other screens
                     //otherwise you put the screen there where you want to go
-                    Track t = db.getTrackByGenreID(genres.get(current).getId());
-                    System.out.println(t.toString());
+                    LoadTrackData load = new LoadTrackData(tss, genres.get(current).getId());
+                    tss.setScreen(load);
                 }
             });
 

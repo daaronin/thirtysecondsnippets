@@ -147,8 +147,19 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     int lastDisplayed = 0;
 
-    int displayInterval = (int) (0.1 / (512.0/44100.0));       
+    int displayInterval = (int) (0.1 / (512.0/44100.0)); 
+    
+    private Track track;
+    
+    private SnippetAnalysis analysis;
             
+    public ThirtySecondSnippets(Game tss, Track track, SnippetAnalysis analysis, Music m){
+        this.tss = tss;
+        this.track = track;
+        this.analysis = analysis;
+        this.m = m;
+    }
+    
     public ThirtySecondSnippets(Game tss){
         this.tss = tss;
     }
@@ -717,70 +728,15 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         //Gets track from Spotify
        
        
-        if (dansTryingToGetWorkDone){
-            try {
-                MusicDB db = new MusicDB();
-                Track track = db.getTrackByGenre("rock");
-                System.out.println(track.getArtist() + " | " + track.getName());
-                tempo = (int)track.getTempo();
-                tempo = 132;
-                
-                String filename = "music.mp3";
-                //Thinking of You
-                //InputStream is = new URL("https://p.scdn.co/mp3-preview/f95dde5cc2dc74f1070d3247ebd1c35a015ca3ee").openStream();
-                
-                //Only
-                //InputStream is = new URL("https://p.scdn.co/mp3-preview/b0c09984f019d5205c6443ca344f1fc2a2a63aa0").openStream();
-                
-                //Anaconda
-                //InputStream is = new URL("https://p.scdn.co/mp3-preview/693a3633cfeb2935a9de0a1c229956d7571ed06f").openStream();
-
-                //Pompeii / Bastille
-                InputStream is = new URL("https://p.scdn.co/mp3-preview/9074bf34469e166222d41d334a59e2041a71e532").openStream();
-                
-                //Skylar Grey Coming Home
-                //InputStream is = new URL("https://p.scdn.co/mp3-preview/fcc74d3ce6a2d4f5017a776a30dc3cb3715e85c2").openStream();
-                
-                //Fetched Random
-                //InputStream is = new URL(track.getPreview_url()).openStream();
-                BufferedInputStream stream = new BufferedInputStream(is);
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                FileHandle handle = Gdx.files.external(filename);
-                if (handle.exists()) {
-                    handle.delete();
-                }
-                int current = 0;
-                while ((current = stream.read()) != -1) {
-                    bytes.write(current);
-                }
-                FileOutputStream fos = new FileOutputStream(handle.file());
-                bytes.writeTo(fos);
-                
-                fos.flush();
-                fos.close();
-                
-               m = Gdx.audio.newMusic(handle);
-                try {
-//                    MP3Decoder decode = new MP3Decoder(handle, 1024);
-//                    float[] samples = new float[1024];
-//                    decode.readSamples(samples);
-                    
-                SnippetAnalysis analysis = new SnippetAnalysis(handle, 1024);
-                peaks = analysis.doAnalysis();
-//                
-//                for(int i = 0;i<peaks.get(0).size();i++){
-//                    //System.out.println("Index: " + i + " | " + "Time: " + (i * (512.0 / 44100.0)) + " | Value: " + peaks.get(0).get(i));
-//                    System.out.println(peaks.get(0).get(i));
-//                }                
-                } catch (Exception ex) {
-                    Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
-            } 
-        }
+        
+        tempo = (int)track.getTempo();
+        tempo = 132;
+        try {
+            peaks = analysis.getPeaks();
+        } catch (Exception ex) {
+            Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        
         
         //gets height and width
         width = Gdx.graphics.getWidth();
