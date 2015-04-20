@@ -28,25 +28,31 @@ public class SnippetAnalysis {
     private final float[] multipliers = { 2f, 2f, 2f };
     private final float[] bands = { 80, 4000, 4000, 10000, 10000, 16000 };
     List<List<Float>> peaks;
-    
-    public SnippetAnalysis(){
-        peaks = null;
-    }
+    int SAMPLING = 1024;
     
     public SnippetAnalysis(FileHandle file){
         this.FILE = file;
-                peaks = null;
+        peaks = null;
+    }
+    
+    public SnippetAnalysis(FileHandle file, int sampling){
+        this.FILE = file;
+        this.SAMPLING = sampling;
     }
     
     public void setFile(FileHandle file){
         this.FILE = file;
-                peaks = null;
+        peaks = null;
     }
     
-    public List<List<Float>> doAnalysis(FileHandle FILE){
+    public void setSampling(int sampling){
+        this.SAMPLING = sampling;
+    }
+    
+    public List<List<Float>> doAnalysis(){
         try {
-            MP3Decoder decoder = new MP3Decoder(FILE, 1024);
-            SpectrumProvider spectrumProvider = new SpectrumProvider( decoder, 1024, HOP_SIZE, true );
+            MP3Decoder decoder = new MP3Decoder(FILE, SAMPLING);
+            SpectrumProvider spectrumProvider = new SpectrumProvider( decoder, SAMPLING, HOP_SIZE, true );
             float[] spectrum = spectrumProvider.nextSpectrum();
             float[] lastSpectrum = new float[spectrum.length];
             List<List<Float>> spectralFlux = new ArrayList<List<Float>>( );
@@ -105,9 +111,7 @@ public class SnippetAnalysis {
                  
             }
             
-            for(int i = 0;i<peaks.get(0).size();i++){
-                    //System.out.println(spectralFlux.get(0).get(i) + ", " +thresholds.get(0).get(i) + ", " +peaks.get(0).get(i));
-                } 
+            
         } catch (Exception ex) {
             Logger.getLogger(SnippetAnalysis.class.getName()).log(Level.SEVERE, null, ex);
         }
