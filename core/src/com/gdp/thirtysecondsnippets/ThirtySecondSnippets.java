@@ -736,13 +736,13 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 //InputStream is = new URL("https://p.scdn.co/mp3-preview/693a3633cfeb2935a9de0a1c229956d7571ed06f").openStream();
 
                 //Pompeii / Bastille
-                //InputStream is = new URL("https://p.scdn.co/mp3-preview/9074bf34469e166222d41d334a59e2041a71e532").openStream();
+                InputStream is = new URL("https://p.scdn.co/mp3-preview/9074bf34469e166222d41d334a59e2041a71e532").openStream();
                 
                 //Skylar Grey Coming Home
                 //InputStream is = new URL("https://p.scdn.co/mp3-preview/fcc74d3ce6a2d4f5017a776a30dc3cb3715e85c2").openStream();
                 
                 //Fetched Random
-                InputStream is = new URL(track.getPreview_url()).openStream();
+                //InputStream is = new URL(track.getPreview_url()).openStream();
                 BufferedInputStream stream = new BufferedInputStream(is);
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 FileHandle handle = Gdx.files.external(filename);

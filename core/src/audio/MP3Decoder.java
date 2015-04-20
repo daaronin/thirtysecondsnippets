@@ -25,21 +25,25 @@ public class MP3Decoder implements Decoder
                 System.out.println(decoder.getChannels());
 		this.in = decoder;
                 this.sampleWindowSize = sampleWindowSize;
+                
 	}
 
 	@Override
 	public int readSamples(float[] samples) 
 	{
                 short[] s_samples = new short[this.sampleWindowSize * this.in.getChannels()];
+                float[] tmp_float = new float[s_samples.length];
+                
                 int i = in.readSamples(s_samples, 0, sampleWindowSize * this.in.getChannels());
+                AudioTools.toFloat(s_samples, 0, tmp_float, 0, s_samples.length);
                 //ShortBuffer new_short = AudioTools.allocateShortBuffer(1024, 1);
                 //AudioTools.convertToMonoShort(shorts, new_short, 1024);
                 //short[] s_samples_new = new_short.array();
-                for(int j = 0;j<s_samples.length;j+=2){
+                for(int j = 0;j<tmp_float.length;j+=2){
                     if(this.in.getChannels() == 2){
-                        samples[j/2] = ((float)s_samples[j] + (float)s_samples[j+1]) / 2;
+                        samples[j/2] = ((float)tmp_float[j] + (float)tmp_float[j+1]) / 2;
                     }else{
-                        samples[j] = (float)s_samples[j];
+                        samples[j] = (float)tmp_float[j];
                     }
                     //samples[j] = (float)s_samples[j];
                     //System.out.println(samples[j/2]);

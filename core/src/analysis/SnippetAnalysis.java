@@ -111,6 +111,10 @@ public class SnippetAnalysis {
                  
             }
             
+            for(int i = 0;i<peaks.get(0).size();i++){
+                    System.out.println(spectralFlux.get(0).get(i) + ", " +thresholds.get(0).get(i) + ", " +peaks.get(0).get(i));
+                }
+            
             
         } catch (Exception ex) {
             Logger.getLogger(SnippetAnalysis.class.getName()).log(Level.SEVERE, null, ex);
