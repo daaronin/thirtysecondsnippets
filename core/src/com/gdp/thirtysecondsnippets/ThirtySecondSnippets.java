@@ -24,6 +24,8 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.JointEdge;
@@ -1069,11 +1071,16 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 }
             }
             
-            for (int i = 0; i < needleBodies.size(); i++){
-                needleBodies.get(i).setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED,0f));
-                if (needleBodies.get(i).getPosition().x <= 200){
-                    needleBodies.get(i).getFixtureList().first().getFilterData().maskBits = NO_COLLIDE_BIT;
-                    needleBodies.get(i).getFixtureList().first().getFilterData().categoryBits = NO_COLLIDE_BIT;
+            for (Body needleBody : needleBodies) {
+                needleBody.setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED,0f));
+                //System.out.println("needlex = " + needleBody.getPosition().x + " and " + width/5/PIXELS_TO_METERS);
+                if (needleBody.getPosition().x <= width/2.9f/PIXELS_TO_METERS) {
+                    for (int i = 0; i < needleBody.getFixtureList().size; i++){
+                        Filter filt = needleBody.getFixtureList().get(i).getFilterData();
+                        filt.maskBits = NO_COLLIDE_BIT;
+                        filt.categoryBits = NO_COLLIDE_BIT;
+                        needleBody.getFixtureList().get(i).setFilterData(filt);
+                    }
                 }
             }
             
