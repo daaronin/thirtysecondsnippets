@@ -1,11 +1,13 @@
 package com.gdp.thirtysecondsnippets;
 
+import analysis.SnippetAnalysis;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
@@ -48,12 +50,15 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ThirtySecondSnippets implements InputProcessor, Screen {
 
+    Preferences prefs = Gdx.app.getPreferences("30SSSettings");
+    
     SpriteBatch batch;
     Texture threadlet, background, scissor1, scissor2, scissor3, scissor4, 
             scissor5, scissor6, redlet, shortthreadlet, threadedBackground, 
@@ -113,7 +118,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     static final int STARTING_LENGTH = 2;
     static final int MAX_THREAD_LENGTH = 5;
     static final int SPACER_AMOUNT = 5;
-    static final int SPAWN_RATE = 60;
+    static final int SPAWN_RATE = 7;
     static final int GROWTH_TIMER_OFFSET = 4;
     
     float SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f;
@@ -147,10 +152,72 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     boolean dansTryingToGetWorkDone = true;
     private Game tss;
+    
+    Music m = null;
+    
+    int beatIndex = 0;
+    
+    List<List<Float>> peaks = null;
+    
+    int lastDisplayed = 0;
+
+    int displayInterval = (int) (0.1 / (512.0/44100.0)); 
+    
+    private Track track;
+    
+    private SnippetAnalysis analysis;
 
     public ThirtySecondSnippets(Game tss){
         this.tss = tss;
+        
+        try {
+                MusicDB db = new MusicDB();
+                track = db.getTrackByGenre("rock");
+                System.out.println(track.getArtist() + " | " + track.getName() + " | " + track.getTempo());
+                songTitle = track.getName();
+                songArtist = track.getArtist();
+                tempo = (int)track.getTempo();
+                
+                String filename = "music.mp3";
+                InputStream is = new URL(track.getPreview_url()).openStream();
+                BufferedInputStream stream = new BufferedInputStream(is);
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                FileHandle handle = Gdx.files.external(filename);
+                if (handle.exists()) {
+                    handle.delete();
+                }
+                int current = 0;
+                while ((current = stream.read()) != -1) {
+                    bytes.write(current);
+                }
+                FileOutputStream fos = new FileOutputStream(handle.file());
+                bytes.writeTo(fos);
+
+                m = Gdx.audio.newMusic(handle);
+                System.out.println(bytes.size());
+                
+                analysis = new SnippetAnalysis(handle);
+                peaks = analysis.doAnalysis();
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
+            } 
     }
+    
+    public ThirtySecondSnippets(Game tss, Track track, SnippetAnalysis analysis, Music m){
+        this.tss = tss;
+        this.track = track;
+        this.analysis = analysis;
+        this.m = m;
+        
+        peaks = analysis.getPeaks();
+        
+        songTitle = track.getName();
+        songArtist = track.getArtist();
+        tempo = (int)track.getTempo();
+    }
+    
     
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
@@ -755,40 +822,6 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     @Override
     public void show() {
         //Gets track from Spotify
-        Music m = null;
-        if (dansTryingToGetWorkDone){
-            try {
-                MusicDB db = new MusicDB();
-                Track track = db.getTrackByGenre("rock");
-                System.out.println(track.getArtist() + " | " + track.getName());
-                songTitle = track.getName();
-                songArtist = track.getArtist();
-                tempo = (int)track.getTempo();
-                
-                String filename = "music.mp3";
-                InputStream is = new URL(track.getPreview_url()).openStream();
-                BufferedInputStream stream = new BufferedInputStream(is);
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                FileHandle handle = Gdx.files.external(filename);
-                if (handle.exists()) {
-                    handle.delete();
-                }
-                int current = 0;
-                while ((current = stream.read()) != -1) {
-                    bytes.write(current);
-                }
-                FileOutputStream fos = new FileOutputStream(handle.file());
-                bytes.writeTo(fos);
-
-                m = Gdx.audio.newMusic(handle);
-                System.out.println(bytes.size());
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
-            } 
-        }
-        
         //gets height and width
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
@@ -868,9 +901,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
         Gdx.input.setInputProcessor(this);
         
-        if(m != null){
-            m.play();
-        }
+        
         threadSprites = createSprites(STARTING_LENGTH, 0);
         threadBodies = createRope(threadSprites, 0);
         
@@ -970,6 +1001,12 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 //System.out.println("postsolve");
             }
     });
+        
+        if(m != null){
+            float volume = prefs.getFloat("musicvol", 1);
+            m.setVolume(volume);
+            m.play();
+        }
     }
 
     @Override
@@ -1034,9 +1071,24 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             
         }
         
+        int currentBeat = (int) (m.getPosition() / (512.0/44100.0));
+            
+            if(currentBeat < peaks.get(0).size() && currentBeat > beatIndex){
+                for(int i = beatIndex+1;i<=currentBeat;i++){
+                    
+                    if(peaks.get(0).get(i) > 0 && i - lastDisplayed > displayInterval){
+                        System.out.println(peaks.get(0).get(i));
+                        spawn();
+                        lastDisplayed = i;
+                    }
+                }
+                
+                beatIndex = currentBeat;
+            }
+        
         if (TimeUtils.nanoTime() - lastTimeTempo > (100000000 * 60)/tempo) {
             //System.out.println("Spawn");
-            spawn();
+            //spawn();
             lastTimeTempo = TimeUtils.nanoTime();
             animateScissor();
         }

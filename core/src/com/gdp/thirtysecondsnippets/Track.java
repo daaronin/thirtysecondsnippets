@@ -112,7 +112,7 @@ public class Track{
     
     @Override
     public String toString(){
-        return name+" by "+artist;
+        return name+" by "+artist+ " | URL: "+this.preview_url+" | Tempo: "+this.tempo;
     }
 
     
