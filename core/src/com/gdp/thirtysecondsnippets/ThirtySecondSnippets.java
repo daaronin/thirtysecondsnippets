@@ -177,6 +177,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 songTitle = track.getName();
                 songArtist = track.getArtist();
                 tempo = (int)track.getTempo();
+                timerpaceClosed = tempo/60 * 40; 
+                timerpaceOpen = tempo/60 * 12;
                 
                 String filename = "music.mp3";
                 InputStream is = new URL(track.getPreview_url()).openStream();
@@ -914,7 +916,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 
                 if (contact.getFixtureB().getFilterData().categoryBits == THREAD_BIT 
                         && contact.getFixtureA().getFilterData().categoryBits == BLADE_BIT && jointDestroyable){
-                    for (int i = 0; i < contact.getFixtureB().getBody().getJointList().size; i+=2){
+                    for (int i = 0; i < contact.getFixtureB().getBody().getJointList().size; i++){
                         if (!jointDeletionList.contains(contact.getFixtureB().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureB().getBody().getJointList().get(i));
                             needle_combo = 1;
@@ -924,7 +926,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 }
                 if (contact.getFixtureA().getFilterData().categoryBits == THREAD_BIT 
                         && contact.getFixtureB().getFilterData().categoryBits == BLADE_BIT&& jointDestroyable){
-                    for (int i = 0; i < contact.getFixtureA().getBody().getJointList().size; i+=2){
+                    for (int i = 0; i < contact.getFixtureA().getBody().getJointList().size; i++){
                         if (!jointDeletionList.contains(contact.getFixtureA().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureA().getBody().getJointList().get(i));
                             needle_combo = 1;
@@ -1077,6 +1079,16 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 for(int i = beatIndex+1;i<=currentBeat;i++){
                     
                     if(peaks.get(0).get(i) > 0 && i - lastDisplayed > displayInterval){
+                        System.out.println(peaks.get(0).get(i));
+                        spawn();
+                        lastDisplayed = i;
+                    }
+                    if(peaks.get(1).get(i) > 0 && i - lastDisplayed > displayInterval){
+                        System.out.println(peaks.get(0).get(i));
+                        spawn();
+                        lastDisplayed = i;
+                    }
+                    if(peaks.get(2).get(i) > 0 && i - lastDisplayed > displayInterval){
                         System.out.println(peaks.get(0).get(i));
                         spawn();
                         lastDisplayed = i;
