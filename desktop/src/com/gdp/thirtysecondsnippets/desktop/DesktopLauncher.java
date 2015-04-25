@@ -11,6 +11,5 @@ public class DesktopLauncher {
 		config.width=TSS.WIDTH; // sets window width
                 config.height=TSS.HEIGHT;  // sets window height
                 new LwjglApplication(new TSS(), config);
-
 	}
 }

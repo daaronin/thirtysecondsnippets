@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -66,8 +67,8 @@ public class GenreMenu implements Screen{
                     //Same way we moved here from the Splash Screen
                     //We set it to new Splash because we got no other screens
                     //otherwise you put the screen there where you want to go
-                    Track t = db.getTrackByGenreID(genres.get(current).getId());
-                    System.out.println(t.toString());
+                    LoadTrackData load = new LoadTrackData(tss, genres.get(current).getId());
+                    tss.setScreen(load);
                 }
             });
 
@@ -81,13 +82,25 @@ public class GenreMenu implements Screen{
         Table table_root = new Table();
         table_root.setBackground(skin.get("bg", Drawable.class));
         
+        TextButton back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
+        
+        back.addListener(new ChangeListener(){
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    MainMenu game = new MainMenu(tss);
+                    tss.setScreen(game);
+                }
+        });
+        
         ScrollPane pane = new ScrollPane(table);
-        table_root.add(pane).expand().fill();
+        table_root.add(pane).expand();
+        table_root.row();
+        table_root.add(back).height(Value.percentHeight(.30f)).width(Value.percentHeight(.30f)).left().padLeft(Value.percentWidth(.5f)).padBottom(Value.percentHeight(.3f));
        
         stage.addActor(table_root);
         
         table_root.setFillParent(true);
-        table_root.setDebug(true);
+        //table_root.setDebug(true);
 
         Gdx.input.setInputProcessor(stage);
 

@@ -49,7 +49,7 @@ public class MusicDB {
         List<NameValuePair> parameters = new ArrayList<NameValuePair>(1);
         parameters.add(new BasicNameValuePair("getTrackByGenre", "true"));
         parameters.add(new BasicNameValuePair("key", key));
-        parameters.add(new BasicNameValuePair("genre", "genre"));
+        parameters.add(new BasicNameValuePair("genre", genre));
 
         String response = sendPost(parameters);
         
