@@ -2,5 +2,5 @@
 <resources>
 
     <string name="app_name">thirtysecondsnippets</string>
-
+    <string name="toast_crash">We seem to have broken some threads. We\'re working on fixing them.</string>
 </resources>
