@@ -9,6 +9,7 @@ package com.gdp.thirtysecondsnippets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -20,6 +21,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Json;
+import java.util.ArrayList;
 
 /**
  *
@@ -41,6 +44,17 @@ public class MainMenu implements Screen{
     
     @Override
     public void show() {
+        MusicDB db = new MusicDB();
+        ArrayList<Genre> genres = db.getGenres();
+        
+        Json json = new Json();
+        json.addClassTag("genre", Genre.class); // This may not be needed. I don't know how json deals with String
+        FileHandle handle = Gdx.files.external("genre_list");
+        if (handle.exists()) {
+            handle.delete();
+        }
+        json.toJson(genres, handle);
+        
         ImageButton title = new ImageButton(skin.getDrawable("title"));
         TextButton play = new TextButton("Play", skin.get("blue", TextButtonStyle.class));
         TextButton setting = new TextButton("*", skin.get("setting", TextButtonStyle.class));

@@ -24,6 +24,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -48,8 +50,10 @@ public class GenreMenu implements Screen{
     
     @Override
     public void show() {
-        final MusicDB db = new MusicDB();
-        final ArrayList<Genre> genres = db.getGenres();
+        Json json = new Json();
+        json.addClassTag("genre", Genre.class);
+        
+        final ArrayList<Genre> genres = json.fromJson(ArrayList.class, Gdx.files.external("genre_list"));
         
         final String[] colors = {"green", "orange", "blue"};
         
