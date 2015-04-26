@@ -166,6 +166,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     private Track track;
     
     private SnippetAnalysis analysis;
+    
+    ArrayList<RevoluteJoint> joints = new ArrayList<RevoluteJoint>();
 
     public ThirtySecondSnippets(Game tss){
         this.tss = tss;
@@ -660,7 +662,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     public ArrayList<Body> createRope(ArrayList<Sprite> sprites, int startingLength){
         ArrayList<Body> segments = new ArrayList<Body>();
-        ArrayList<RevoluteJoint> joints = new ArrayList<RevoluteJoint>();
+        
         ArrayList<RopeJoint> ropeJoints = new ArrayList<RopeJoint>();
         //ArrayList<RopeJoint> ropeJoints = new ArrayList<RopeJoint>();
         
@@ -681,7 +683,13 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             threadDef.filter.maskBits = SCISSOR_BIT | BLADE_BIT | NEEDLE_BIT;
             
             segments.get(i).createFixture(threadDef);
+            segments.get(i).setLinearDamping(.5f);
+            segments.get(i).setAngularDamping(.5f);
         }
+        
+        segments.get(segments.size()-1).setAngularDamping(2.5f);
+        segments.get(segments.size()-1).setLinearDamping(2.5f);
+        
         shape.dispose();
         //DistanceJointDef the_joint = new DistanceJointDef();
         
@@ -691,6 +699,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         jointDef.collideConnected = false;
         jointDef.localAnchorA.x = -sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
         jointDef.localAnchorB.x = sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
+        
         
         ropeJointDef.collideConnected = false;
         ropeJointDef.localAnchorA.x = -sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
@@ -893,6 +902,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         fixtureDef.filter.maskBits = NEEDLE_HOLE_BIT;
         
         body.createFixture(fixtureDef);
+        body.setLinearDamping(.5f);
+        body.setAngularDamping(.5f);
 
         shape.dispose();
         /*----------------------------------------------------------------*/
@@ -1325,6 +1336,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if (drawBoxes){
             debugRenderer.render(world, debugMatrix);
         }
+        
     }
 
     public void endLevel(){
