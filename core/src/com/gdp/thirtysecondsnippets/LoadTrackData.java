@@ -25,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -128,10 +130,11 @@ public class LoadTrackData  implements Screen{
             public void run() {
                 InputStream is = null;
                 try {
-                    // do something important here, asynchronously to the rendering thread
+                    // do something important here, asynchronously to the rendering threa
+                    loadGenreList();
                     MusicDB db = new MusicDB();
                     final Track t = db.getTrackByGenreID(genreId);
-                    System.out.println(t.toString());
+                    t.setGenreId(genreId);
                     String filename = "music.mp3";
                     is = new URL(t.getPreview_url()).openStream();
                     
@@ -266,8 +269,6 @@ public class LoadTrackData  implements Screen{
             up = true;
         }
         
-        System.out.println(height);
-        
         batch.draw(yarn_sprite, yarn_sprite.getX(), yarn_sprite.getY(),yarn_sprite.getOriginX(),
                    yarn_sprite.getOriginY(), yarn_sprite.getWidth(),yarn_sprite.getHeight(),
                    yarn_sprite.getScaleX(),yarn_sprite.getScaleY(),yarn_sprite.getRotation());
@@ -302,6 +303,19 @@ public class LoadTrackData  implements Screen{
     @Override
     public void dispose() {
         
+    }
+    
+    public void loadGenreList(){
+        MusicDB db = new MusicDB();
+        ArrayList<Genre> genres = db.getGenres();
+        
+        Json json = new Json();
+        json.addClassTag("genre", Genre.class); // This may not be needed. I don't know how json deals with String
+        FileHandle handle = Gdx.files.external("genre_list");
+        if (handle.exists()) {
+            handle.delete();
+        }
+        json.toJson(genres, Gdx.files.external("genre_list"));
     }
     
 }

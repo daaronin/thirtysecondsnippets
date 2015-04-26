@@ -25,6 +25,7 @@ public class Track{
     private double tempo = 0;
     private int time_sig = 0;
     private int in_key = 0;
+    private int genreId = 0;
     
     public Track(){
         
@@ -93,6 +94,10 @@ public class Track{
     public void setTempo(double tempo) {
         this.tempo = tempo;
     }
+    
+    public void setGenreId(int genreId){
+        this.genreId = genreId;
+    }
 
     public int getTime_sig() {
         return time_sig;
@@ -104,6 +109,10 @@ public class Track{
 
     public int getIn_key() {
         return in_key;
+    }
+    
+    public int getGenreId(){
+        return this.genreId;
     }
 
     public void setIn_key(int in_key) {
