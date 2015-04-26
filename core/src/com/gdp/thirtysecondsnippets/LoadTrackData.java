@@ -131,6 +131,7 @@ public class LoadTrackData  implements Screen{
                     // do something important here, asynchronously to the rendering thread
                     MusicDB db = new MusicDB();
                     final Track t = db.getTrackByGenreID(genreId);
+                    t.setGenreId(genreId);
                     System.out.println(t.toString());
                     String filename = "music.mp3";
                     is = new URL(t.getPreview_url()).openStream();

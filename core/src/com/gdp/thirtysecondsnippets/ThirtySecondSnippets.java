@@ -1004,6 +1004,13 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             }
     });
         
+        m.setOnCompletionListener(new Music.OnCompletionListener() {
+            @Override
+            public void onCompletion(Music music) {
+                endLevel();
+            }
+        });
+        
         if(m != null){
             float volume = prefs.getFloat("musicvol", 1);
             m.setVolume(volume);
@@ -1097,7 +1104,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 
                 beatIndex = currentBeat;
             }
-        
+            
         if (TimeUtils.nanoTime() - lastTimeTempo > (100000000 * 60)/tempo) {
             //System.out.println("Spawn");
             //spawn();
@@ -1320,6 +1327,11 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         }
     }
 
+    public void endLevel(){
+        FinishScreen finish = new FinishScreen(tss, lbl_score.toString() + score, track);
+        tss.setScreen(finish);
+    }
+    
     @Override
     public void hide() {
         
