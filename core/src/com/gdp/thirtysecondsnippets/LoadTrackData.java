@@ -132,7 +132,6 @@ public class LoadTrackData  implements Screen{
                     MusicDB db = new MusicDB();
                     final Track t = db.getTrackByGenreID(genreId);
                     t.setGenreId(genreId);
-                    System.out.println(t.toString());
                     String filename = "music.mp3";
                     is = new URL(t.getPreview_url()).openStream();
                     
@@ -266,8 +265,6 @@ public class LoadTrackData  implements Screen{
         }else if(cat_sprite.getY() <= .07*height){
             up = true;
         }
-        
-        System.out.println(height);
         
         batch.draw(yarn_sprite, yarn_sprite.getX(), yarn_sprite.getY(),yarn_sprite.getOriginX(),
                    yarn_sprite.getOriginY(), yarn_sprite.getWidth(),yarn_sprite.getHeight(),
