@@ -18,7 +18,7 @@ public class TSS extends Game{
     
     @Override
     public void create() {
-            setScreen(new SettingsMenu(this));
+            setScreen(new MainMenu(this));
     }
 
 }

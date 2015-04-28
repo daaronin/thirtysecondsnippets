@@ -11,6 +11,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -161,6 +162,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     List<List<Float>> peaks = null;
     
+    List<Float> spectralFluxBass = null;
+    
     int lastDisplayed = 0;
 
     int displayInterval = (int) (0.1 / (512.0/44100.0)); 
@@ -211,6 +214,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 
                 analysis = new SnippetAnalysis(handle);
                 peaks = analysis.doAnalysis();
+                spectralFluxBass = analysis.getSpectralFluxBass();
             } catch (MalformedURLException ex) {
                 Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -225,6 +229,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         this.m = m;
         
         peaks = analysis.getPeaks();
+        spectralFluxBass = analysis.getSpectralFluxBass();
         
         songTitle = track.getName();
         songArtist = track.getArtist();
