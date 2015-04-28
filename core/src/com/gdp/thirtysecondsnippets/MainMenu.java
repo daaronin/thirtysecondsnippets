@@ -59,6 +59,7 @@ public class MainMenu implements Screen{
         TextButton play = new TextButton("Play", skin.get("blue", TextButtonStyle.class));
         TextButton setting = new TextButton("*", skin.get("setting", TextButtonStyle.class));
         TextButton about = new TextButton("?", skin.get("about", TextButtonStyle.class));
+        TextButton stats = new TextButton("%", skin.get("back", TextButtonStyle.class));
         
         play.addListener(new ChangeListener(){
                 @Override
@@ -79,6 +80,14 @@ public class MainMenu implements Screen{
                 }
             });
         
+        stats.addListener(new ChangeListener(){
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    StatsScreen menu = new StatsScreen(tss);
+                    tss.setScreen(menu);
+                }
+            });
+        
         about.addListener(new ChangeListener(){
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
@@ -86,11 +95,12 @@ public class MainMenu implements Screen{
                 }
             });
         
-        table.add(title).top().center().width(Value.percentWidth(.9f)).height(Value.percentHeight(.45f)).padTop(20).colspan(2);
+        table.add(title).top().center().width(Value.percentWidth(.9f)).height(Value.percentHeight(.45f)).padTop(20).colspan(3);
         table.row();
-        table.add(play).height(100).width(340).expandY().colspan(2);
+        table.add(play).height(100).width(340).expandY().colspan(3);
         table.row();
         table.add(setting).height(Value.percentHeight(.28f)).width(Value.percentHeight(.28f)).bottom().left().padBottom(Value.percentHeight(.2f)).padLeft(Value.percentWidth(.2f));
+        table.add(stats).height(Value.percentHeight(.35f)).width(Value.percentHeight(.35f)).bottom().center().padBottom(Value.percentHeight(.2f));
         table.add(about).height(Value.percentHeight(.28f)).width(Value.percentHeight(.28f)).bottom().right().padBottom(Value.percentHeight(.2f)).padRight(Value.percentWidth(.2f));
         
         table.setBackground(skin.getDrawable("bg_blur"));
@@ -124,10 +134,14 @@ public class MainMenu implements Screen{
 
     @Override
     public void hide() {
+        dispose();
     }
 
     @Override
     public void dispose() {
+        atlas.dispose();
+        skin.dispose();
+        stage.dispose();        
     }
 
 }

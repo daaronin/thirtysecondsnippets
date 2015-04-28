@@ -297,12 +297,14 @@ public class LoadTrackData  implements Screen{
 
     @Override
     public void hide() {
-        
+        dispose();
     }
 
     @Override
     public void dispose() {
-        
+        atlas.dispose();
+        skin.dispose();
+        stage.dispose();        
     }
     
     public void loadGenreList(){

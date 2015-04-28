@@ -54,6 +54,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 public class ThirtySecondSnippets implements InputProcessor, Screen {
 
@@ -168,12 +170,19 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     private SnippetAnalysis analysis;
     
     ArrayList<RevoluteJoint> joints = new ArrayList<RevoluteJoint>();
+    
+    int needles_thread = 0;
+    int thread_cut = 0;
+    int beats = 0;
+    int needles = 0;
 
+    MusicDB db = new MusicDB();
+    
     public ThirtySecondSnippets(Game tss){
         this.tss = tss;
         
         try {
-                MusicDB db = new MusicDB();
+                
                 track = db.getTrackByGenre("rock");
                 System.out.println(track.getArtist() + " | " + track.getName() + " | " + track.getTempo());
                 songTitle = track.getName();
@@ -748,6 +757,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     }
     
     public void spawn(){
+        this.beats++;
         Random rand = new Random();
         int randNum = rand.nextInt(SPAWN_RATE);
         //System.out.println(randNum);
@@ -755,6 +765,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 0:
                 if (bottomSpacer <= 0){
                     createNeedleBody("down");
+                    this.needles++;
                     lastRand = 0;
                     bottomSpacer = SPACER_AMOUNT;
                 }
@@ -764,6 +775,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 1:
                 if (topSpacer <= 0){
                     createNeedleBody("up");
+                    this.needles++;
                     lastRand = 1;
                     topSpacer = SPACER_AMOUNT;
                 }
@@ -809,6 +821,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 6:
                 if (topSpacer <= 0){
                     createNeedleBody("up");
+                    this.needles++;
                     lastRand = 1;
                     topSpacer = SPACER_AMOUNT;
                 }
@@ -818,6 +831,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 7:
                 if (bottomSpacer <= 0){
                     createNeedleBody("down");
+                    this.needles++;
                     lastRand = 0;
                     bottomSpacer = SPACER_AMOUNT;
                 }
@@ -1175,6 +1189,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     //System.out.println("Body Size after: " + threadBodies.size());
                     //System.out.println("Sprite Size after: " + threadSprites.size());
                 }
+                needles_thread++;
                 growThread = false;
                 growableAllowed = true;
             }
@@ -1193,6 +1208,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                         }
                         if (ref < threadSprites.size()){
                             threadSprites.remove(threadSprites.get(ref));
+                            this.thread_cut++;
                         }
                     } else if (queueToRemove.get(i).y == 2){
                         if (ref < needleBodies.size()){
@@ -1340,12 +1356,30 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     }
 
     public void endLevel(){
-        FinishScreen finish = new FinishScreen(tss, lbl_score.toString() + score, track);
+        List<NameValuePair> parameters = new ArrayList<NameValuePair>(1);
+        parameters.add(new BasicNameValuePair("uid", Installation.id()));
+        parameters.add(new BasicNameValuePair("needles_thread", Integer.toString(this.needles_thread)));
+        parameters.add(new BasicNameValuePair("thread_cut", Integer.toString(this.thread_cut)));
+        parameters.add(new BasicNameValuePair("songs_played", "1"));
+        parameters.add(new BasicNameValuePair("beats", Integer.toString(this.beats)));
+        parameters.add(new BasicNameValuePair("total_needles", Integer.toString(this.needles)));
+        
+        System.out.println("Threaded: "+needles_thread);
+        
+        db.updateUser(parameters);
+        
+        Results results = new Results();
+        ArrayList<String> res = new ArrayList<String>();
+        res.add((int)((this.needles_thread/(double)this.needles)*100) + "% thread rate");
+        results.setResults(res);
+        
+        FinishScreen finish = new FinishScreen(tss, lbl_score.toString() + score, track, results);
         tss.setScreen(finish);
     }
     
     @Override
     public void hide() {
-        
+        dispose();
     }
+
 }
