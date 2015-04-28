@@ -680,6 +680,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(sprites.get(0).getWidth()/2 / PIXELS_TO_METERS, sprites.get(0).getHeight()
                         /2 / PIXELS_TO_METERS);
+        
+        boolean guided = prefs.getBoolean("guide", false);
+        
         for (int i = 0; i < sprites.size(); i++){
             segments.add(world.createBody(segmentDef));
             segmentDef.position.set((sprites.get(i).getX() + sprites.get(i).getWidth()/2) / 
@@ -692,12 +695,18 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             threadDef.filter.maskBits = SCISSOR_BIT | BLADE_BIT | NEEDLE_BIT;
             
             segments.get(i).createFixture(threadDef);
-            segments.get(i).setLinearDamping(.5f);
-            segments.get(i).setAngularDamping(.5f);
+            if(guided){
+                segments.get(i).setLinearDamping(.5f);
+                segments.get(i).setAngularDamping(.5f);
+            }
+            
         }
         
-        segments.get(segments.size()-1).setAngularDamping(2.5f);
-        segments.get(segments.size()-1).setLinearDamping(2.5f);
+        if(guided){
+            segments.get(segments.size()-1).setAngularDamping(2.5f);
+            segments.get(segments.size()-1).setLinearDamping(2.5f);
+        }
+        
         
         shape.dispose();
         //DistanceJointDef the_joint = new DistanceJointDef();

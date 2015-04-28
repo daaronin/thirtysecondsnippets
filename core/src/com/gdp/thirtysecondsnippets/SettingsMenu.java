@@ -88,9 +88,23 @@ public class SettingsMenu implements Screen{
                 }
         });
         
+        final CheckBox guidecheck = new CheckBox("", skin.get("strobecheck", CheckBoxStyle.class));
+        
+        boolean checked2 = prefs.getBoolean("guide", false);
+        guidecheck.setChecked(checked2);
+        
+        guidecheck.addListener(new ChangeListener(){
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    prefs.putBoolean("guide", guidecheck.isChecked());
+                    prefs.flush();
+                }
+        });
+        
         Label musicvol = new Label("Music Volume ", skin.get("labelb", LabelStyle.class));
         Label soundfxvol = new Label("Sound FX Volume ", skin.get("labelb", LabelStyle.class));
         Label strobelabel = new Label("Strobe?", skin.get("labelb", LabelStyle.class));
+        Label guideelabel = new Label("Guide Thread?", skin.get("labelb", LabelStyle.class));
         
         TextButton back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
         
@@ -103,7 +117,7 @@ public class SettingsMenu implements Screen{
         });
         
                 
-        table.add(title).top().padTop(2).colspan(2).width(Value.percentWidth(.5f, table)).height(Value.percentHeight(.3f, table));
+        table.add(title).top().padTop(2).colspan(2).width(Value.percentWidth(.5f, table)).height(Value.percentHeight(.15f, table)).padBottom(40);
         table.row();
         table.add(musicvol);//label
         table.add(musicvolslider).center().width(Value.percentWidth(5f)).height(Value.percentHeight(.5f)).padLeft(20);
@@ -111,8 +125,11 @@ public class SettingsMenu implements Screen{
         table.add(soundfxvol).padTop(40);//label
         table.add(soundfxslider).center().width(Value.percentWidth(5f)).height(Value.percentHeight(.5f)).padLeft(20).padTop(45);
         table.row();
-        table.add(strobelabel).padTop(40).padBottom(40);//label
-        table.add(strobecheck).center().width(Value.percentWidth(1f)).height(Value.percentHeight(1f)).padLeft(20).padTop(45).padBottom(40);
+        table.add(strobelabel).padTop(40).padBottom(20);//label
+        table.add(strobecheck).center().width(Value.percentWidth(1f)).height(Value.percentHeight(1f)).padLeft(20).padTop(15);
+        table.row();
+        table.add(guideelabel).padBottom(20).padTop(20);//label
+        table.add(guidecheck).center().width(Value.percentWidth(1f)).height(Value.percentHeight(1f)).padLeft(20).padTop(15).padBottom(20);
         table.row();
         table.add(back).height(Value.percentHeight(.30f)).width(Value.percentHeight(.30f));
         
