@@ -11,6 +11,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -54,6 +55,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 public class ThirtySecondSnippets implements InputProcessor, Screen {
 
@@ -159,6 +162,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     List<List<Float>> peaks = null;
     
+    List<Float> spectralFluxBass = null;
+    
     int lastDisplayed = 0;
 
     int displayInterval = (int) (0.1 / (512.0/44100.0)); 
@@ -166,12 +171,21 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     private Track track;
     
     private SnippetAnalysis analysis;
+    
+    ArrayList<RevoluteJoint> joints = new ArrayList<RevoluteJoint>();
+    
+    int needles_thread = 0;
+    int thread_cut = 0;
+    int beats = 0;
+    int needles = 0;
 
+    MusicDB db = new MusicDB();
+    
     public ThirtySecondSnippets(Game tss){
         this.tss = tss;
         
         try {
-                MusicDB db = new MusicDB();
+                
                 track = db.getTrackByGenre("rock");
                 System.out.println(track.getArtist() + " | " + track.getName() + " | " + track.getTempo());
                 songTitle = track.getName();
@@ -200,6 +214,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 
                 analysis = new SnippetAnalysis(handle);
                 peaks = analysis.doAnalysis();
+                spectralFluxBass = analysis.getSpectralFluxBass();
             } catch (MalformedURLException ex) {
                 Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -214,6 +229,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         this.m = m;
         
         peaks = analysis.getPeaks();
+        spectralFluxBass = analysis.getSpectralFluxBass();
         
         songTitle = track.getName();
         songArtist = track.getArtist();
@@ -660,7 +676,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     public ArrayList<Body> createRope(ArrayList<Sprite> sprites, int startingLength){
         ArrayList<Body> segments = new ArrayList<Body>();
-        ArrayList<RevoluteJoint> joints = new ArrayList<RevoluteJoint>();
+        
         ArrayList<RopeJoint> ropeJoints = new ArrayList<RopeJoint>();
         //ArrayList<RopeJoint> ropeJoints = new ArrayList<RopeJoint>();
         
@@ -669,6 +685,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(sprites.get(0).getWidth()/2 / PIXELS_TO_METERS, sprites.get(0).getHeight()
                         /2 / PIXELS_TO_METERS);
+        
+        boolean guided = prefs.getBoolean("guide", false);
+        
         for (int i = 0; i < sprites.size(); i++){
             segments.add(world.createBody(segmentDef));
             segmentDef.position.set((sprites.get(i).getX() + sprites.get(i).getWidth()/2) / 
@@ -681,7 +700,19 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             threadDef.filter.maskBits = SCISSOR_BIT | BLADE_BIT | NEEDLE_BIT;
             
             segments.get(i).createFixture(threadDef);
+            if(guided){
+                segments.get(i).setLinearDamping(.5f);
+                segments.get(i).setAngularDamping(.5f);
+            }
+            
         }
+        
+        if(guided){
+            segments.get(segments.size()-1).setAngularDamping(2.5f);
+            segments.get(segments.size()-1).setLinearDamping(2.5f);
+        }
+        
+        
         shape.dispose();
         //DistanceJointDef the_joint = new DistanceJointDef();
         
@@ -691,6 +722,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         jointDef.collideConnected = false;
         jointDef.localAnchorA.x = -sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
         jointDef.localAnchorB.x = sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
+        
         
         ropeJointDef.collideConnected = false;
         ropeJointDef.localAnchorA.x = -sprites.get(0).getWidth()/2/PIXELS_TO_METERS;
@@ -739,6 +771,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     }
     
     public void spawn(){
+        this.beats++;
         Random rand = new Random();
         int randNum = rand.nextInt(SPAWN_RATE);
         //System.out.println(randNum);
@@ -746,6 +779,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 0:
                 if (bottomSpacer <= 0){
                     createNeedleBody("down");
+                    this.needles++;
                     lastRand = 0;
                     bottomSpacer = SPACER_AMOUNT;
                 }
@@ -755,6 +789,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 1:
                 if (topSpacer <= 0){
                     createNeedleBody("up");
+                    this.needles++;
                     lastRand = 1;
                     topSpacer = SPACER_AMOUNT;
                 }
@@ -800,6 +835,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 6:
                 if (topSpacer <= 0){
                     createNeedleBody("up");
+                    this.needles++;
                     lastRand = 1;
                     topSpacer = SPACER_AMOUNT;
                 }
@@ -809,6 +845,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 7:
                 if (bottomSpacer <= 0){
                     createNeedleBody("down");
+                    this.needles++;
                     lastRand = 0;
                     bottomSpacer = SPACER_AMOUNT;
                 }
@@ -893,6 +930,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         fixtureDef.filter.maskBits = NEEDLE_HOLE_BIT;
         
         body.createFixture(fixtureDef);
+        body.setLinearDamping(.5f);
+        body.setAngularDamping(.5f);
 
         shape.dispose();
         /*----------------------------------------------------------------*/
@@ -1164,6 +1203,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     //System.out.println("Body Size after: " + threadBodies.size());
                     //System.out.println("Sprite Size after: " + threadSprites.size());
                 }
+                needles_thread++;
                 growThread = false;
                 growableAllowed = true;
             }
@@ -1182,6 +1222,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                         }
                         if (ref < threadSprites.size()){
                             threadSprites.remove(threadSprites.get(ref));
+                            this.thread_cut++;
                         }
                     } else if (queueToRemove.get(i).y == 2){
                         if (ref < needleBodies.size()){
@@ -1325,15 +1366,34 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if (drawBoxes){
             debugRenderer.render(world, debugMatrix);
         }
+        
     }
 
     public void endLevel(){
-        FinishScreen finish = new FinishScreen(tss, lbl_score.toString() + score, track);
+        List<NameValuePair> parameters = new ArrayList<NameValuePair>(1);
+        parameters.add(new BasicNameValuePair("uid", Installation.id()));
+        parameters.add(new BasicNameValuePair("needles_thread", Integer.toString(this.needles_thread)));
+        parameters.add(new BasicNameValuePair("thread_cut", Integer.toString(this.thread_cut)));
+        parameters.add(new BasicNameValuePair("songs_played", "1"));
+        parameters.add(new BasicNameValuePair("beats", Integer.toString(this.beats)));
+        parameters.add(new BasicNameValuePair("total_needles", Integer.toString(this.needles)));
+        
+        System.out.println("Threaded: "+needles_thread);
+        
+        db.updateUser(parameters);
+        
+        Results results = new Results();
+        ArrayList<String> res = new ArrayList<String>();
+        res.add((int)((this.needles_thread/(double)this.needles)*100) + "% thread rate");
+        results.setResults(res);
+        
+        FinishScreen finish = new FinishScreen(tss, lbl_score.toString() + score, track, results);
         tss.setScreen(finish);
     }
     
     @Override
     public void hide() {
-        
+        dispose();
     }
+
 }

@@ -38,6 +38,8 @@ public class MusicDB {
 
     private static int SUCCESS = 7;
     private static int FAILURE = 6;
+    
+    public static final int USER_SETTING_NUMBER = 6;
 
     public MusicDB() {
 
@@ -152,6 +154,39 @@ public class MusicDB {
         
         return genres;
     }
+    
+    public boolean updateUser(List<NameValuePair> parameters){
+        if(parameters.size() < USER_SETTING_NUMBER){
+            System.out.println("ERROR: All user arguments must be supplied.");
+            return false;
+        }
+        
+        parameters.add(new BasicNameValuePair("updateUser", "true"));
+        parameters.add(new BasicNameValuePair("key", key));
+        
+        String response = sendPost(parameters);
+        
+        try{
+            
+            JsonValue root = new JsonReader().parse(response);
+            int response_code = root.getInt("response_code", 0);
+            String message = root.getString("message", "No Message Found");
+        
+            if (response_code == SUCCESS) {
+                 System.out.println("User Updated.");
+                return true;
+            } else if (response_code == FAILURE) {
+                throw new Exception("Failure: " + response_code + " | " + message);
+            } else {
+                throw new Exception("Unknown Response");
+            }
+           
+        } catch (Exception ex) {
+            Logger.getLogger(MusicDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return false;
+    }
 
     private String sendPost(List<NameValuePair> parameters) {
         String res_body = "";
@@ -181,5 +216,41 @@ public class MusicDB {
 
         return res_body;
 
+    }
+
+    public User getUserByID(String id) {
+        User user = new User();
+
+        List<NameValuePair> parameters = new ArrayList<NameValuePair>(1);
+        parameters.add(new BasicNameValuePair("getUserByID", "true"));
+        parameters.add(new BasicNameValuePair("key", key));
+        parameters.add(new BasicNameValuePair("uid", id));
+
+        String response = sendPost(parameters);
+        
+        try{
+            
+            JsonValue root = new JsonReader().parse(response);
+            int response_code = root.getInt("response_code", 0);
+            String message = root.getString("message", "No Message Found");
+        
+        
+            if (response_code == SUCCESS) {
+                Json json = new Json();
+                message = message.replace("\\\"", "\"");
+                message = message.replace("\\", "");
+                
+                user = json.fromJson(User.class, message);
+
+            } else if (response_code == FAILURE) {
+                throw new Exception("Failure: " + response_code + " | " + message);
+            } else {
+                throw new Exception("Unknown Response");
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(MusicDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return user;
     }
 }

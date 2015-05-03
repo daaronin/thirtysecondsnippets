@@ -35,11 +35,13 @@ public class FinishScreen implements Screen{
     
     String score = "Score: 0";
     Track track = null;
+    Results results;
     
-    public FinishScreen(Game tss, String score, Track track){
+    public FinishScreen(Game tss, String score, Track track, Results results){
         this.tss = tss;
         this.score = score;
         this.track = track;
+        this.results = results;
     }
     
     public FinishScreen(Game tss){
@@ -77,9 +79,14 @@ public class FinishScreen implements Screen{
         });
         
         table.add(scoreLabel).top().center().height(Value.percentHeight(.35f, table)).colspan(2);
+        for(int i = 0;i<results.getResults().size();i++){
+            table.row();
+            Label infolabel = new Label((CharSequence) results.getResults().get(i), skin.get("labelb", Label.LabelStyle.class));
+            table.add(infolabel).top().center().height(Value.percentHeight(.15f, table)).colspan(2);
+        }
         table.row();
-        table.add(replay).size(450,120).padBottom(10).padTop(20);
-        table.add(genres).size(450,120).padBottom(10).padTop(20).padLeft(20);
+        table.add(replay).size(450,120).padBottom(10).padTop(30);
+        table.add(genres).size(450,120).padBottom(10).padTop(30).padLeft(20);
         
         table.setBackground(skin.getDrawable("bg_blur"));
         table.setFillParent(true);

@@ -29,6 +29,9 @@ public class SnippetAnalysis {
     private final float[] bands = { 80, 4000, 4000, 10000, 10000, 16000 };
     List<List<Float>> peaks;
     int SAMPLING = 1024;
+
+    float bass_min = 0;
+    float bass_max = 0;
     
     public SnippetAnalysis(FileHandle file){
         this.FILE = file;
@@ -49,13 +52,15 @@ public class SnippetAnalysis {
         this.SAMPLING = sampling;
     }
     
+    List<List<Float>> spectralFlux = new ArrayList<List<Float>>( );
+    
     public List<List<Float>> doAnalysis(){
         try {
             MP3Decoder decoder = new MP3Decoder(FILE, SAMPLING);
             SpectrumProvider spectrumProvider = new SpectrumProvider( decoder, SAMPLING, HOP_SIZE, true );
             float[] spectrum = spectrumProvider.nextSpectrum();
             float[] lastSpectrum = new float[spectrum.length];
-            List<List<Float>> spectralFlux = new ArrayList<List<Float>>( );
+            
             for( int i = 0; i < bands.length / 2; i++ )
                 spectralFlux.add( new ArrayList<Float>( ) );
             
@@ -115,10 +120,50 @@ public class SnippetAnalysis {
             Logger.getLogger(SnippetAnalysis.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        findExtremes();
+        
         return peaks;
+    }
+    
+    public float getBass_min() {
+        return bass_min;
+    }
+
+    public void setBass_min(float bass_min) {
+        this.bass_min = bass_min;
+    }
+
+    public float getBass_max() {
+        return bass_max;
+    }
+
+    public void setBass_max(float bass_max) {
+        this.bass_max = bass_max;
     }
     
     public List<List<Float>> getPeaks(){
         return peaks;
+    }
+    
+    public List<Float> getSpectralFluxBass(){
+        return spectralFlux.get(0);
+    }
+
+    private void findExtremes() {
+        float max = -1000000;
+        float min = 1000000;
+        
+        for(int i = 0;i<spectralFlux.get(0).size();i++){
+            if(spectralFlux.get(0).get(i) < min){
+                min = spectralFlux.get(0).get(i);
+            }
+            
+            if(spectralFlux.get(0).get(i) > max){
+                max = spectralFlux.get(0).get(i);
+            }
+        }
+        
+        this.bass_max = max;
+        this.bass_min = min;
     }
 }

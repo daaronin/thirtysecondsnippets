@@ -135,6 +135,19 @@ public class LoadTrackData  implements Screen{
                     MusicDB db = new MusicDB();
                     final Track t = db.getTrackByGenreID(genreId);
                     t.setGenreId(genreId);
+                    
+                    //Fast
+                    t.setArtist("Miss Kittin");
+                    t.setName("Flashforward");
+                    t.setPreview_url("https://p.scdn.co/mp3-preview/8cef07b9eecad74b412470b1233fbd732bd0d3f7");
+                    t.setTempo(220);
+                    
+                    //Slow       
+                    t.setPreview_url("https://p.scdn.co/mp3-preview/fcc74d3ce6a2d4f5017a776a30dc3cb3715e85c2");
+                    t.setArtist("Skylar Grey");
+                    t.setName("Coming Home - Part II / Bonus Track");
+                    t.setTempo(110);
+                    
                     String filename = "music.mp3";
                     is = new URL(t.getPreview_url()).openStream();
                     
@@ -297,12 +310,14 @@ public class LoadTrackData  implements Screen{
 
     @Override
     public void hide() {
-        
+        dispose();
     }
 
     @Override
     public void dispose() {
-        
+        atlas.dispose();
+        skin.dispose();
+        stage.dispose();        
     }
     
     public void loadGenreList(){
