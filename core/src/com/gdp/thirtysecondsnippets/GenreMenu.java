@@ -84,7 +84,7 @@ public class GenreMenu implements Screen{
         }
         
         Table table_root = new Table();
-        table_root.setBackground(skin.get("bg", Drawable.class));
+        table_root.setBackground(skin.get("bg_blur", Drawable.class));
         
         TextButton back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
         

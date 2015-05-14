@@ -90,6 +90,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     CharSequence hyperthreading = "";
     CharSequence songTitle = "";
     CharSequence songArtist = "";
+    CharSequence titleDisplay = "";
     
     int score = 0;
     int needle_combo = 1;
@@ -120,7 +121,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     float BACKGROUND_SPEED = 28.8f;
     static final int STARTING_LENGTH = 2;
     static final int MAX_THREAD_LENGTH = 5;
-    static final int SPACER_AMOUNT = 5;
+    static final int SPACER_AMOUNT = 3;
     static final int SPAWN_RATE = 7;
     static final int GROWTH_TIMER_OFFSET = 4;
     
@@ -231,7 +232,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         peaks = analysis.getPeaks();
         spectralFluxBass = analysis.getSpectralFluxBass();
         
-        songTitle = track.getName();
+        titleDisplay = songTitle = track.getName();
         songArtist = track.getArtist();
         tempo = (int)track.getTempo();
     }
@@ -1186,7 +1187,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     if(peaks.get(0).get(i) > 0 && i - lastDisplayed > displayInterval){
                         System.out.println(peaks.get(0).get(i));
                         Random rand = new Random();
-                        int randNum = rand.nextInt(2);
+                        int randNum = rand.nextInt(2)+2;
                         spawn(randNum);
                         lastDisplayed = i;
                     }
@@ -1229,13 +1230,14 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 scissorBodies.get(i).setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED,0f));
                 if (scissorSprites.get(i).getY() >= 0){
                     if (scissorSprites.get(i).getTexture() == scissor1 || scissorSprites.get(i).getTexture() == scissor2){
-                        scissorBodies.get(i).setTransform(scissorBodies.get(i).getPosition().x, 5.8f, scissorBodies.get(i).getAngle());
+                        scissorBodies.get(i).setTransform(scissorBodies.get(i).getPosition().x, (scissorSprites.get(i).getY() + scissorSprites.get(i).getHeight()*.25f)/PIXELS_TO_METERS, scissorBodies.get(i).getAngle());
                     } else {
                         scissorBodies.get(i).setTransform(scissorBodies.get(i).getPosition().x, 15, scissorBodies.get(i).getAngle());
                     }
                 } else {
                     if (scissorSprites.get(i).getTexture() == scissor1 || scissorSprites.get(i).getTexture() == scissor2){
-                        scissorBodies.get(i).setTransform(scissorBodies.get(i).getPosition().x, 1.4f, scissorBodies.get(i).getAngle());
+                        System.out.println((scissorSprites.get(i).getY() + scissorSprites.get(i).getHeight()/2)/PIXELS_TO_METERS);
+                        scissorBodies.get(i).setTransform(scissorBodies.get(i).getPosition().x, (scissorSprites.get(i).getY() + scissorSprites.get(i).getHeight()*.75f)/PIXELS_TO_METERS, scissorBodies.get(i).getAngle());
                     } else {
                         scissorBodies.get(i).setTransform(scissorBodies.get(i).getPosition().x, 15, scissorBodies.get(i).getAngle());
                     }
@@ -1508,7 +1510,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         res.add((int)((this.needles_thread/(double)this.needles)*100) + "% thread rate");
         results.setResults(res);
         
-        FinishScreen finish = new FinishScreen(tss, lbl_score.toString() + score, track, results);
+        FinishScreen finish = new FinishScreen(tss, lbl_score.toString() + score, track, results, (String)titleDisplay,"By: " + (String)songArtist);
         tss.setScreen(finish);
     }
     
