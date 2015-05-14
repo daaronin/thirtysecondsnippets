@@ -38,14 +38,16 @@ public class FinishScreen implements Screen{
     Results results;
     String title = "title";
     String artist = "artist";
+    int difficulty = 0;
     
-    public FinishScreen(Game tss, String score, Track track, Results results, String title, String artist){
+    public FinishScreen(Game tss, String score, Track track, Results results, String title, String artist, int difficulty){
         this.tss = tss;
         this.score = score;
         this.track = track;
         this.results = results;
         this.title = title;
         this.artist = artist;
+        this.difficulty = difficulty;
     }
     
     public FinishScreen(Game tss){
@@ -67,7 +69,7 @@ public class FinishScreen implements Screen{
                 //Same way we moved here from the Splash Screen
                 //We set it to new Splash because we got no other screens
                 //otherwise you put the screen there where you want to go
-                LoadTrackData load = new LoadTrackData(tss, track.getGenreId());
+                LoadTrackData load = new LoadTrackData(tss, track.getGenreId(),difficulty);
                 tss.setScreen(load);
             }
         });
@@ -80,7 +82,7 @@ public class FinishScreen implements Screen{
                 //Same way we moved here from the Splash Screen
                 //We set it to new Splash because we got no other screens
                 //otherwise you put the screen there where you want to go
-                GenreMenu genre = new GenreMenu(tss);
+                DifficultyMenu genre = new DifficultyMenu(tss);
                 tss.setScreen(genre);
             }
         });

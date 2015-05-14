@@ -48,6 +48,8 @@ public class LoadTrackData  implements Screen{
     private Table table = new Table();
     private Stage stage = new Stage();
     
+    int difficulty = 0;
+    
     TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons.pack"));
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
@@ -84,9 +86,10 @@ public class LoadTrackData  implements Screen{
         this.tss = tss;
     }
     
-    public LoadTrackData(Game tss, int genreId){
+    public LoadTrackData(Game tss, int genreId, int difficulty){
         this.tss = tss;
         this.genreId = genreId;
+        this.difficulty = difficulty;
     }
 
     @Override
@@ -218,7 +221,7 @@ public class LoadTrackData  implements Screen{
                     Gdx.app.postRunnable(new Runnable() {
                         @Override
                         public void run() {
-                            ThirtySecondSnippets game = new ThirtySecondSnippets(tss, t, analysis, m);
+                            ThirtySecondSnippets game = new ThirtySecondSnippets(tss, t, analysis, m, difficulty);
                             tss.setScreen(game);
                         }
                     });

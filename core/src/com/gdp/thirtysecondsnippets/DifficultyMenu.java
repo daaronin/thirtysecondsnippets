@@ -28,17 +28,21 @@ import java.util.ArrayList;
  *
  * @author George McDaid
  */
-public class MainMenu implements Screen{
+public class DifficultyMenu implements Screen{
     
     private Game tss;
     private Stage stage = new Stage();
     private Table table = new Table();
     
+    static final int LEISURELY_DIFFICULTY = 7;
+    static final int BRISK_DIFFICULTY = 5;
+    static final int BREAKNECK_DIFFICULTY = 3;
+    
     TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons.pack"));
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
 
-    public MainMenu(Game tss){
+    public DifficultyMenu(Game tss){
         this.tss = tss;
     }
     
@@ -56,52 +60,62 @@ public class MainMenu implements Screen{
         json.toJson(genres, handle);
         
         ImageButton title = new ImageButton(skin.getDrawable("title"));
-        TextButton play = new TextButton("Play", skin.get("blue", TextButtonStyle.class));
-        TextButton setting = new TextButton("*", skin.get("setting", TextButtonStyle.class));
-        TextButton about = new TextButton("?", skin.get("about", TextButtonStyle.class));
-        TextButton stats = new TextButton("%", skin.get("back", TextButtonStyle.class));
+        TextButton leisurely = new TextButton("Leisurely", skin.get("blue", TextButtonStyle.class));
+        TextButton brisk = new TextButton("Brisk", skin.get("green", TextButtonStyle.class));
+        TextButton breakneck = new TextButton("Breakneck", skin.get("orange", TextButtonStyle.class));
         
-        play.addListener(new ChangeListener(){
+        leisurely.addListener(new ChangeListener(){
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                     //Same way we moved here from the Splash Screen
                     //We set it to new Splash because we got no other screens
                     //otherwise you put the screen there where you want to go
-                    DifficultyMenu menu = new DifficultyMenu(tss);
+                    GenreMenu menu = new GenreMenu(tss, LEISURELY_DIFFICULTY);
+                    tss.setScreen(menu);
+                }
+        });
+        brisk.addListener(new ChangeListener(){
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    //Same way we moved here from the Splash Screen
+                    //We set it to new Splash because we got no other screens
+                    //otherwise you put the screen there where you want to go
+                    GenreMenu menu = new GenreMenu(tss, BRISK_DIFFICULTY);
+                    tss.setScreen(menu);
+                }
+        });
+        breakneck.addListener(new ChangeListener(){
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    //Same way we moved here from the Splash Screen
+                    //We set it to new Splash because we got no other screens
+                    //otherwise you put the screen there where you want to go
+                    GenreMenu menu = new GenreMenu(tss, BREAKNECK_DIFFICULTY);
                     tss.setScreen(menu);
                 }
         });
         
-        setting.addListener(new ChangeListener(){
+        TextButton back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
+        
+        back.addListener(new ChangeListener(){
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                    SettingsMenu menu = new SettingsMenu(tss);
-                    tss.setScreen(menu);
+                    MainMenu game = new MainMenu(tss);
+                    tss.setScreen(game);
                 }
-            });
+        });
         
-        stats.addListener(new ChangeListener(){
-                @Override
-                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                    StatsScreen menu = new StatsScreen(tss);
-                    tss.setScreen(menu);
-                }
-            });
         
-        about.addListener(new ChangeListener(){
-                @Override
-                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                    Gdx.net.openURI("http://www.30secondsnippets.com/");
-                }
-            });
-        
-        table.add(title).top().center().width(Value.percentWidth(.9f)).height(Value.percentHeight(.45f)).padTop(20).colspan(3);
+        table.add(title).top().center().width(Value.percentWidth(.9f)).height(Value.percentHeight(.45f)).padTop(10).colspan(3);
         table.row();
-        table.add(play).height(100).width(340).expandY().colspan(3);
+        table.add(leisurely).height(80).width(340).expandY().colspan(3);
         table.row();
-        table.add(setting).height(Value.percentHeight(.28f)).width(Value.percentHeight(.28f)).bottom().left().padBottom(Value.percentHeight(.2f)).padLeft(Value.percentWidth(.2f));
-        table.add(stats).height(Value.percentHeight(.35f)).width(Value.percentHeight(.35f)).bottom().center().padBottom(Value.percentHeight(.2f));
-        table.add(about).height(Value.percentHeight(.28f)).width(Value.percentHeight(.28f)).bottom().right().padBottom(Value.percentHeight(.2f)).padRight(Value.percentWidth(.2f));
+        table.add(brisk).height(80).width(340).expandY().colspan(3);
+        table.row();
+        table.add(breakneck).height(80).width(340).expandY().colspan(3);
+        table.row();
+        
+        table.add(back).height(Value.percentHeight(.30f)).width(Value.percentHeight(.30f)).left().padLeft(Value.percentWidth(.5f)).padBottom(Value.percentHeight(.3f));
         
         table.setBackground(skin.getDrawable("bg_blur"));
         table.setFillParent(true);

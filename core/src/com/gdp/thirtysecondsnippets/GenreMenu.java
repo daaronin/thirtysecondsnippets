@@ -37,6 +37,8 @@ public class GenreMenu implements Screen{
     
     private Game tss;
     
+    int difficulty = 0;
+    
     private Stage stage = new Stage();
     private Table table = new Table();
     
@@ -44,8 +46,9 @@ public class GenreMenu implements Screen{
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
 
-    public GenreMenu(Game tss){
+    public GenreMenu(Game tss, int difficulty){
         this.tss = tss;
+        this.difficulty = difficulty;
     }
     
     @Override
@@ -71,7 +74,7 @@ public class GenreMenu implements Screen{
                     //Same way we moved here from the Splash Screen
                     //We set it to new Splash because we got no other screens
                     //otherwise you put the screen there where you want to go
-                    LoadTrackData load = new LoadTrackData(tss, genres.get(current).getId());
+                    LoadTrackData load = new LoadTrackData(tss, genres.get(current).getId(), difficulty);
                     tss.setScreen(load);
                 }
             });

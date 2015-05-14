@@ -121,9 +121,15 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     float BACKGROUND_SPEED = 28.8f;
     static final int STARTING_LENGTH = 2;
     static final int MAX_THREAD_LENGTH = 5;
-    static final int SPACER_AMOUNT = 3;
+    int SPACER_AMOUNT = 0;
     static final int SPAWN_RATE = 7;
     static final int GROWTH_TIMER_OFFSET = 4;
+    
+    static final int LEISURELY_DIFFICULTY = 5;
+    static final int BRISK_DIFFICULTY = 4;
+    static final int BREAKNECK_DIFFICULTY = 3;
+    
+    int difficulty = 0;
     
     float SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f;
     
@@ -223,18 +229,22 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             } 
     }
     
-    public ThirtySecondSnippets(Game tss, Track track, SnippetAnalysis analysis, Music m){
+    public ThirtySecondSnippets(Game tss, Track track, SnippetAnalysis analysis, Music m, int difficulty){
         this.tss = tss;
         this.track = track;
         this.analysis = analysis;
         this.m = m;
-        
+        this.difficulty = difficulty;
+        SPACER_AMOUNT = difficulty;
         peaks = analysis.getPeaks();
         spectralFluxBass = analysis.getSpectralFluxBass();
         
         titleDisplay = songTitle = track.getName();
         songArtist = track.getArtist();
         tempo = (int)track.getTempo();
+        System.out.println("----------------");
+        System.out.println("Difficulty = " + difficulty);
+        System.out.println("----------------");    
     }
     
     
@@ -1510,7 +1520,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         res.add((int)((this.needles_thread/(double)this.needles)*100) + "% thread rate");
         results.setResults(res);
         
-        FinishScreen finish = new FinishScreen(tss, lbl_score.toString() + score, track, results, (String)titleDisplay,"By: " + (String)songArtist);
+        FinishScreen finish = new FinishScreen(tss, lbl_score.toString() + score, track, results, (String)titleDisplay,"By: " + (String)songArtist, difficulty);
         tss.setScreen(finish);
     }
     
