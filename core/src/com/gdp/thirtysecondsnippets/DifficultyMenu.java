@@ -34,8 +34,8 @@ public class DifficultyMenu implements Screen{
     private Stage stage = new Stage();
     private Table table = new Table();
     
-    static final int LEISURELY_DIFFICULTY = 7;
-    static final int BRISK_DIFFICULTY = 5;
+    static final int LEISURELY_DIFFICULTY = 6;
+    static final int BRISK_DIFFICULTY = 4;
     static final int BREAKNECK_DIFFICULTY = 3;
     
     TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons.pack"));

@@ -93,7 +93,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     CharSequence titleDisplay = "";
     
     int score = 0;
-    int needle_combo = 1;
+    int needle_combo = 0;
     int needle_hit = 0;
     static final int GROWTH_SUPRESSOR = 1;
     static final int SCORE_CONSTANT = 1;
@@ -125,7 +125,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     static final int SPAWN_RATE = 7;
     static final int GROWTH_TIMER_OFFSET = 4;
     
-    static final int LEISURELY_DIFFICULTY = 5;
+    static final int LEISURELY_DIFFICULTY = 6;
     static final int BRISK_DIFFICULTY = 4;
     static final int BREAKNECK_DIFFICULTY = 3;
     
@@ -1028,7 +1028,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     for (int i = 0; i < contact.getFixtureB().getBody().getJointList().size; i++){
                         if (!jointDeletionList.contains(contact.getFixtureB().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureB().getBody().getJointList().get(i));
-                            needle_combo = 1;
+                            needle_combo = 0;
                             jointDestroyable = false;
                         }
                     }
@@ -1038,7 +1038,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     for (int i = 0; i < contact.getFixtureA().getBody().getJointList().size; i++){
                         if (!jointDeletionList.contains(contact.getFixtureA().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureA().getBody().getJointList().get(i));
-                            needle_combo = 1;
+                            needle_combo = 0;
                             jointDestroyable = false;
                         }
                     }
