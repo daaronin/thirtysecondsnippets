@@ -24,6 +24,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -65,7 +66,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     SpriteBatch batch;
     Texture threadlet, background, scissor1, scissor2, scissor3, scissor4, 
             scissor5, scissor6, redlet, shortthreadlet, threadedBackground, 
-            colorBackground, shadowBackground, needleYellow, needleGreen, needleBlue;
+            colorBackground, shadowBackground, needleYellow, needleGreen, 
+            needleBlue, star1, star2, star3, star4, star5;
     Sprite player_sprite;
     World world;
     Body body;
@@ -109,6 +111,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     int counter = 0;
     boolean growThread = false;
     boolean growableAllowed = true;
+    boolean particlesAllowed = false;
     
     static final short THREAD_BIT = 2;
     static final short HEAD_BIT = 4;
@@ -117,6 +120,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     static final short NEEDLE_BIT = 32;
     static final short NEEDLE_HOLE_BIT = 64;
     static final short NO_COLLIDE_BIT = 128;
+    static final short PARTICLE_BIT = 256;
     
     float BACKGROUND_SPEED = 28.8f;
     static final int STARTING_LENGTH = 2;
@@ -147,6 +151,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     ArrayList<Vector2> queueToRemove = new ArrayList<Vector2>();
     
+    ArrayList<Sprite> particleSprites = new ArrayList<Sprite>();
+    ArrayList<Body> particleBodies = new ArrayList<Body>();
     
     Box2DDebugRenderer debugRenderer;
     OrthographicCamera camera;
@@ -399,6 +405,80 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         }
         threadSprites.addAll(sprites);
         return sprites;
+    }
+    
+    public void createParticles(int num, float posX, float posY){
+        
+        for (int i = 0; i < num; i++){
+            Sprite particle;
+            Random rand = new Random();
+            int tex;
+            tex = rand.nextInt(5);
+            
+            if (tex == 0){
+                particle = new Sprite(star1);
+            } else if (tex == 1){
+                particle = new Sprite(star2);                
+            }else if (tex == 2){
+                particle = new Sprite(star3);                
+            }else if (tex == 3){
+                particle = new Sprite(star4);                
+            }else{
+                particle = new Sprite(star5);                
+            }
+            particle.setPosition(posX + particle.getWidth()/2, posY + particle.getHeight()/2);
+            particleSprites.add(particle);
+            /*-------------------------------------------------------*/
+            BodyDef particleDef = new BodyDef();
+            particleDef.type = BodyType.DynamicBody;
+            
+            particleDef.position.set((particle.getX() + particle.getWidth()/2) / 
+                             PIXELS_TO_METERS, 
+                (particle.getY() + particle.getHeight()/2) / PIXELS_TO_METERS);
+        
+            /*------------------------------------------------------  */
+            
+            Body particleBody = world.createBody(particleDef);
+            
+            CircleShape shape = new CircleShape();
+            shape.setRadius(particle.getWidth()/2/PIXELS_TO_METERS);
+            shape.setPosition(new Vector2(particle.getX()/PIXELS_TO_METERS + particle.getWidth()/2 / PIXELS_TO_METERS,
+                    particle.getY()/PIXELS_TO_METERS + particle.getHeight()/2 / PIXELS_TO_METERS));
+            
+            FixtureDef threadDef = new FixtureDef();
+            threadDef.shape = shape;
+            threadDef.density = .1f;
+            threadDef.filter.categoryBits = PARTICLE_BIT;
+            threadDef.filter.maskBits = PARTICLE_BIT | THREAD_BIT | NEEDLE_BIT;
+            
+            particleBody.createFixture(threadDef);
+            particleBodies.add(particleBody);
+            
+            switch(tex){
+                case 0:
+                   // particleBodies.get(particleBodies.size()-1).setTransform(particleBodies.get(particleBodies.size()-1).getPosition().x-.1f, particleBodies.get(particleBodies.size()-1).getPosition().y+.1f,bgx);
+                    particleBodies.get(particleBodies.size()-1).applyForceToCenter(new Vector2(.1f, 0f), true);
+                    break;
+                case 1:
+                   // particleBodies.get(particleBodies.size()-1).setTransform(particleBodies.get(particleBodies.size()-1).getPosition().x+.05f, particleBodies.get(particleBodies.size()-1).getPosition().y-.1f,bgx);
+                    particleBodies.get(particleBodies.size()-1).applyForceToCenter(new Vector2(.1f, -.1f), true);
+                    break;
+                case 2:
+                   // particleBodies.get(particleBodies.size()-1).setTransform(particleBodies.get(particleBodies.size()-1).getPosition().x+.2f, particleBodies.get(particleBodies.size()-1).getPosition().y-.15f,bgx);
+                    particleBodies.get(particleBodies.size()-1).applyForceToCenter(new Vector2(.1f, -.1f), true);
+                    break;
+                case 3:
+                   // particleBodies.get(particleBodies.size()-1).setTransform(particleBodies.get(particleBodies.size()-1).getPosition().x+.15f, particleBodies.get(particleBodies.size()-1).getPosition().y+.15f,bgx);
+                    particleBodies.get(particleBodies.size()-1).applyForceToCenter(new Vector2(.1f, .1f), true);
+                    break;
+                case 4:
+                   // particleBodies.get(particleBodies.size()-1).setTransform(particleBodies.get(particleBodies.size()-1).getPosition().x-.2f, particleBodies.get(particleBodies.size()-1).getPosition().y+.2f,bgx);
+                    particleBodies.get(particleBodies.size()-1).applyForceToCenter(new Vector2(.1f, .1f), true);
+                    break;
+            }
+            
+            shape.dispose();
+        }
     }
     
     public Sprite createNeedleSprite(float posX, float posY, String orientation){
@@ -969,6 +1049,12 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         scissor5 = new Texture("scissor5.png");
         scissor6 = new Texture("scissor6.png");
         
+        star1 = new Texture("star1.png");
+        star2 = new Texture("star2.png");
+        star3 = new Texture("star3.png");
+        star4 = new Texture("star4.png");
+        star5 = new Texture("star5.png");
+        
         font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/font.png"),false);
         
         timerpaceClosed = (300 - tempo)/60 * 1;
@@ -1054,6 +1140,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                         needle_hit = 0;
                         growableAllowed = false;
                         growthTimer = GROWTH_TIMER_OFFSET;
+                        particlesAllowed = true;
                     } else if (growableAllowed && needle_hit < GROWTH_SUPRESSOR) {
                         needle_hit++;
                     }
@@ -1067,6 +1154,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                         needle_hit = 0;
                         growableAllowed = false;
                         growthTimer = GROWTH_TIMER_OFFSET;
+                        particlesAllowed = true;
                     } else if (growableAllowed && needle_hit < GROWTH_SUPRESSOR) {
                         needle_hit++;
                     }
@@ -1182,6 +1270,14 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             }
         }
         
+        for (int i = 0; i < particleSprites.size(); i++){
+            particleSprites.get(i).setPosition((particleBodies.get(i).getPosition().x * PIXELS_TO_METERS) - particleSprites.get(i).getWidth()/2 , 
+                    (particleBodies.get(i).getPosition().y * PIXELS_TO_METERS) - particleSprites.get(i).getHeight()/2);
+            
+            particleSprites.get(i).setRotation((float)Math.toDegrees(particleBodies.get(i).getAngle()));
+        }
+        
+        
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
@@ -1271,6 +1367,11 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 }
             }
             
+            if (particlesAllowed){
+                createParticles(25,body.getPosition().x*PIXELS_TO_METERS,body.getPosition().y*PIXELS_TO_METERS);
+                particlesAllowed = false;
+            }
+            
             if (growThread){
                 //System.out.println("Trying to grow Thread");
                 if (threadBodies.size() < MAX_THREAD_LENGTH && threadSprites.size() < MAX_THREAD_LENGTH){
@@ -1307,6 +1408,10 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                         }
                         if (ref < needleSprites.size()){
                             needleSprites.remove(needleSprites.get(ref));
+                        }
+                    } else if (queueToRemove.get(i).y == 3){
+                        if (ref < particleSprites.size()){
+                            particleSprites.remove(particleSprites.get(ref));
                         }
                     }
                 }
@@ -1486,6 +1591,12 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 batch.draw(threadSprite, threadSprite.getX(), threadSprite.getY(), threadSprite.getOriginX(), 
                         threadSprite.getOriginY(), threadSprite.getWidth(), threadSprite.getHeight(), 
                         threadSprite.getScaleX(), threadSprite.getScaleY(), threadSprite.getRotation());
+            }
+            
+            for (Sprite particleSprite : particleSprites){
+                batch.draw(particleSprite, particleSprite.getX(), particleSprite.getY(), particleSprite.getOriginX(), 
+                        particleSprite.getOriginY(), particleSprite.getWidth(), particleSprite.getHeight(), 
+                        particleSprite.getScaleX(), particleSprite.getScaleY(), particleSprite.getRotation());
             }
             
             font.draw(batch, score_amount, 0, 50);
