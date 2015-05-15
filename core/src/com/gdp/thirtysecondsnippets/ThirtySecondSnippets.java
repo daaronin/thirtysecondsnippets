@@ -96,7 +96,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     int score = 0;
     int needle_combo = 0;
-    int needle_hit = 0;
+    int needle_hit = 1;
     static final int GROWTH_SUPRESSOR = 1;
     static final int SCORE_CONSTANT = 1;
     boolean HYPERTHREADING_MODE = false;
@@ -129,8 +129,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     static final int SPAWN_RATE = 7;
     static final int GROWTH_TIMER_OFFSET = 4;
     
-    static final int LEISURELY_DIFFICULTY = 6;
-    static final int BRISK_DIFFICULTY = 4;
+    static final int LEISURELY_DIFFICULTY = 7;
+    static final int BRISK_DIFFICULTY = 5;
     static final int BREAKNECK_DIFFICULTY = 3;
     
     int difficulty = 0;
@@ -191,6 +191,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     int thread_cut = 0;
     int beats = 0;
     int needles = 0;
+    int scissors = 0;
 
     MusicDB db = new MusicDB();
     
@@ -248,9 +249,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         titleDisplay = songTitle = track.getName();
         songArtist = track.getArtist();
         tempo = (int)track.getTempo();
-        System.out.println("----------------");
-        System.out.println("Difficulty = " + difficulty);
-        System.out.println("----------------");    
+        //System.out.println("----------------");
+        //System.out.println("Difficulty = " + difficulty);
+        //System.out.println("----------------");    
     }
     
     
@@ -432,9 +433,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             BodyDef particleDef = new BodyDef();
             particleDef.type = BodyType.DynamicBody;
             
-            particleDef.position.set((particle.getX() + particle.getWidth()/2) / 
+            particleDef.position.set(particle.getX()/PIXELS_TO_METERS + particle.getWidth()/2 / 
                              PIXELS_TO_METERS, 
-                (particle.getY() + particle.getHeight()/2) / PIXELS_TO_METERS);
+                particle.getY()/PIXELS_TO_METERS + particle.getHeight()/2 / PIXELS_TO_METERS);
         
             /*------------------------------------------------------  */
             
@@ -890,6 +891,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 2:
                 if (topSpacer <= 0){
                     createScissorsBody("down");
+                    this.scissors++;
                     lastRand = 2;
                     topSpacer = SPACER_AMOUNT;
                 }
@@ -899,6 +901,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 3:
                 if (bottomSpacer <= 0){
                     createScissorsBody("up");
+                    this.scissors++;
                     lastRand = 3;
                     bottomSpacer = SPACER_AMOUNT;
                 }
@@ -908,6 +911,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 4:
                 if (bottomSpacer <= 0){
                     createScissorsBody("up");
+                    this.scissors++;
                     lastRand = 4;
                     bottomSpacer = SPACER_AMOUNT;
                 }
@@ -917,6 +921,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 5:
                 if (topSpacer <= 0){
                     createScissorsBody("down");
+                    this.scissors++;
                     lastRand = 5;
                     topSpacer = SPACER_AMOUNT;
                 }
@@ -978,6 +983,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 2:
                 if (topSpacer <= 0){
                     createScissorsBody("down");
+                    this.scissors++;
                     lastRand = 2;
                     topSpacer = SPACER_AMOUNT;
                 }
@@ -987,6 +993,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 3:
                 if (bottomSpacer <= 0){
                     createScissorsBody("up");
+                    this.scissors++;
                     lastRand = 3;
                     bottomSpacer = SPACER_AMOUNT;
                 }
@@ -996,6 +1003,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 4:
                 if (bottomSpacer <= 0){
                     createScissorsBody("up");
+                    this.scissors++;
                     lastRand = 3;
                     bottomSpacer = SPACER_AMOUNT;
                 }
@@ -1014,7 +1022,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         //gets height and width
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
-        System.out.println("Width: " + width + ", Height: " + height);
+        //System.out.println("Width: " + width + ", Height: " + height);
         
         camera = new OrthographicCamera(width,height);
 
@@ -1265,7 +1273,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             }
             threadSprites.get(i).setRotation((float)Math.toDegrees(threadBodies.get(i).getAngle()));
             
-            if (threadSprites.get(i).getX() <= 0 || threadBodies.get(i).getPosition().x <= 0){
+            if (threadSprites.get(i).getX() <= -25 || threadBodies.get(i).getPosition().x <= -25){
                 queueToRemove.add(new Vector2(i,1));
             }
         }
@@ -1275,6 +1283,10 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     (particleBodies.get(i).getPosition().y * PIXELS_TO_METERS) - particleSprites.get(i).getHeight()/2);
             
             particleSprites.get(i).setRotation((float)Math.toDegrees(particleBodies.get(i).getAngle()));
+            
+            if (particleSprites.get(i).getX() <= -50){
+                queueToRemove.add(new Vector2(i,3));
+            }
         }
         
         
@@ -1291,21 +1303,21 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 for(int i = beatIndex+1;i<=currentBeat;i++){
                     
                     if(peaks.get(0).get(i) > 0 && i - lastDisplayed > displayInterval){
-                        System.out.println(peaks.get(0).get(i));
+                        //System.out.println(peaks.get(0).get(i));
                         Random rand = new Random();
                         int randNum = rand.nextInt(2)+2;
                         spawn(randNum);
                         lastDisplayed = i;
                     }
                     if(peaks.get(1).get(i) > 0 && i - lastDisplayed > displayInterval){
-                        System.out.println(peaks.get(0).get(i));
+                        //System.out.println(peaks.get(0).get(i));
                         Random rand = new Random();
-                        int randNum = rand.nextInt(2)+2;
+                        int randNum = rand.nextInt(2);
                         spawn(randNum);
                         lastDisplayed = i;
                     }
                     if(peaks.get(2).get(i) > 0 && i - lastDisplayed > displayInterval){
-                        System.out.println(peaks.get(0).get(i));
+                        //System.out.println(peaks.get(0).get(i));
                         Random rand = new Random();
                         int randNum = rand.nextInt(2);
                         spawn(randNum);
@@ -1342,7 +1354,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     }
                 } else {
                     if (scissorSprites.get(i).getTexture() == scissor1 || scissorSprites.get(i).getTexture() == scissor2){
-                        System.out.println((scissorSprites.get(i).getY() + scissorSprites.get(i).getHeight()/2)/PIXELS_TO_METERS);
+                        //System.out.println((scissorSprites.get(i).getY() + scissorSprites.get(i).getHeight()/2)/PIXELS_TO_METERS);
                         scissorBodies.get(i).setTransform(scissorBodies.get(i).getPosition().x, (scissorSprites.get(i).getY() + scissorSprites.get(i).getHeight()*.75f)/PIXELS_TO_METERS, scissorBodies.get(i).getAngle());
                     } else {
                         scissorBodies.get(i).setTransform(scissorBodies.get(i).getPosition().x, 15, scissorBodies.get(i).getAngle());
@@ -1368,7 +1380,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             }
             
             if (particlesAllowed){
-                createParticles(25,body.getPosition().x*PIXELS_TO_METERS,body.getPosition().y*PIXELS_TO_METERS);
+                createParticles(30,body.getPosition().x*PIXELS_TO_METERS,body.getPosition().y*PIXELS_TO_METERS);
                 particlesAllowed = false;
             }
             
@@ -1412,6 +1424,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     } else if (queueToRemove.get(i).y == 3){
                         if (ref < particleSprites.size()){
                             particleSprites.remove(particleSprites.get(ref));
+                        }
+                        if (ref < particleBodies.size()){
+                            particleBodies.remove(particleBodies.get(ref));
                         }
                     }
                 }
@@ -1630,6 +1645,12 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         ArrayList<String> res = new ArrayList<String>();
         res.add((int)((this.needles_thread/(double)this.needles)*100) + "% thread rate");
         results.setResults(res);
+        
+        System.out.println("-------------------------------");
+        System.out.println(" Difficulty: " + difficulty);
+        System.out.println("    Needles: " + needles);
+        System.out.println("   Scissors: " + scissors);
+        System.out.println("-------------------------------");
         
         FinishScreen finish = new FinishScreen(tss, lbl_score.toString() + score, track, results, (String)titleDisplay,"By: " + (String)songArtist, difficulty);
         tss.setScreen(finish);
