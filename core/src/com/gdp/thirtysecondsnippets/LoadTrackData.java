@@ -158,7 +158,7 @@ public class LoadTrackData  implements Screen{
         sprites.get(0).setPosition(width/4-sprites.get(0).getWidth()/2,height/2-sprites.get(0).getHeight()/2);
         sprites.get(1).setPosition(width/1.5f-sprites.get(1).getWidth()/2,height/4-sprites.get(1).getHeight()/2);
         sprites.get(2).setPosition(width/4 + width/2 -sprites.get(2).getWidth()/2,height/2-sprites.get(2).getHeight()/2);
-        sprites.get(3).setPosition(width/2-sprites.get(3).getWidth()/2,height -sprites.get(3).getHeight()/2);
+        sprites.get(3).setPosition(width/3-sprites.get(3).getWidth()/2,height/4 -sprites.get(3).getHeight()/2);
         
         sprites.get(4).setPosition(0-sprites.get(4).getWidth()/2,height/4-sprites.get(4).getHeight()/2);
         sprites.get(5).setPosition(width/4-sprites.get(5).getWidth()/2,0-sprites.get(5).getHeight()/2);

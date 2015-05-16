@@ -827,6 +827,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         for (int i = 0; i < sprites.size()-1; i++){
             jointDef.bodyA = segments.get(i);
             jointDef.bodyB = segments.get(i + 1);
+            //jointDef.initialize(segments.get(i), segments.get(i+1), body.getPosition());
             joints.add((RevoluteJoint) world.createJoint(jointDef));
             
             ropeJointDef.bodyA = segments.get(i);
@@ -1037,8 +1038,28 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f;
         
         batch = new SpriteBatch();
-        shortthreadlet = new Texture("shortthreadhighcontrast_alt.png");
-        threadlet = new Texture("shortthreadhighcontrast2_alt.png");
+        
+        Random rand = new Random();
+        int texType = rand.nextInt(3);
+        switch (texType){
+            case 0:
+                shortthreadlet = new Texture("shortthreadhighcontrast_alt.png");
+                threadlet = new Texture("shortthreadhighcontrast2_alt.png");
+                break;
+            case 1:
+                shortthreadlet = new Texture("shortthreadhighcontrast_purp.png");
+                threadlet = new Texture("shortthreadhighcontrast2_purp.png");
+                break;
+            case 2:
+                shortthreadlet = new Texture("shortthreadhighcontrast.png");
+                threadlet = new Texture("shortthreadhighcontrast2.png");
+                break;
+            default:
+                break;
+        }
+        
+        
+        
         redlet = new Texture("redthread.png");
         
         background = new Texture("tallback.png");
