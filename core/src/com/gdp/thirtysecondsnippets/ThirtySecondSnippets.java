@@ -1041,6 +1041,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         
         Random rand = new Random();
         int texType = rand.nextInt(3);
+        texType = 0;
         switch (texType){
             case 0:
                 shortthreadlet = new Texture("shortthreadhighcontrast_alt.png");

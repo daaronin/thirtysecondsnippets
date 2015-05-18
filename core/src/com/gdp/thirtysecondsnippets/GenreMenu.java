@@ -62,11 +62,42 @@ public class GenreMenu implements Screen{
         
         for(int i = 0;i < genres.size();i++){
             final int current = i;
-            if(i == ((genres.size() + genres.size()%2)/2)){
+            if(i == 3 || i == 6){
                 table.row();
             }
-            
-            TextButton button = new TextButton(genres.get(i).getName(), skin.get(colors[i%colors.length], TextButtonStyle.class));
+            int colours = 0;
+            switch (i){
+                case 0:
+                    colours = 2;
+                    break;
+                case 1:
+                    colours = 0;
+                    break;
+                case 2:
+                    colours = 1;
+                    break;
+                case 3:
+                    colours = 0;
+                    break;
+                case 4:
+                    colours = 2;
+                    break;
+                case 5:
+                    colours = 0;
+                    break;
+                case 6:
+                    colours = 1;
+                    break;
+                case 7:
+                    colours = 0;
+                    break;
+                case 8:
+                    colours = 2;
+                    break;
+                default:
+                    break;
+            }
+            TextButton button = new TextButton(genres.get(i).getName(), skin.get(colors[colours], TextButtonStyle.class));
             
             button.addListener(new ChangeListener(){
                 @Override
