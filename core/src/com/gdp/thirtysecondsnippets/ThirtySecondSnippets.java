@@ -67,7 +67,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     Texture threadlet, background, scissor1, scissor2, scissor3, scissor4, 
             scissor5, scissor6, redlet, shortthreadlet, threadedBackground, 
             colorBackground, shadowBackground, needleYellow, needleGreen, 
-            needleBlue, star1, star2, star3, star4, star5;
+            needleBlue, star1, star2, star3, star4, star5, woodsBack, woodsFront,
+            woodsBackground, woodsClouds, emptyTree;
     Sprite player_sprite;
     World world;
     Body body;
@@ -77,14 +78,16 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     float scissorsX, scissorsY;
     
     int runtimeCounter = 0;
+    int backgroundType = 2;
+    
     
     float width, height;
     int screen_top_height = 5;
-    float bgx, bgcolorx;
+    float bgx, bgcolorx, bgcloudx;
     long lastTimeBg;
     long lastTimeTempo;
     
-    BitmapFont font;
+    BitmapFont font,blackfont;
     CharSequence lbl_score = "Score: ";
     CharSequence score_amount = "";
     CharSequence multiplier = "";
@@ -399,7 +402,16 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         float startingX = player_sprite.getX()-player_sprite.getWidth()/2 - startingLength*player_sprite.getWidth();
         float startingY = player_sprite.getY()-player_sprite.getHeight()/2;
         for (int i = 0; i < length; i++){
-            sprites.add(new Sprite(shortthreadlet));
+            if (backgroundType == 1){
+                sprites.add(new Sprite(shortthreadlet));
+            } else if (backgroundType == 2){
+                Random rand = new Random();
+                if (rand.nextBoolean()){
+                    sprites.add(new Sprite(shortthreadlet));
+                } else {
+                    sprites.add(new Sprite(threadlet));
+                }
+            }
 
             sprites.get(i).setPosition(startingX - sprites.get(i).getWidth(),startingY);
             startingX -= sprites.get(i).getWidth();
@@ -1031,8 +1043,14 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         //camera.viewportHeight = height/PIXELS_TO_METERS;
         camera.position.set(width/2f, height/2f, 0);
        
+        if (backgroundType == 1){
         bgx = 144;
         bgcolorx = 2016;
+        } else if (backgroundType == 2){
+            bgx = 0;
+            bgcolorx = 0;
+            bgcloudx = 0;
+        }
         
         //BACKGROUND_SPEED = tempo/60f*3f;
         SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f;
@@ -1041,7 +1059,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         
         Random rand = new Random();
         int texType = rand.nextInt(3);
-        texType = 0;
+        if (backgroundType == 2){
+            texType = 3;
+        }
         switch (texType){
             case 0:
                 shortthreadlet = new Texture("shortthreadhighcontrast_alt.png");
@@ -1054,6 +1074,10 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 2:
                 shortthreadlet = new Texture("shortthreadhighcontrast.png");
                 threadlet = new Texture("shortthreadhighcontrast2.png");
+                break;
+            case 3:
+                shortthreadlet = new Texture("shortthreadhighcontrast_wood.png");
+                threadlet = new Texture("shortthreadhighcontrast2_wood.png");
                 break;
             default:
                 break;
@@ -1068,24 +1092,49 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         colorBackground = new Texture("rainbow.png");
         shadowBackground = new Texture("shadowmap3.png");
         
-        needleGreen = new Texture("needlegreenoutline.png");
-        needleBlue = new Texture("needleblueoutline.png");
-        needleYellow = new Texture("needleyellowoutline.png");
+        woodsBackground = new Texture("woodssmallbackground.png");
+        woodsBack = new Texture("woodsback.png");
+        woodsFront = new Texture("woodsfront.png");
+        woodsClouds = new Texture("woodsclouds.png");
         
-        scissor1 = new Texture("scissor1.png");
-        scissor2 = new Texture("scissor2.png");
-        scissor3 = new Texture("scissor3.png");
-        scissor4 = new Texture("scissor4.png");
-        scissor5 = new Texture("scissor5.png");
-        scissor6 = new Texture("scissor6.png");
-        
-        star1 = new Texture("star1.png");
-        star2 = new Texture("star2.png");
-        star3 = new Texture("star3.png");
-        star4 = new Texture("star4.png");
-        star5 = new Texture("star5.png");
-        
+        if (backgroundType == 1){
+            needleGreen = new Texture("needlegreenoutline.png");
+            needleBlue = new Texture("needleblueoutline.png");
+            needleYellow = new Texture("needleyellowoutline.png");
+            
+            scissor1 = new Texture("scissor1.png");
+            scissor2 = new Texture("scissor2.png");
+            scissor3 = new Texture("scissor3.png");
+            scissor4 = new Texture("scissor4.png");
+            scissor5 = new Texture("scissor5.png");
+            scissor6 = new Texture("scissor6.png");
+            
+            star1 = new Texture("star1.png");
+            star2 = new Texture("star2.png");
+            star3 = new Texture("star3.png");
+            star4 = new Texture("star4.png");
+            star5 = new Texture("star5.png");
+        } else if (backgroundType == 2){
+            needleGreen = new Texture("woodspinetreebird.png");
+            needleBlue = new Texture("woodspinetreebird.png");
+            needleYellow = new Texture("woodspinetreebird.png");
+            emptyTree = new Texture("woodspinetree.png");
+            
+            scissor1 = new Texture("saw1.png");
+            scissor2 = new Texture("saw2.png");
+            scissor3 = new Texture("saw3.png");
+            scissor4 = new Texture("saw4.png");
+            scissor5 = new Texture("saw5.png");
+            scissor6 = new Texture("saw6.png");
+            
+            star1 = new Texture("wood1.png");
+            star2 = new Texture("wood2alt.png");
+            star3 = new Texture("wood3alt.png");
+            star4 = new Texture("wood4.png");
+            star5 = new Texture("wood5.png");
+        }
         font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/font.png"),false);
+        blackfont = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/blackfont.png"),false);
         
         timerpaceClosed = (300 - tempo)/60 * 1;
         timerpaceOpen = (300 - tempo)/60 * 12;
@@ -1165,6 +1214,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     contact.getFixtureB().getFilterData().categoryBits = NO_COLLIDE_BIT;
                     contact.getFixtureB().getFilterData().maskBits = NO_COLLIDE_BIT;
                     if (growableAllowed && needle_hit >= GROWTH_SUPRESSOR && growthTimer <= 0){
+                        needleSprites.get(needleBodies.indexOf(contact.getFixtureB().getBody())).setTexture(emptyTree);
                         growThread = true;
                         needle_combo++;
                         needle_hit = 0;
@@ -1179,6 +1229,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     contact.getFixtureA().getFilterData().categoryBits = NO_COLLIDE_BIT;
                     contact.getFixtureA().getFilterData().maskBits = NO_COLLIDE_BIT;
                     if (growableAllowed && needle_hit >= GROWTH_SUPRESSOR && growthTimer <= 0){
+                        needleSprites.get(needleBodies.indexOf(contact.getFixtureA().getBody())).setTexture(emptyTree);
                         growThread = true;
                         needle_combo++;
                         needle_hit = 0;
@@ -1360,11 +1411,23 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if (TimeUtils.nanoTime() - lastTimeBg > 100000000) {
             runtimeCounter++;
             growthTimer--;
-            bgx -= BACKGROUND_SPEED;
-            if (HYPERTHREADING_MODE){
-                bgcolorx -= BACKGROUND_SPEED*2;
-            } else {
-                bgcolorx -= BACKGROUND_SPEED;
+            if (backgroundType == 1){
+                bgx -= BACKGROUND_SPEED;
+                if (HYPERTHREADING_MODE){
+                    bgcolorx -= BACKGROUND_SPEED*2;
+                } else {
+                    bgcolorx -= BACKGROUND_SPEED;
+                }
+            } else if (backgroundType == 2){
+                if (HYPERTHREADING_MODE){
+                    bgcolorx -= BACKGROUND_SPEED*2f;
+                    bgcloudx -= BACKGROUND_SPEED*2f;
+                    bgx -= BACKGROUND_SPEED;
+                } else {
+                    bgcolorx -= BACKGROUND_SPEED;
+                    bgcloudx -= BACKGROUND_SPEED;
+                    bgx -= BACKGROUND_SPEED * .5f;
+                }
             }
             for (int i = 0; i < scissorBodies.size(); i++){
                 scissorBodies.get(i).setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED,0f));
@@ -1458,10 +1521,23 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         }
 
         if (bgx <= 0) {
-            bgx = 144;
+            if (backgroundType == 1){
+                bgx = 144;
+            } else if (backgroundType == 2){
+                bgx = 1035;
+            }
         }
         if (bgcolorx <= 0){
-            bgcolorx = 2016;
+            if (backgroundType == 1){
+                bgcolorx = 2016;
+            } else if (backgroundType == 2){
+                bgcolorx = 1035;
+            }
+        }
+        if (backgroundType == 2){
+            if (bgcloudx <= 0){
+                bgcloudx = 3000;
+            }
         }
         
         batch.setProjectionMatrix(camera.combined);
@@ -1524,89 +1600,104 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         
         batch.begin();
         if(drawSprite){
-            batch.draw(background, bgx + 144*15, 0);
-            batch.draw(background, bgx + 144*14, 0);
-            batch.draw(background, bgx + 144*13, 0);
-            batch.draw(background, bgx + 144*12, 0);
-            batch.draw(background, bgx + 144*11, 0);
-            batch.draw(background, bgx + 144*10, 0);
-            batch.draw(background, bgx + 144*9, 0);
-            batch.draw(background, bgx + 144*8, 0);
-            batch.draw(background, bgx + 144*7, 0);
-            batch.draw(background, bgx + 144*6, 0);
-            batch.draw(background, bgx + 144*5, 0);            
-            batch.draw(background, bgx + 144*4, 0);
-            batch.draw(background, bgx + 144*3, 0);
-            batch.draw(background, bgx + 144*2, 0);
-            batch.draw(background, bgx + 144, 0);
-            batch.draw(background, bgx, 0);
-            batch.draw(background, bgx - 144, 0);
+            if (backgroundType == 1){
+                batch.draw(background, bgx + 144*15, 0);
+                batch.draw(background, bgx + 144*14, 0);
+                batch.draw(background, bgx + 144*13, 0);
+                batch.draw(background, bgx + 144*12, 0);
+                batch.draw(background, bgx + 144*11, 0);
+                batch.draw(background, bgx + 144*10, 0);
+                batch.draw(background, bgx + 144*9, 0);
+                batch.draw(background, bgx + 144*8, 0);
+                batch.draw(background, bgx + 144*7, 0);
+                batch.draw(background, bgx + 144*6, 0);
+                batch.draw(background, bgx + 144*5, 0);            
+                batch.draw(background, bgx + 144*4, 0);
+                batch.draw(background, bgx + 144*3, 0);
+                batch.draw(background, bgx + 144*2, 0);
+                batch.draw(background, bgx + 144, 0);
+                batch.draw(background, bgx, 0);
+                batch.draw(background, bgx - 144, 0);
+
+                batch.draw(background, bgx + 144*15, background.getHeight());
+                batch.draw(background, bgx + 144*14, background.getHeight());
+                batch.draw(background, bgx + 144*13, background.getHeight());
+                batch.draw(background, bgx + 144*12, background.getHeight());
+                batch.draw(background, bgx + 144*11, background.getHeight());
+                batch.draw(background, bgx + 144*10, background.getHeight());
+                batch.draw(background, bgx + 144*9, background.getHeight());
+                batch.draw(background, bgx + 144*8, background.getHeight());
+                batch.draw(background, bgx + 144*7, background.getHeight());
+                batch.draw(background, bgx + 144*6, background.getHeight());
+                batch.draw(background, bgx + 144*5, background.getHeight());            
+                batch.draw(background, bgx + 144*4, background.getHeight());
+                batch.draw(background, bgx + 144*3, background.getHeight());
+                batch.draw(background, bgx + 144*2, background.getHeight());
+                batch.draw(background, bgx + 144, background.getHeight());
+                batch.draw(background, bgx, background.getHeight());
+                batch.draw(background, bgx - 144, background.getHeight());
+
+                batch.draw(colorBackground, bgcolorx, 0);
+                batch.draw(colorBackground, bgcolorx, colorBackground.getHeight());
+
+                batch.draw(colorBackground, bgcolorx - 2016, 0);
+                batch.draw(colorBackground, bgcolorx - 2016, colorBackground.getHeight());
+
+                batch.draw(threadedBackground, bgx + 144*15, 0);
+                batch.draw(threadedBackground, bgx + 144*14, 0);
+                batch.draw(threadedBackground, bgx + 144*13, 0);
+                batch.draw(threadedBackground, bgx + 144*12, 0);
+                batch.draw(threadedBackground, bgx + 144*11, 0);
+                batch.draw(threadedBackground, bgx + 144*10, 0);
+                batch.draw(threadedBackground, bgx + 144*9, 0);
+                batch.draw(threadedBackground, bgx + 144*8, 0);
+                batch.draw(threadedBackground, bgx + 144*7, 0);
+                batch.draw(threadedBackground, bgx + 144*6, 0);
+                batch.draw(threadedBackground, bgx + 144*5, 0);            
+                batch.draw(threadedBackground, bgx + 144*4, 0);
+                batch.draw(threadedBackground, bgx + 144*3, 0);
+                batch.draw(threadedBackground, bgx + 144*2, 0);
+                batch.draw(threadedBackground, bgx + 144, 0);
+                batch.draw(threadedBackground, bgx, 0);
+                batch.draw(threadedBackground, bgx - 144, 0);
+
+                batch.draw(threadedBackground, bgx + 144*15, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx + 144*14, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx + 144*13, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx + 144*12, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx + 144*11, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx + 144*10, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx + 144*9, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx + 144*8, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx + 144*7, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx + 144*6, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx + 144*5, threadedBackground.getHeight());            
+                batch.draw(threadedBackground, bgx + 144*4, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx + 144*3, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx + 144*2, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx + 144, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx - 144, threadedBackground.getHeight());
+
+                batch.draw(shadowBackground, bgcolorx, 0);
+                batch.draw(shadowBackground, bgcolorx - 2016, 0);
+
+                batch.draw(shadowBackground, bgcolorx, shadowBackground.getHeight());
+                batch.draw(shadowBackground, bgcolorx - 2016, shadowBackground.getHeight());
+            } else if (backgroundType == 2){
+                batch.draw(woodsBackground, 0, 0, width, height);
+                
+                batch.draw(woodsBack, bgx, 0);
+                batch.draw(woodsBack, bgx - 1035, 0);
+                batch.draw(woodsBack, bgx + 1035, 0);
+                
+                batch.draw(woodsFront, bgcolorx, 0);
+                batch.draw(woodsFront, bgcolorx - 1035, 0);
+                batch.draw(woodsFront, bgcolorx + 1035, 0);
+                
+                batch.draw(woodsClouds, bgcloudx - 1000 , height - woodsClouds.getHeight());
+            }
             
-            batch.draw(background, bgx + 144*15, background.getHeight());
-            batch.draw(background, bgx + 144*14, background.getHeight());
-            batch.draw(background, bgx + 144*13, background.getHeight());
-            batch.draw(background, bgx + 144*12, background.getHeight());
-            batch.draw(background, bgx + 144*11, background.getHeight());
-            batch.draw(background, bgx + 144*10, background.getHeight());
-            batch.draw(background, bgx + 144*9, background.getHeight());
-            batch.draw(background, bgx + 144*8, background.getHeight());
-            batch.draw(background, bgx + 144*7, background.getHeight());
-            batch.draw(background, bgx + 144*6, background.getHeight());
-            batch.draw(background, bgx + 144*5, background.getHeight());            
-            batch.draw(background, bgx + 144*4, background.getHeight());
-            batch.draw(background, bgx + 144*3, background.getHeight());
-            batch.draw(background, bgx + 144*2, background.getHeight());
-            batch.draw(background, bgx + 144, background.getHeight());
-            batch.draw(background, bgx, background.getHeight());
-            batch.draw(background, bgx - 144, background.getHeight());
-            
-            batch.draw(colorBackground, bgcolorx, 0);
-            batch.draw(colorBackground, bgcolorx, colorBackground.getHeight());
-            
-            batch.draw(colorBackground, bgcolorx - 2016, 0);
-            batch.draw(colorBackground, bgcolorx - 2016, colorBackground.getHeight());
-            
-            batch.draw(threadedBackground, bgx + 144*15, 0);
-            batch.draw(threadedBackground, bgx + 144*14, 0);
-            batch.draw(threadedBackground, bgx + 144*13, 0);
-            batch.draw(threadedBackground, bgx + 144*12, 0);
-            batch.draw(threadedBackground, bgx + 144*11, 0);
-            batch.draw(threadedBackground, bgx + 144*10, 0);
-            batch.draw(threadedBackground, bgx + 144*9, 0);
-            batch.draw(threadedBackground, bgx + 144*8, 0);
-            batch.draw(threadedBackground, bgx + 144*7, 0);
-            batch.draw(threadedBackground, bgx + 144*6, 0);
-            batch.draw(threadedBackground, bgx + 144*5, 0);            
-            batch.draw(threadedBackground, bgx + 144*4, 0);
-            batch.draw(threadedBackground, bgx + 144*3, 0);
-            batch.draw(threadedBackground, bgx + 144*2, 0);
-            batch.draw(threadedBackground, bgx + 144, 0);
-            batch.draw(threadedBackground, bgx, 0);
-            batch.draw(threadedBackground, bgx - 144, 0);
-            
-            batch.draw(threadedBackground, bgx + 144*15, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*14, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*13, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*12, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*11, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*10, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*9, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*8, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*7, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*6, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*5, threadedBackground.getHeight());            
-            batch.draw(threadedBackground, bgx + 144*4, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*3, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*2, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx - 144, threadedBackground.getHeight());
-        
-            batch.draw(shadowBackground, bgcolorx, 0);
-            batch.draw(shadowBackground, bgcolorx - 2016, 0);
-            
-            batch.draw(shadowBackground, bgcolorx, shadowBackground.getHeight());
-            batch.draw(shadowBackground, bgcolorx - 2016, shadowBackground.getHeight());
             
             batch.draw(player_sprite, player_sprite.getX(), player_sprite.getY(),player_sprite.getOriginX(),
                        player_sprite.getOriginY(), player_sprite.getWidth(),player_sprite.getHeight(),
@@ -1635,7 +1726,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                         particleSprite.getOriginY(), particleSprite.getWidth(), particleSprite.getHeight(), 
                         particleSprite.getScaleX(), particleSprite.getScaleY(), particleSprite.getRotation());
             }
-            
+            if (backgroundType == 2){
+                font = blackfont;
+            }
             font.draw(batch, score_amount, 0, 50);
             font.draw(batch, multiplier, 500, 50);
             font.draw(batch, bonus, 500, 50);
