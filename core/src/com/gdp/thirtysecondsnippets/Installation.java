@@ -5,6 +5,7 @@
  */
 package com.gdp.thirtysecondsnippets;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,14 +24,21 @@ public class Installation {
 
     public synchronized static String id() {
         if (sID == null) {  
-            FileHandle file = Gdx.files.external(INSTALLATION);
-            File installation = new File(file.path());
-            try {
-                if (!installation.exists())
-                    writeInstallationFile(installation);
-                sID = readInstallationFile(installation);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            String loc = null;
+            if (Gdx.files.isLocalStorageAvailable()){
+               loc = Gdx.files.getLocalStoragePath();
+               FileHandle file = Gdx.files.getFileHandle(loc, Files.FileType.Internal);
+                File installation = new File(file.path()+"/"+INSTALLATION);
+            
+                //FileHandle file = Gdx.files.internal(INSTALLATION);
+                //File installation = new File(file.path());
+                try {
+                    if (!installation.exists())
+                        writeInstallationFile(installation);
+                    sID = readInstallationFile(installation);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         return sID;

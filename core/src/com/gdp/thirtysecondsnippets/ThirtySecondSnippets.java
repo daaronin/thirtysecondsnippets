@@ -11,7 +11,6 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -29,21 +28,17 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Filter;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.JointEdge;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.joints.DistanceJoint;
-import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RopeJoint;
 import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 import com.badlogic.gdx.utils.TimeUtils;
-import java.awt.Point;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -68,7 +63,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             scissor5, scissor6, redlet, shortthreadlet, threadedBackground, 
             colorBackground, shadowBackground, needleYellow, needleGreen, 
             needleBlue, star1, star2, star3, star4, star5, woodsBack, woodsFront,
-            woodsBackground, woodsClouds, emptyTree;
+            woodsBackground, woodsClouds, emptyTree, tail;
     Sprite player_sprite;
     World world;
     Body body;
@@ -100,7 +95,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     int score = 0;
     int needle_combo = 0;
     int needle_hit = 1;
-    static final int GROWTH_SUPRESSOR = 1;
+    static final int GROWTH_SUPRESSOR = 0;
     static final int SCORE_CONSTANT = 1;
     boolean HYPERTHREADING_MODE = false;
     
@@ -166,6 +161,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     float torque = 0.0f;
     boolean drawSprite = true;
     boolean drawBoxes = false;
+    boolean drawText = true;
     
     final float PIXELS_TO_METERS = 100f;
     
@@ -207,6 +203,13 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 System.out.println(track.getArtist() + " | " + track.getName() + " | " + track.getTempo());
                 songTitle = track.getName();
                 songArtist = track.getArtist();
+                
+//                if (track.getGenreId() % 2 == 1){
+//                    backgroundType = 1;
+//                } else {
+//                    backgroundType = 2;
+//                }
+                
                 tempo = (int)track.getTempo();
                 timerpaceClosed = tempo/60 * 40; 
                 timerpaceOpen = tempo/60 * 12;
@@ -248,6 +251,20 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         SPACER_AMOUNT = difficulty;
         peaks = analysis.getPeaks();
         spectralFluxBass = analysis.getSpectralFluxBass();
+        
+        timerpaceClosed = tempo/60 * 40; 
+        timerpaceOpen = tempo/60 * 12;
+           
+        System.out.println("Genre: " + track.getGenre());
+        
+        
+        if ("metal".equals(track.getGenre())){
+            backgroundType = 3;
+        } else if ("folk".equals(track.getGenre())){
+            backgroundType = 2;
+        } else {
+            backgroundType = 1;
+        }
         
         titleDisplay = songTitle = track.getName();
         songArtist = track.getArtist();
@@ -319,6 +336,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         }
         if (keycode == Input.Keys.F3){
             drawBoxes = !drawBoxes;
+        }
+        if (keycode == Input.Keys.F4){
+            drawText = !drawText;
         }
         if (keycode == Input.Keys.W){
             createScissorsBody("down");
@@ -410,6 +430,23 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     sprites.add(new Sprite(shortthreadlet));
                 } else {
                     sprites.add(new Sprite(threadlet));
+                }
+            } else if (backgroundType == 3){
+                if (threadSprites.isEmpty()){
+                    if (sprites.isEmpty() && length == 1){
+                        sprites.add(new Sprite(tail));
+                    } else if (length > 1){
+                        if (i == length-1){
+                            sprites.add(new Sprite(tail));
+                        } else {
+                            sprites.add(new Sprite(shortthreadlet));
+                        }
+                    }
+                } else {
+                    for (int j = 0; j < threadSprites.size(); j++){
+                        threadSprites.get(j).setTexture(shortthreadlet);
+                    }
+                    sprites.add(new Sprite(tail));
                 }
             }
 
@@ -1046,7 +1083,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if (backgroundType == 1){
         bgx = 144;
         bgcolorx = 2016;
-        } else if (backgroundType == 2){
+        } else if (backgroundType == 2 || backgroundType == 3){
             bgx = 0;
             bgcolorx = 0;
             bgcloudx = 0;
@@ -1061,6 +1098,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         int texType = rand.nextInt(3);
         if (backgroundType == 2){
             texType = 3;
+        } else if (backgroundType == 3){
+            texType = 4;
         }
         switch (texType){
             case 0:
@@ -1078,6 +1117,11 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 3:
                 shortthreadlet = new Texture("shortthreadhighcontrast_wood.png");
                 threadlet = new Texture("shortthreadhighcontrast2_wood.png");
+                break;
+            case 4:
+                shortthreadlet = new Texture("shortthreadhighcontrast_snake.png");
+                threadlet = new Texture("shortthreadhighcontrast2_snake2.png");
+                tail = new Texture("shortthreadhighcontrast_snaketail.png");
                 break;
             default:
                 break;
@@ -1115,6 +1159,11 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             star4 = new Texture("star4.png");
             star5 = new Texture("star5.png");
         } else if (backgroundType == 2){
+            woodsBackground = new Texture("woodssmallbackground.png");
+            woodsBack = new Texture("woodsback.png");
+            woodsFront = new Texture("woodsfront.png");
+            woodsClouds = new Texture("woodsclouds.png");
+
             needleGreen = new Texture("woodspinetreebird.png");
             needleBlue = new Texture("woodspinetreebird.png");
             needleYellow = new Texture("woodspinetreebird.png");
@@ -1132,6 +1181,28 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             star3 = new Texture("wood3alt.png");
             star4 = new Texture("wood4.png");
             star5 = new Texture("wood5.png");
+        } else if (backgroundType == 3){
+            woodsBackground = new Texture("desertsmallbackground.png");
+            woodsBack = new Texture("desertback.png");
+            woodsFront = new Texture("desertfront.png");
+            woodsClouds = new Texture("desertsky.png");
+        
+            needleGreen = new Texture("skeletonhand.png");
+            needleBlue = new Texture("skeletonhand2.png");
+            needleYellow = new Texture("skeletonhand3.png");
+            
+            scissor1 = new Texture("sword1.png");
+            scissor2 = new Texture("sword2.png");
+            scissor3 = new Texture("sword3.png");
+            scissor4 = new Texture("sword4.png");
+            scissor5 = new Texture("sword5.png");
+            scissor6 = new Texture("sword6.png");
+            
+            star1 = new Texture("wood1.png");
+            star2 = new Texture("wood2alt.png");
+            star3 = new Texture("wood3alt.png");
+            star4 = new Texture("wood4.png");
+            star5 = new Texture("wood4.png");
         }
         font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/font.png"),false);
         blackfont = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/blackfont.png"),false);
@@ -1214,7 +1285,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     contact.getFixtureB().getFilterData().categoryBits = NO_COLLIDE_BIT;
                     contact.getFixtureB().getFilterData().maskBits = NO_COLLIDE_BIT;
                     if (growableAllowed && needle_hit >= GROWTH_SUPRESSOR && growthTimer <= 0){
-                        needleSprites.get(needleBodies.indexOf(contact.getFixtureB().getBody())).setTexture(emptyTree);
+                        if (backgroundType == 2){
+                            needleSprites.get(needleBodies.indexOf(contact.getFixtureB().getBody())).setTexture(emptyTree);
+                        }
                         growThread = true;
                         needle_combo++;
                         needle_hit = 0;
@@ -1229,7 +1302,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     contact.getFixtureA().getFilterData().categoryBits = NO_COLLIDE_BIT;
                     contact.getFixtureA().getFilterData().maskBits = NO_COLLIDE_BIT;
                     if (growableAllowed && needle_hit >= GROWTH_SUPRESSOR && growthTimer <= 0){
-                        needleSprites.get(needleBodies.indexOf(contact.getFixtureA().getBody())).setTexture(emptyTree);
+                        if (backgroundType == 2){
+                            needleSprites.get(needleBodies.indexOf(contact.getFixtureA().getBody())).setTexture(emptyTree);
+                        }
                         growThread = true;
                         needle_combo++;
                         needle_hit = 0;
@@ -1257,7 +1332,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     for (int i = 0; i < contact.getFixtureB().getBody().getJointList().size; i++){
                         if (!jointDeletionList.contains(contact.getFixtureB().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureB().getBody().getJointList().get(i));
-                            needle_combo = 1;
+                            needle_combo = 0;
                             jointDestroyable = false;
                         }
                     }
@@ -1267,7 +1342,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     for (int i = 0; i < contact.getFixtureA().getBody().getJointList().size; i++){
                         if (!jointDeletionList.contains(contact.getFixtureA().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureA().getBody().getJointList().get(i));
-                            needle_combo = 1;
+                            needle_combo = 0;
                             jointDestroyable = false;
                         }
                     }
@@ -1281,11 +1356,11 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 //System.out.println("postsolve");
             }
     });
-        
         m.setOnCompletionListener(new Music.OnCompletionListener() {
             @Override
             public void onCompletion(Music music) {
                 endLevel();
+                songTitle="ONCOMPLETE TRIGGERED";
             }
         });
         
@@ -1418,7 +1493,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 } else {
                     bgcolorx -= BACKGROUND_SPEED;
                 }
-            } else if (backgroundType == 2){
+            } else if (backgroundType == 2 || backgroundType == 3){
                 if (HYPERTHREADING_MODE){
                     bgcolorx -= BACKGROUND_SPEED*2f;
                     bgcloudx -= BACKGROUND_SPEED*2f;
@@ -1465,7 +1540,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             }
             
             if (particlesAllowed){
-                createParticles(30,body.getPosition().x*PIXELS_TO_METERS,body.getPosition().y*PIXELS_TO_METERS);
+                createParticles(15,body.getPosition().x*PIXELS_TO_METERS,body.getPosition().y*PIXELS_TO_METERS);
                 particlesAllowed = false;
             }
             
@@ -1523,18 +1598,18 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if (bgx <= 0) {
             if (backgroundType == 1){
                 bgx = 144;
-            } else if (backgroundType == 2){
+            } else if (backgroundType == 2 || backgroundType == 3){
                 bgx = 1035;
             }
         }
         if (bgcolorx <= 0){
             if (backgroundType == 1){
                 bgcolorx = 2016;
-            } else if (backgroundType == 2){
+            } else if (backgroundType == 2 || backgroundType == 3){
                 bgcolorx = 1035;
             }
         }
-        if (backgroundType == 2){
+        if (backgroundType == 2 || backgroundType == 3){
             if (bgcloudx <= 0){
                 bgcloudx = 3000;
             }
@@ -1573,8 +1648,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             BACKGROUND_SPEED = 14.4f;
             SCROLLING_FOREGROUND_SPEED = tempo/60f*-2f;
         }
-        if (runtimeCounter >= 285){
+        if (!m.isPlaying()){
             hyperthreading = "FINISH";
+            endLevel();
         } else {
             if (runtimeCounter >= 30){
                 songTitle = songArtist;
@@ -1696,6 +1772,18 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 batch.draw(woodsFront, bgcolorx + 1035, 0);
                 
                 batch.draw(woodsClouds, bgcloudx - 1000 , height - woodsClouds.getHeight());
+            } else if (backgroundType == 3){
+                batch.draw(woodsBackground, 0, 0, width, height);
+                
+                batch.draw(woodsBack, bgx, 0);
+                batch.draw(woodsBack, bgx - 1035, 0);
+                batch.draw(woodsBack, bgx + 1035, 0);
+                
+                batch.draw(woodsFront, bgcolorx, 0);
+                batch.draw(woodsFront, bgcolorx - 1035, 0);
+                batch.draw(woodsFront, bgcolorx + 1035, 0);
+                
+                //batch.draw(woodsClouds, bgcloudx - 1400 , height - woodsClouds.getHeight());
             }
             
             
@@ -1726,14 +1814,16 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                         particleSprite.getOriginY(), particleSprite.getWidth(), particleSprite.getHeight(), 
                         particleSprite.getScaleX(), particleSprite.getScaleY(), particleSprite.getRotation());
             }
-            if (backgroundType == 2){
+            if (backgroundType == 2 || backgroundType == 3){
                 font = blackfont;
             }
-            font.draw(batch, score_amount, 0, 50);
-            font.draw(batch, multiplier, 500, 50);
-            font.draw(batch, bonus, 500, 50);
-            font.draw(batch, hyperthreading, 0, height);
-            font.draw(batch, songTitle, 0, height);
+            if (drawText){
+                font.draw(batch, score_amount, 0, 50);
+                font.draw(batch, multiplier, 500, 50);
+                font.draw(batch, bonus, 500, 50);
+                font.draw(batch, hyperthreading, 0, height);
+                font.draw(batch, songTitle, 0, height);
+            }
         }
 
         batch.end();
