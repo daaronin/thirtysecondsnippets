@@ -419,7 +419,7 @@ public class LoadTrackData  implements Screen{
 //                   yarn_sprite_p.getOriginY(), yarn_sprite_p.getWidth(),yarn_sprite_p.getHeight(),
 //                   yarn_sprite_p.getScaleX(),yarn_sprite_p.getScaleY(),yarn_sprite_p.getRotation());
         
-        font.draw(batch, "Collecting the yarn...", 350, 670);
+        font.draw(batch, "Collecting the yarn...", 10,75);
         
         batch.end();
         

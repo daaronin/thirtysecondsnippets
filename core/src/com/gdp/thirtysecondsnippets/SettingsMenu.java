@@ -75,19 +75,6 @@ public class SettingsMenu implements Screen{
                 }
         });
         
-        final CheckBox strobecheck = new CheckBox("", skin.get("strobecheck", CheckBoxStyle.class));
-        
-        boolean checked = prefs.getBoolean("strobe", false);
-        strobecheck.setChecked(checked);
-        
-        strobecheck.addListener(new ChangeListener(){
-                @Override
-                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                    prefs.putBoolean("strobe", strobecheck.isChecked());
-                    prefs.flush();
-                }
-        });
-        
         final CheckBox guidecheck = new CheckBox("", skin.get("strobecheck", CheckBoxStyle.class));
         
         boolean checked2 = prefs.getBoolean("guide", false);
@@ -101,9 +88,9 @@ public class SettingsMenu implements Screen{
                 }
         });
         
-        Label musicvol = new Label("Music Volume ", skin.get("labelb", LabelStyle.class));
-        Label soundfxvol = new Label("Sound FX Volume ", skin.get("labelb", LabelStyle.class));
-        Label strobelabel = new Label("Strobe?", skin.get("labelb", LabelStyle.class));
+        Label musicvol = new Label("Music Volume:", skin.get("labelb", LabelStyle.class));
+        Label soundfxvol = new Label("Sound FX Volume:", skin.get("labelb", LabelStyle.class));
+//        Label strobelabel = new Label("Strobe?", skin.get("labelb", LabelStyle.class));
         Label guideelabel = new Label("Guide Thread?", skin.get("labelb", LabelStyle.class));
         
         TextButton back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
@@ -116,22 +103,32 @@ public class SettingsMenu implements Screen{
                 }
         });
         
+        TextButton themeselect = new TextButton("Theme Select", skin.get("blue", TextButton.TextButtonStyle.class));
+        themeselect.addListener(new ChangeListener(){
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    //Same way we moved here from the Splash Screen
+                    //We set it to new Splash because we got no other screens
+                    //otherwise you put the screen there where you want to go
+                    ThemeMenu menu = new ThemeMenu(tss);
+                    tss.setScreen(menu);
+                }
+        });
                 
         table.add(title).top().padTop(2).colspan(2).width(Value.percentWidth(.5f, table)).height(Value.percentHeight(.15f, table)).padBottom(40);
         table.row();
-        table.add(musicvol);//label
+        table.add(musicvol).right();//label
         table.add(musicvolslider).center().width(Value.percentWidth(5f)).height(Value.percentHeight(.5f)).padLeft(20);
         table.row();
-        table.add(soundfxvol).padTop(40);//label
+        table.add(soundfxvol).padTop(40).right();//label
         table.add(soundfxslider).center().width(Value.percentWidth(5f)).height(Value.percentHeight(.5f)).padLeft(20).padTop(45);
         table.row();
-        table.add(strobelabel).padTop(40).padBottom(20);//label
-        table.add(strobecheck).center().width(Value.percentWidth(1f)).height(Value.percentHeight(1f)).padLeft(20).padTop(15);
-        table.row();
-        table.add(guideelabel).padBottom(20).padTop(20);//label
+        table.add(guideelabel).padBottom(20).padTop(20).right();//label
         table.add(guidecheck).center().width(Value.percentWidth(1f)).height(Value.percentHeight(1f)).padLeft(20).padTop(15).padBottom(20);
         table.row();
-        table.add(back).height(Value.percentHeight(.30f)).width(Value.percentHeight(.30f));
+        table.add(themeselect).padTop(40).padBottom(20).center().colspan(2).width(Value.percentWidth(.8f)).height(Value.percentHeight(.4f));//label
+        table.row();
+        table.add(back).height(Value.percentHeight(.30f)).width(Value.percentHeight(.30f)).left().padLeft(Value.percentHeight(.20f)).padBottom(Value.percentHeight(.20f));
         
         table.setBackground(skin.getDrawable("bg_blur"));
         table.setFillParent(true);

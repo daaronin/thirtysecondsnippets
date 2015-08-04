@@ -258,13 +258,21 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         System.out.println("Genre: " + track.getGenre());
         
         
-        if ("metal".equals(track.getGenre())){
-            backgroundType = 3;
-        } else if ("folk".equals(track.getGenre())){
-            backgroundType = 2;
-        } else {
-            backgroundType = 1;
-        }
+        backgroundType = prefs.getInteger("theme", 1);
+
+//        if ("blues".equals(track.getGenre())){
+//            backgroundType = 4;
+//        }else if ("jazz".equals(track.getGenre())){
+//            backgroundType = 5;
+//        }else if ("metal".equals(track.getGenre())){
+//            backgroundType = 3;
+//        } else if ("folk".equals(track.getGenre())){
+//            backgroundType = 2;
+//        } else {
+//            backgroundType = 1;
+//        }
+        
+        
         
         titleDisplay = songTitle = track.getName();
         songArtist = track.getArtist();
@@ -448,6 +456,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     }
                     sprites.add(new Sprite(tail));
                 }
+            } else if (backgroundType == 4 || backgroundType == 5){
+                sprites.add(new Sprite(shortthreadlet));
             }
 
             sprites.get(i).setPosition(startingX - sprites.get(i).getWidth(),startingY);
@@ -1100,6 +1110,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             texType = 3;
         } else if (backgroundType == 3){
             texType = 4;
+        } else if (backgroundType == 4 || backgroundType == 5){
+            texType = 5;
         }
         switch (texType){
             case 0:
@@ -1122,6 +1134,10 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 shortthreadlet = new Texture("shortthreadhighcontrast_snake.png");
                 threadlet = new Texture("shortthreadhighcontrast2_snake2.png");
                 tail = new Texture("shortthreadhighcontrast_snaketail.png");
+                break;
+            case 5:
+                shortthreadlet = new Texture("shortthreadhighcontrast_staff2.png");
+                threadlet = new Texture("shortthreadhighcontrast2_staff2.png");
                 break;
             default:
                 break;
@@ -1197,6 +1213,50 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             scissor4 = new Texture("sword4.png");
             scissor5 = new Texture("sword5.png");
             scissor6 = new Texture("sword6.png");
+            
+            star1 = new Texture("wood1.png");
+            star2 = new Texture("wood2alt.png");
+            star3 = new Texture("wood3alt.png");
+            star4 = new Texture("wood4.png");
+            star5 = new Texture("wood4.png");
+        } else if (backgroundType == 4){
+            woodsBackground = new Texture("clubbackgroundsmall.png");
+            woodsBack = new Texture("clubback.png");
+            woodsFront = new Texture("clubback.png");
+            woodsClouds = new Texture("desertsky.png");
+        
+            needleGreen = new Texture("microphone.png");
+            needleBlue = new Texture("microphone.png");
+            needleYellow = new Texture("microphone.png");
+            
+            scissor1 = new Texture("trombone1.png");
+            scissor2 = new Texture("trombone2.png");
+            scissor3 = new Texture("trombone3.png");
+            scissor4 = new Texture("trombone4.png");
+            scissor5 = new Texture("trombone5.png");
+            scissor6 = new Texture("trombone6.png");
+            
+            star1 = new Texture("wood1.png");
+            star2 = new Texture("wood2alt.png");
+            star3 = new Texture("wood3alt.png");
+            star4 = new Texture("wood4.png");
+            star5 = new Texture("wood4.png");
+        }else if (backgroundType == 5){
+            woodsBackground = new Texture("clubbackgroundsmall2.png");
+            woodsBack = new Texture("clubback.png");
+            woodsFront = new Texture("clubback.png");
+            woodsClouds = new Texture("desertsky.png");
+        
+            needleGreen = new Texture("microphone.png");
+            needleBlue = new Texture("microphone.png");
+            needleYellow = new Texture("microphone.png");
+            
+            scissor1 = new Texture("trombone1.png");
+            scissor2 = new Texture("trombone2.png");
+            scissor3 = new Texture("trombone3.png");
+            scissor4 = new Texture("trombone4.png");
+            scissor5 = new Texture("trombone5.png");
+            scissor6 = new Texture("trombone6.png");
             
             star1 = new Texture("wood1.png");
             star2 = new Texture("wood2alt.png");
@@ -1366,7 +1426,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         
         if(m != null){
             float volume = prefs.getFloat("musicvol", 1);
-            m.setVolume(volume);
+            m.setVolume(volume/20);
             m.play();
         }
     }
@@ -1493,7 +1553,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 } else {
                     bgcolorx -= BACKGROUND_SPEED;
                 }
-            } else if (backgroundType == 2 || backgroundType == 3){
+            } else if (backgroundType == 2 || backgroundType == 3 || backgroundType == 4 || backgroundType == 5){
                 if (HYPERTHREADING_MODE){
                     bgcolorx -= BACKGROUND_SPEED*2f;
                     bgcloudx -= BACKGROUND_SPEED*2f;
@@ -1598,18 +1658,18 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if (bgx <= 0) {
             if (backgroundType == 1){
                 bgx = 144;
-            } else if (backgroundType == 2 || backgroundType == 3){
+            } else if (backgroundType == 2 || backgroundType == 3 || backgroundType == 4 || backgroundType == 5){
                 bgx = 1035;
             }
         }
         if (bgcolorx <= 0){
             if (backgroundType == 1){
                 bgcolorx = 2016;
-            } else if (backgroundType == 2 || backgroundType == 3){
+            } else if (backgroundType == 2 || backgroundType == 3 || backgroundType == 4 || backgroundType == 5){
                 bgcolorx = 1035;
             }
         }
-        if (backgroundType == 2 || backgroundType == 3){
+        if (backgroundType == 2 || backgroundType == 3 || backgroundType == 4 || backgroundType == 5){
             if (bgcloudx <= 0){
                 bgcloudx = 3000;
             }
@@ -1782,6 +1842,18 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 batch.draw(woodsFront, bgcolorx, 0);
                 batch.draw(woodsFront, bgcolorx - 1035, 0);
                 batch.draw(woodsFront, bgcolorx + 1035, 0);
+                
+                //batch.draw(woodsClouds, bgcloudx - 1400 , height - woodsClouds.getHeight());
+            } else if (backgroundType == 4 || backgroundType == 5){
+                batch.draw(woodsBackground, 0, 0, width, height);
+                
+                batch.draw(woodsBack, bgx, 0);
+                batch.draw(woodsBack, bgx - 1035, 0);
+                batch.draw(woodsBack, bgx + 1035, 0);
+                
+//                batch.draw(woodsFront, bgcolorx, 0);
+//                batch.draw(woodsFront, bgcolorx - 1035, 0);
+//                batch.draw(woodsFront, bgcolorx + 1035, 0);
                 
                 //batch.draw(woodsClouds, bgcloudx - 1400 , height - woodsClouds.getHeight());
             }
