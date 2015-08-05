@@ -53,6 +53,7 @@ public class ThemeMenu implements Screen{
     ImageButton folkPic;
     ImageButton metalPic;
     ImageButton jazzPic;
+    ImageButton bubblePic;
     
     private Stage stage = new Stage();
     private Table table = new Table();
@@ -83,6 +84,7 @@ public class ThemeMenu implements Screen{
         Label folklbl = new Label("Folked Up", skin.get("labelb", Label.LabelStyle.class));
         Label metallbl = new Label("Hardcore", skin.get("labelb", Label.LabelStyle.class));
         Label jazzlbl = new Label("Jazztastic", skin.get("labelb", Label.LabelStyle.class));
+        Label bubblelbl = new Label("Pop Art", skin.get("labelb", Label.LabelStyle.class));
         
         Texture basic;
         
@@ -153,6 +155,25 @@ public class ThemeMenu implements Screen{
         jazzPic = new ImageButton(style4);
         jazzPic.setDisabled(true);
         
+        Texture bubble;
+        
+        if (prefs.getInteger("unlocked", 1) > 4){
+            bubble = new Texture("levelbubble.png");
+        } else {
+            bubble = new Texture("levelbubblelocked.jpg");
+            bubblelbl.setText("*Play 50 Songs*");
+        }
+        
+        ImageButtonStyle style5 = new ImageButtonStyle();
+        style5.up = new SpriteDrawable(new Sprite(bubble));
+        style5.down = new SpriteDrawable(new Sprite(bubble));
+        style5.imageUp = new SpriteDrawable(new Sprite(bubble));
+        style5.imageOver = new SpriteDrawable(new Sprite(hover));
+        style5.imageChecked = new SpriteDrawable(new Sprite(selected));
+        style5.imageDown = new SpriteDrawable(new Sprite(clicked));
+        bubblePic = new ImageButton(style5);
+        bubblePic.setDisabled(true);
+        
         switch(prefs.getInteger("theme", 1)){
             case 1:
                 basicPic.setChecked(true);
@@ -166,6 +187,8 @@ public class ThemeMenu implements Screen{
             case 5:
                 jazzPic.setChecked(true);
                 break;
+            case 6:
+                bubblePic.setChecked(true);
             default:
                 break;
         }
@@ -221,6 +244,19 @@ public class ThemeMenu implements Screen{
             });
         
         }
+        if (prefs.getInteger("unlocked", 1) > 4) {
+            bubblePic.setDisabled(false);
+            bubblePic.addListener(new ChangeListener(){
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        prefs.putInteger("theme", 6);
+                        prefs.flush();
+                        MainMenu menu = new MainMenu(tss);
+                        tss.setScreen(menu);
+                    }
+            });
+        
+        }
         
         TextButton statselect = new TextButton("Stats", skin.get("blue", TextButton.TextButtonStyle.class));
         statselect.addListener(new ChangeListener(){
@@ -255,11 +291,13 @@ public class ThemeMenu implements Screen{
         table.add(folkPic).height(Value.percentHeight(.40f)).width(Value.percentWidth(.40f)).padLeft(Value.percentWidth(.10f)).padRight(Value.percentWidth(.10f));
         table.add(metalPic).height(Value.percentHeight(.40f)).width(Value.percentWidth(.40f)).padLeft(Value.percentWidth(.10f)).padRight(Value.percentWidth(.10f));
         table.add(jazzPic).height(Value.percentHeight(.40f)).width(Value.percentWidth(.40f)).padLeft(Value.percentWidth(.10f)).padRight(Value.percentWidth(.10f));
+        table.add(bubblePic).height(Value.percentHeight(.40f)).width(Value.percentWidth(.40f)).padLeft(Value.percentWidth(.10f)).padRight(Value.percentWidth(.10f));
         table.row();
         table.add(basiclbl).padLeft(Value.percentWidth(.10f)).padRight(Value.percentWidth(.10f));
         table.add(folklbl).padLeft(Value.percentWidth(.10f)).padRight(Value.percentWidth(.10f));
         table.add(metallbl).padLeft(Value.percentWidth(.10f)).padRight(Value.percentWidth(.10f));
         table.add(jazzlbl).padLeft(Value.percentWidth(.10f)).padRight(Value.percentWidth(.10f));
+        table.add(bubblelbl).padLeft(Value.percentWidth(.10f)).padRight(Value.percentWidth(.10f));
         pane.setWidget(table);
         table_root.row();
         table_root.add(back).height(Value.percentHeight(.40f)).width(Value.percentHeight(.40f)).center().padLeft(Value.percentHeight(.20f)).padBottom(Value.percentHeight(.20f)).colspan(1);

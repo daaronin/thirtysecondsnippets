@@ -456,7 +456,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     }
                     sprites.add(new Sprite(tail));
                 }
-            } else if (backgroundType == 4 || backgroundType == 5){
+            } else if (backgroundType == 4 || backgroundType == 5 || backgroundType == 6){
                 sprites.add(new Sprite(shortthreadlet));
             }
 
@@ -1112,6 +1112,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             texType = 4;
         } else if (backgroundType == 4 || backgroundType == 5){
             texType = 5;
+        }else if (backgroundType == 6){
+            texType = 6;
         }
         switch (texType){
             case 0:
@@ -1138,6 +1140,10 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             case 5:
                 shortthreadlet = new Texture("shortthreadhighcontrast_staff2.png");
                 threadlet = new Texture("shortthreadhighcontrast2_staff2.png");
+                break;
+            case 6:
+                shortthreadlet = new Texture("shortthreadhighcontrast_fish.png");
+                threadlet = new Texture("shortthreadhighcontrast_fish.png");
                 break;
             default:
                 break;
@@ -1263,6 +1269,28 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             star3 = new Texture("wood3alt.png");
             star4 = new Texture("wood4.png");
             star5 = new Texture("wood4.png");
+        } else if (backgroundType == 6){
+            woodsBackground = new Texture("oceanbackground.png");
+            woodsBack = new Texture("oceanmiddleground.png");
+            woodsFront = new Texture("oceanforeground.png");
+            
+            needleGreen = new Texture("bubblestickpopped.png");
+            needleBlue = new Texture("bubblestickpopped.png");
+            needleYellow = new Texture("bubblestickpopped.png");
+            emptyTree = new Texture("bubblestick.png");
+            
+            scissor1 = new Texture("spear1.png");
+            scissor2 = new Texture("spear2.png");
+            scissor3 = new Texture("spear3.png");
+            scissor4 = new Texture("spear4.png");
+            scissor5 = new Texture("spear5.png");
+            scissor6 = new Texture("spear6.png");
+            
+            star1 = new Texture("star1.png");
+            star2 = new Texture("star2.png");
+            star3 = new Texture("star3.png");
+            star4 = new Texture("star4.png");
+            star5 = new Texture("star5.png");
         }
         font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/font.png"),false);
         blackfont = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/blackfont.png"),false);
@@ -1345,7 +1373,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     contact.getFixtureB().getFilterData().categoryBits = NO_COLLIDE_BIT;
                     contact.getFixtureB().getFilterData().maskBits = NO_COLLIDE_BIT;
                     if (growableAllowed && needle_hit >= GROWTH_SUPRESSOR && growthTimer <= 0){
-                        if (backgroundType == 2){
+                        if (backgroundType == 2 || backgroundType == 6){
                             needleSprites.get(needleBodies.indexOf(contact.getFixtureB().getBody())).setTexture(emptyTree);
                         }
                         growThread = true;
@@ -1362,7 +1390,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     contact.getFixtureA().getFilterData().categoryBits = NO_COLLIDE_BIT;
                     contact.getFixtureA().getFilterData().maskBits = NO_COLLIDE_BIT;
                     if (growableAllowed && needle_hit >= GROWTH_SUPRESSOR && growthTimer <= 0){
-                        if (backgroundType == 2){
+                        if (backgroundType == 2 || backgroundType == 6){
                             needleSprites.get(needleBodies.indexOf(contact.getFixtureA().getBody())).setTexture(emptyTree);
                         }
                         growThread = true;
@@ -1563,6 +1591,16 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     bgcloudx -= BACKGROUND_SPEED;
                     bgx -= BACKGROUND_SPEED * .5f;
                 }
+            } else if (backgroundType == 6){
+                if (HYPERTHREADING_MODE){
+                    bgcolorx -= BACKGROUND_SPEED*2f;
+                    //bgcloudx -= BACKGROUND_SPEED*2f;
+                    bgx -= BACKGROUND_SPEED;
+                } else {
+                    bgcolorx -= BACKGROUND_SPEED;
+                    //bgcloudx -= BACKGROUND_SPEED;
+                    bgx -= BACKGROUND_SPEED * .5f;
+                }
             }
             for (int i = 0; i < scissorBodies.size(); i++){
                 scissorBodies.get(i).setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED,0f));
@@ -1658,14 +1696,14 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         if (bgx <= 0) {
             if (backgroundType == 1){
                 bgx = 144;
-            } else if (backgroundType == 2 || backgroundType == 3 || backgroundType == 4 || backgroundType == 5){
+            } else if (backgroundType == 2 || backgroundType == 3 || backgroundType == 4 || backgroundType == 5 || backgroundType == 6){
                 bgx = 1035;
             }
         }
         if (bgcolorx <= 0){
             if (backgroundType == 1){
                 bgcolorx = 2016;
-            } else if (backgroundType == 2 || backgroundType == 3 || backgroundType == 4 || backgroundType == 5){
+            } else if (backgroundType == 2 || backgroundType == 3 || backgroundType == 4 || backgroundType == 5 || backgroundType == 6){
                 bgcolorx = 1035;
             }
         }
@@ -1840,7 +1878,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 batch.draw(woodsFront, bgcolorx + 1035, 0);
                 
                 batch.draw(woodsClouds, bgcloudx - 1000 , height - woodsClouds.getHeight());
-            } else if (backgroundType == 3){
+            } else if (backgroundType == 3 || backgroundType == 6){
                 batch.draw(woodsBackground, 0, 0, width, height);
                 
                 batch.draw(woodsBack, bgx, 0);
