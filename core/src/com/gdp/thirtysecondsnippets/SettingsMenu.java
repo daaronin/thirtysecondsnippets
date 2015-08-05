@@ -126,9 +126,9 @@ public class SettingsMenu implements Screen{
         table.add(guideelabel).padBottom(20).padTop(20).right();//label
         table.add(guidecheck).center().width(Value.percentWidth(1f)).height(Value.percentHeight(1f)).padLeft(20).padTop(15).padBottom(20);
         table.row();
-        table.add(themeselect).padTop(40).padBottom(20).center().colspan(2).width(Value.percentWidth(.8f)).height(Value.percentHeight(.4f));//label
+        //table.add(themeselect).padTop(40).padBottom(20).center().colspan(2).width(Value.percentWidth(.8f)).height(Value.percentHeight(.4f));//label
         table.row();
-        table.add(back).height(Value.percentHeight(.30f)).width(Value.percentHeight(.30f)).left().padLeft(Value.percentHeight(.20f)).padBottom(Value.percentHeight(.20f));
+        table.add(back).height(Value.percentHeight(.4f)).width(Value.percentHeight(.4f)).left().bottom().padLeft(Value.percentHeight(.20f)).padTop(Value.percentHeight(.40f)).padBottom(Value.percentHeight(.20f));
         
         table.setBackground(skin.getDrawable("bg_blur"));
         table.setFillParent(true);

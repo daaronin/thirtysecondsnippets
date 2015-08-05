@@ -108,14 +108,14 @@ public class DifficultyMenu implements Screen{
         
         table.add(title).top().center().width(Value.percentWidth(.9f)).height(Value.percentHeight(.45f)).padTop(10).colspan(3);
         table.row();
-        table.add(leisurely).height(80).width(340).expandY().colspan(3);
+        table.add(leisurely).height(Value.percentHeight(.35f)).width(Value.percentWidth(.45f)).padTop(10).expandY().colspan(3);
         table.row();
-        table.add(brisk).height(80).width(340).expandY().colspan(3);
+        table.add(brisk).height(Value.percentHeight(.35f)).width(Value.percentWidth(.45f)).padTop(10).expandY().colspan(3);
         table.row();
-        table.add(breakneck).height(80).width(340).expandY().colspan(3);
+        table.add(breakneck).height(Value.percentHeight(.35f)).width(Value.percentWidth(.45f)).padTop(10).expandY().colspan(3);
         table.row();
         
-        table.add(back).height(Value.percentHeight(.30f)).width(Value.percentHeight(.30f)).left().padLeft(Value.percentWidth(.5f)).padBottom(Value.percentHeight(.3f));
+        table.add(back).height(Value.percentHeight(.40f)).width(Value.percentHeight(.40f)).left().padLeft(Value.percentWidth(.2f)).padBottom(Value.percentHeight(.2f));
         
         table.setBackground(skin.getDrawable("bg_blur"));
         table.setFillParent(true);

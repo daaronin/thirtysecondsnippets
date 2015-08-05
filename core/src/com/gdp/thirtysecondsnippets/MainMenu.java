@@ -11,6 +11,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -21,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Json;
 import java.util.ArrayList;
 
@@ -57,9 +60,25 @@ public class MainMenu implements Screen{
         
         ImageButton title = new ImageButton(skin.getDrawable("title"));
         TextButton play = new TextButton("Play", skin.get("blue", TextButtonStyle.class));
-        TextButton setting = new TextButton("*", skin.get("setting", TextButtonStyle.class));
+        //TextButton setting = new TextButton("*", skin.get("setting", TextButtonStyle.class));
         TextButton about = new TextButton("?", skin.get("about", TextButtonStyle.class));
         TextButton stats = new TextButton("%", skin.get("back", TextButtonStyle.class));
+        
+        ImageButton.ImageButtonStyle patchstyle = new ImageButton.ImageButtonStyle();
+        patchstyle.up = new SpriteDrawable(new Sprite( new Texture("patchlog.png")));
+        patchstyle.down = new SpriteDrawable(new Sprite( new Texture("patchlogpressed.png")));
+        ImageButton patch = new ImageButton(patchstyle);
+        
+        ImageButton.ImageButtonStyle achievementstyle = new ImageButton.ImageButtonStyle();
+        achievementstyle.up = new SpriteDrawable(new Sprite( new Texture("achievements.png")));
+        achievementstyle.down = new SpriteDrawable(new Sprite( new Texture("achievementspressed.png")));
+        ImageButton achievement = new ImageButton(achievementstyle);
+        
+        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+        style.up = skin.getDrawable("sq_green_up");
+        style.down = skin.getDrawable("sq_green_down");
+        style.imageUp = new SpriteDrawable(new Sprite(new Texture("settingsicon.png")));
+        ImageButton setting = new ImageButton(style);
         
         play.addListener(new ChangeListener(){
                 @Override
@@ -95,19 +114,47 @@ public class MainMenu implements Screen{
                 }
             });
         
+        patch.addListener(new ChangeListener(){
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    Gdx.net.openURI("http://www.30secondsnippets.com/");
+                }
+            });
+        
+        achievement.addListener(new ChangeListener(){
+                @Override
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    ThemeMenu menu = new ThemeMenu(tss);
+                    tss.setScreen(menu);
+                }
+            });
+        
+        patch.setX(stage.getWidth()- stage.getHeight()/4 - 20);
+        patch.setY(stage.getHeight()-stage.getHeight()/4 - 20);
+        patch.setHeight(stage.getHeight()/4);
+        patch.setWidth(stage.getHeight()/4);
+        patch.right();
+        
+        achievement.setX(20);
+        achievement.setY(stage.getHeight()- stage.getHeight()/4 - 20);
+        achievement.setHeight(stage.getHeight()/4);
+        achievement.setWidth(stage.getHeight()/4);
+        
         table.add(title).top().center().width(Value.percentWidth(.9f)).height(Value.percentHeight(.45f)).padTop(20).colspan(3);
         table.row();
-        table.add(play).height(100).width(340).expandY().colspan(3);
+        table.add(play).height(Value.percentHeight(.5f)).width(Value.percentWidth(.5f)).expandY().colspan(3);
         table.row();
-        table.add(setting).height(Value.percentHeight(.28f)).width(Value.percentHeight(.28f)).bottom().left().padBottom(Value.percentHeight(.2f)).padLeft(Value.percentWidth(.2f));
-        table.add(stats).height(Value.percentHeight(.35f)).width(Value.percentHeight(.35f)).bottom().center().padBottom(Value.percentHeight(.2f));
-        table.add(about).height(Value.percentHeight(.28f)).width(Value.percentHeight(.28f)).bottom().right().padBottom(Value.percentHeight(.2f)).padRight(Value.percentWidth(.2f));
+        table.add(setting).height(Value.percentHeight(.3f)).width(Value.percentHeight(.3f)).bottom().center().padBottom(Value.percentHeight(.12f)).colspan(3);
+        //table.add(stats).height(Value.percentHeight(.3f)).width(Value.percentHeight(.3f)).bottom().center().padBottom(Value.percentHeight(.2f));
+        //table.add(about).height(Value.percentHeight(.3f)).width(Value.percentHeight(.3f)).bottom().right().padBottom(Value.percentHeight(.2f)).padRight(Value.percentWidth(.2f));
         
         table.setBackground(skin.getDrawable("bg_blur"));
         table.setFillParent(true);
         //table.debug();
         
         stage.addActor(table);
+        stage.addActor(patch);
+        stage.addActor(achievement);
         
         Gdx.input.setInputProcessor(stage);
    }

@@ -1737,6 +1737,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         batch.begin();
         if(drawSprite){
             if (backgroundType == 1){
+                batch.draw(background, bgx + 144*17, 0);
+                batch.draw(background, bgx + 144*16, 0);
                 batch.draw(background, bgx + 144*15, 0);
                 batch.draw(background, bgx + 144*14, 0);
                 batch.draw(background, bgx + 144*13, 0);
@@ -1755,6 +1757,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 batch.draw(background, bgx, 0);
                 batch.draw(background, bgx - 144, 0);
 
+                batch.draw(background, bgx + 144*17, background.getHeight());
+                batch.draw(background, bgx + 144*16, background.getHeight());
                 batch.draw(background, bgx + 144*15, background.getHeight());
                 batch.draw(background, bgx + 144*14, background.getHeight());
                 batch.draw(background, bgx + 144*13, background.getHeight());
@@ -1779,6 +1783,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 batch.draw(colorBackground, bgcolorx - 2016, 0);
                 batch.draw(colorBackground, bgcolorx - 2016, colorBackground.getHeight());
 
+                batch.draw(threadedBackground, bgx + 144*17, 0);
+                batch.draw(threadedBackground, bgx + 144*16, 0);
                 batch.draw(threadedBackground, bgx + 144*15, 0);
                 batch.draw(threadedBackground, bgx + 144*14, 0);
                 batch.draw(threadedBackground, bgx + 144*13, 0);
@@ -1797,6 +1803,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 batch.draw(threadedBackground, bgx, 0);
                 batch.draw(threadedBackground, bgx - 144, 0);
 
+                batch.draw(threadedBackground, bgx + 144*17, threadedBackground.getHeight());
+                batch.draw(threadedBackground, bgx + 144*16, threadedBackground.getHeight());
                 batch.draw(threadedBackground, bgx + 144*15, threadedBackground.getHeight());
                 batch.draw(threadedBackground, bgx + 144*14, threadedBackground.getHeight());
                 batch.draw(threadedBackground, bgx + 144*13, threadedBackground.getHeight());

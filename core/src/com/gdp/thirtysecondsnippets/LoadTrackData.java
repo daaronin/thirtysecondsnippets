@@ -277,90 +277,98 @@ public class LoadTrackData  implements Screen{
                       PIXELS_TO_METERS, 0);
         
         
-         batch.begin();
+        batch.begin();
+        batch.draw(background, bgx + 144*17, 0);
+        batch.draw(background, bgx + 144*16, 0);
         batch.draw(background, bgx + 144*15, 0);
-            batch.draw(background, bgx + 144*14, 0);
-            batch.draw(background, bgx + 144*13, 0);
-            batch.draw(background, bgx + 144*12, 0);
-            batch.draw(background, bgx + 144*11, 0);
-            batch.draw(background, bgx + 144*10, 0);
-            batch.draw(background, bgx + 144*9, 0);
-            batch.draw(background, bgx + 144*8, 0);
-            batch.draw(background, bgx + 144*7, 0);
-            batch.draw(background, bgx + 144*6, 0);
-            batch.draw(background, bgx + 144*5, 0);            
-            batch.draw(background, bgx + 144*4, 0);
-            batch.draw(background, bgx + 144*3, 0);
-            batch.draw(background, bgx + 144*2, 0);
-            batch.draw(background, bgx + 144, 0);
-            batch.draw(background, bgx, 0);
-            batch.draw(background, bgx - 144, 0);
-            
-            batch.draw(background, bgx + 144*15, background.getHeight());
-            batch.draw(background, bgx + 144*14, background.getHeight());
-            batch.draw(background, bgx + 144*13, background.getHeight());
-            batch.draw(background, bgx + 144*12, background.getHeight());
-            batch.draw(background, bgx + 144*11, background.getHeight());
-            batch.draw(background, bgx + 144*10, background.getHeight());
-            batch.draw(background, bgx + 144*9, background.getHeight());
-            batch.draw(background, bgx + 144*8, background.getHeight());
-            batch.draw(background, bgx + 144*7, background.getHeight());
-            batch.draw(background, bgx + 144*6, background.getHeight());
-            batch.draw(background, bgx + 144*5, background.getHeight());            
-            batch.draw(background, bgx + 144*4, background.getHeight());
-            batch.draw(background, bgx + 144*3, background.getHeight());
-            batch.draw(background, bgx + 144*2, background.getHeight());
-            batch.draw(background, bgx + 144, background.getHeight());
-            batch.draw(background, bgx, background.getHeight());
-            batch.draw(background, bgx - 144, background.getHeight());
-            
-            batch.draw(colorBackground, bgcolorx, 0);
-            batch.draw(colorBackground, bgcolorx, colorBackground.getHeight());
-            
-            batch.draw(colorBackground, bgcolorx - 2016, 0);
-            batch.draw(colorBackground, bgcolorx - 2016, colorBackground.getHeight());
-            
-            batch.draw(threadedBackground, bgx + 144*15, 0);
-            batch.draw(threadedBackground, bgx + 144*14, 0);
-            batch.draw(threadedBackground, bgx + 144*13, 0);
-            batch.draw(threadedBackground, bgx + 144*12, 0);
-            batch.draw(threadedBackground, bgx + 144*11, 0);
-            batch.draw(threadedBackground, bgx + 144*10, 0);
-            batch.draw(threadedBackground, bgx + 144*9, 0);
-            batch.draw(threadedBackground, bgx + 144*8, 0);
-            batch.draw(threadedBackground, bgx + 144*7, 0);
-            batch.draw(threadedBackground, bgx + 144*6, 0);
-            batch.draw(threadedBackground, bgx + 144*5, 0);            
-            batch.draw(threadedBackground, bgx + 144*4, 0);
-            batch.draw(threadedBackground, bgx + 144*3, 0);
-            batch.draw(threadedBackground, bgx + 144*2, 0);
-            batch.draw(threadedBackground, bgx + 144, 0);
-            batch.draw(threadedBackground, bgx, 0);
-            batch.draw(threadedBackground, bgx - 144, 0);
-            
-            batch.draw(threadedBackground, bgx + 144*15, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*14, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*13, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*12, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*11, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*10, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*9, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*8, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*7, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*6, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*5, threadedBackground.getHeight());            
-            batch.draw(threadedBackground, bgx + 144*4, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*3, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144*2, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx + 144, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx, threadedBackground.getHeight());
-            batch.draw(threadedBackground, bgx - 144, threadedBackground.getHeight());
-        
-            batch.draw(shadowBackground, bgcolorx, 0);
-            batch.draw(shadowBackground, bgcolorx - 2016, 0);
-            
-            batch.draw(shadowBackground, bgcolorx, shadowBackground.getHeight());
-            batch.draw(shadowBackground, bgcolorx - 2016, shadowBackground.getHeight());
+        batch.draw(background, bgx + 144*14, 0);
+        batch.draw(background, bgx + 144*13, 0);
+        batch.draw(background, bgx + 144*12, 0);
+        batch.draw(background, bgx + 144*11, 0);
+        batch.draw(background, bgx + 144*10, 0);
+        batch.draw(background, bgx + 144*9, 0);
+        batch.draw(background, bgx + 144*8, 0);
+        batch.draw(background, bgx + 144*7, 0);
+        batch.draw(background, bgx + 144*6, 0);
+        batch.draw(background, bgx + 144*5, 0);            
+        batch.draw(background, bgx + 144*4, 0);
+        batch.draw(background, bgx + 144*3, 0);
+        batch.draw(background, bgx + 144*2, 0);
+        batch.draw(background, bgx + 144, 0);
+        batch.draw(background, bgx, 0);
+        batch.draw(background, bgx - 144, 0);
+
+        batch.draw(background, bgx + 144*17, background.getHeight());
+        batch.draw(background, bgx + 144*16, background.getHeight());
+        batch.draw(background, bgx + 144*15, background.getHeight());
+        batch.draw(background, bgx + 144*14, background.getHeight());
+        batch.draw(background, bgx + 144*13, background.getHeight());
+        batch.draw(background, bgx + 144*12, background.getHeight());
+        batch.draw(background, bgx + 144*11, background.getHeight());
+        batch.draw(background, bgx + 144*10, background.getHeight());
+        batch.draw(background, bgx + 144*9, background.getHeight());
+        batch.draw(background, bgx + 144*8, background.getHeight());
+        batch.draw(background, bgx + 144*7, background.getHeight());
+        batch.draw(background, bgx + 144*6, background.getHeight());
+        batch.draw(background, bgx + 144*5, background.getHeight());            
+        batch.draw(background, bgx + 144*4, background.getHeight());
+        batch.draw(background, bgx + 144*3, background.getHeight());
+        batch.draw(background, bgx + 144*2, background.getHeight());
+        batch.draw(background, bgx + 144, background.getHeight());
+        batch.draw(background, bgx, background.getHeight());
+        batch.draw(background, bgx - 144, background.getHeight());
+
+        batch.draw(colorBackground, bgcolorx, 0);
+        batch.draw(colorBackground, bgcolorx, colorBackground.getHeight());
+
+        batch.draw(colorBackground, bgcolorx - 2016, 0);
+        batch.draw(colorBackground, bgcolorx - 2016, colorBackground.getHeight());
+
+        batch.draw(threadedBackground, bgx + 144*17, 0);
+        batch.draw(threadedBackground, bgx + 144*16, 0);
+        batch.draw(threadedBackground, bgx + 144*15, 0);
+        batch.draw(threadedBackground, bgx + 144*14, 0);
+        batch.draw(threadedBackground, bgx + 144*13, 0);
+        batch.draw(threadedBackground, bgx + 144*12, 0);
+        batch.draw(threadedBackground, bgx + 144*11, 0);
+        batch.draw(threadedBackground, bgx + 144*10, 0);
+        batch.draw(threadedBackground, bgx + 144*9, 0);
+        batch.draw(threadedBackground, bgx + 144*8, 0);
+        batch.draw(threadedBackground, bgx + 144*7, 0);
+        batch.draw(threadedBackground, bgx + 144*6, 0);
+        batch.draw(threadedBackground, bgx + 144*5, 0);            
+        batch.draw(threadedBackground, bgx + 144*4, 0);
+        batch.draw(threadedBackground, bgx + 144*3, 0);
+        batch.draw(threadedBackground, bgx + 144*2, 0);
+        batch.draw(threadedBackground, bgx + 144, 0);
+        batch.draw(threadedBackground, bgx, 0);
+        batch.draw(threadedBackground, bgx - 144, 0);
+
+        batch.draw(threadedBackground, bgx + 144*17, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144*16, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144*15, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144*14, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144*13, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144*12, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144*11, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144*10, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144*9, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144*8, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144*7, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144*6, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144*5, threadedBackground.getHeight());            
+        batch.draw(threadedBackground, bgx + 144*4, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144*3, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144*2, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx + 144, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx, threadedBackground.getHeight());
+        batch.draw(threadedBackground, bgx - 144, threadedBackground.getHeight());
+
+        batch.draw(shadowBackground, bgcolorx, 0);
+        batch.draw(shadowBackground, bgcolorx - 2016, 0);
+
+        batch.draw(shadowBackground, bgcolorx, shadowBackground.getHeight());
+        batch.draw(shadowBackground, bgcolorx - 2016, shadowBackground.getHeight());
 
         batch.draw(cat_sprite, cat_sprite.getX(), cat_sprite.getY(),cat_sprite.getOriginX(),
                    cat_sprite.getOriginY(), cat_sprite.getWidth(),cat_sprite.getHeight(),

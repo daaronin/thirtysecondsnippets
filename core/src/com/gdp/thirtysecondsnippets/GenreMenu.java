@@ -133,7 +133,7 @@ public class GenreMenu implements Screen{
         ScrollPane pane = new ScrollPane(table);
         table_root.add(pane).expand();
         table_root.row();
-        table_root.add(back).height(Value.percentHeight(.30f)).width(Value.percentHeight(.30f)).left().padLeft(Value.percentWidth(.5f)).padBottom(Value.percentHeight(.3f));
+        table_root.add(back).height(Value.percentHeight(.40f)).width(Value.percentHeight(.40f)).left().padLeft(Value.percentWidth(.2f)).padBottom(Value.percentHeight(.2f));
        
         stage.addActor(table_root);
         
