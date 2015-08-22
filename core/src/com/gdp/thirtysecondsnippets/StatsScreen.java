@@ -115,7 +115,7 @@ public class StatsScreen implements Screen{
         table.add(thread_rate_val).padLeft(35).left();
         table.row();
         
-        table.add(back).height(Value.percentHeight(.40f)).width(Value.percentHeight(.40f)).padTop(20).left();
+        table.add(back).height(Value.percentHeight(.40f)).width(Value.percentHeight(.40f)).padTop(20).left().colspan(3);
         
         table.setBackground(skin.getDrawable("bg_blur"));
         table.setFillParent(true);
