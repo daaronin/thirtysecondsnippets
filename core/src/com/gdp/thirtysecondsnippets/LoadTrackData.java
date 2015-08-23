@@ -22,16 +22,13 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -46,7 +43,7 @@ public class LoadTrackData  implements Screen{
     private final Game tss;
     private int genreId;
     private Table table = new Table();
-    private Stage stage = new Stage();
+    private Stage stage = new Stage(new StretchViewport(TSS.WIDTH, TSS.HEIGHT));
     
     int difficulty = 0;
     
@@ -436,7 +433,7 @@ public class LoadTrackData  implements Screen{
 
     @Override
     public void resize(int width, int height) {
-        
+        stage.getViewport().update(width, height, true);
     }
 
     @Override

@@ -1,14 +1,9 @@
 package com.gdp.thirtysecondsnippets;
 
 import analysis.SnippetAnalysis;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -19,31 +14,19 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Filter;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.Joint;
-import com.badlogic.gdx.physics.box2d.JointEdge;
-import com.badlogic.gdx.physics.box2d.Manifold;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RopeJoint;
 import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 import com.badlogic.gdx.utils.TimeUtils;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -51,8 +34,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
 public class ThirtySecondSnippets implements InputProcessor, Screen {
 
@@ -154,6 +135,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     Box2DDebugRenderer debugRenderer;
     OrthographicCamera camera;
+    private Viewport viewport;
     Matrix4 debugMatrix;
     
     Vector2 mouseLoc;
@@ -302,9 +284,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
     @Override
     public void resize(int width, int height) {
-        camera.viewportWidth = width;
-        camera.viewportHeight = height;
-        camera.position.set(width/2f, height/2f, 0);
+        viewport.update(width, height);
     }
 
     @Override
@@ -1080,8 +1060,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     public void show() {
         //Gets track from Spotify
         //gets height and width
-        width = Gdx.graphics.getWidth();
-        height = Gdx.graphics.getHeight();
+        width = 1280;
+        height = 720;
         //System.out.println("Width: " + width + ", Height: " + height);
         
         camera = new OrthographicCamera(width,height);
@@ -1089,7 +1069,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         //camera.viewportWidth = width/PIXELS_TO_METERS;
         //camera.viewportHeight = height/PIXELS_TO_METERS;
         camera.position.set(width/2f, height/2f, 0);
-       
+        viewport = new StretchViewport(width, height, camera);
+
         if (backgroundType == 1){
         bgx = 144;
         bgcolorx = 2016;

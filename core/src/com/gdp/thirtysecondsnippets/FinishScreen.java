@@ -12,12 +12,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Value;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 /**
  *
@@ -26,7 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 public class FinishScreen implements Screen{
     
     Game tss;
-    private Stage stage = new Stage();
+    private Stage stage = new Stage(new StretchViewport(TSS.WIDTH, TSS.HEIGHT));
     private Table table = new Table();
     
     TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons.pack"));
@@ -119,7 +116,7 @@ public class FinishScreen implements Screen{
 
     @Override
     public void resize(int width, int height) {
-        
+        stage.getViewport().update(width, height, true);
     }
 
     @Override

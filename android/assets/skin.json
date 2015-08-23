@@ -1,6 +1,6 @@
 {
     "com.badlogic.gdx.graphics.g2d.BitmapFont": {
-        "font": { "file": "fonts/font.fnt" },
+        "font": { "file": "fonts/font.fnt" }
     },
     "com.badlogic.gdx.graphics.Color": {
         "green": { "a": 1, "b": 0, "g": 1, "r": 0 },
@@ -9,18 +9,20 @@
         "black": { "a": 1, "b": 0, "g": 0, "r": 0 }
     },  
     "com.badlogic.gdx.graphics.g2d.BitmapFont": {
-        "ast": { "file": "fonts/ast.fnt" },
+        "ast": { "file": "fonts/ast.fnt" }
     },
     "com.badlogic.gdx.graphics.g2d.BitmapFont": {
-        "about": { "file": "fonts/about.fnt" },
+        "about": { "file": "fonts/about.fnt" }
     },
     "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": { 
         "green": { "up": "greenup" , "down": "greendown", "font": font, "pressedOffsetY": -4 },
         "blue": { "up": "blueup" , "down": "bluedown", "font": font, "pressedOffsetY": -4 },
-        "orange": { "up": "orangeup" , "down": "orangedown", "font": font, "pressedOffsetY": -4 }
-        "setting": { "up": "sq_blue_up" , "down": "sq_blue_down", "font": ast, "pressedOffsetY": -26, "unpressedOffsetY": -23, "unpressedOffsetX": 4, "pressedOffsetX": 4}
-        "about": { "up": "sq_green_up" , "down": "sq_green_down", "font": about, "pressedOffsetY": -1, "unpressedOffsetY": 2}
-        "back": { "up": "sq_green_up" , "down": "sq_green_down", "font": font, "pressedOffsetY": 2, "unpressedOffsetY": 5}
+        "orange": { "up": "orangeup" , "down": "orangedown", "font": font, "pressedOffsetY": -4 },
+        "setting": { "up": "sq_blue_up" , "down": "sq_blue_down", "font": ast, "pressedOffsetY": -26, "unpressedOffsetY": -23, "unpressedOffsetX": 4, "pressedOffsetX": 4},
+        "about": { "up": "sq_green_up" , "down": "sq_green_down", "font": about, "pressedOffsetY": -1, "unpressedOffsetY": 2},
+        "back": { "up": "sq_green_up" , "down": "sq_green_down", "font": font, "pressedOffsetY": 2, "unpressedOffsetY": 5},
+        "patch": { "up": "patchlog" , "down": "patchlogpressed", "font": font, "pressedOffsetY": 2, "unpressedOffsetY": 5}
+        "achievement": { "up": "achievements" , "down": "achievementspressed", "font": font, "pressedOffsetY": 2, "unpressedOffsetY": 5}
     },
     "com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle":{
         "slider" : { "background": "slider" , "knob": "knob"}
