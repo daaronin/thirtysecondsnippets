@@ -25,6 +25,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+
 import java.util.ArrayList;
 
 /**
@@ -34,7 +36,7 @@ import java.util.ArrayList;
 public class MainMenu implements Screen{
     
     private Game tss;
-    private Stage stage = new Stage();
+    private Stage stage = new Stage(new StretchViewport(TSS.WIDTH, TSS.HEIGHT));
     private Table table = new Table();
     
     TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons.pack"));
@@ -121,36 +123,27 @@ public class MainMenu implements Screen{
                 }
             });
         
-        achievement.addListener(new ChangeListener(){
-                @Override
-                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                    ThemeMenu menu = new ThemeMenu(tss);
-                    tss.setScreen(menu);
-                }
-            });
-        
-        patch.setX(stage.getWidth()- stage.getHeight()/4 - 20);
-        patch.setY(stage.getHeight()-stage.getHeight()/4 - 20);
-        patch.setHeight(stage.getHeight()/4);
-        patch.setWidth(stage.getHeight()/4);
-        patch.right();
-        
-        achievement.setX(20);
-        achievement.setY(stage.getHeight()- stage.getHeight()/4 - 20);
-        achievement.setHeight(stage.getHeight()/4);
-        achievement.setWidth(stage.getHeight()/4);
-        
-        table.add(title).top().center().width(Value.percentWidth(.9f)).height(Value.percentHeight(.45f)).padTop(20).colspan(3);
+        achievement.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                ThemeMenu menu = new ThemeMenu(tss);
+                tss.setScreen(menu);
+            }
+        });
+
+        table.add(achievement).top().left().width(Value.percentWidth(.18f, table)).height(Value.percentHeight(.27f, table)).padTop(20);
+        table.add(title).top().center().width(Value.percentWidth(.5f, table)).height(Value.percentHeight(.35f, table)).padTop(20);
+        table.add(patch).top().right().width(Value.percentWidth(.18f, table)).height(Value.percentHeight(.27f, table)).padTop(20);
         table.row();
-        table.add(play).height(Value.percentHeight(.5f)).width(Value.percentWidth(.5f)).expandY().colspan(3);
+        table.add(play).height(Value.percentHeight(.2f, table)).width(Value.percentWidth(.5f, table)).expandY().colspan(3);
         table.row();
-        table.add(setting).height(Value.percentHeight(.3f)).width(Value.percentHeight(.3f)).bottom().center().padBottom(Value.percentHeight(.12f)).colspan(3);
+        table.add(setting).height(Value.percentHeight(.2f, table)).width(Value.percentHeight(.06f, table)).bottom().center().padBottom(Value.percentHeight(.12f, table)).colspan(3);
         //table.add(stats).height(Value.percentHeight(.3f)).width(Value.percentHeight(.3f)).bottom().center().padBottom(Value.percentHeight(.2f));
         //table.add(about).height(Value.percentHeight(.3f)).width(Value.percentHeight(.3f)).bottom().right().padBottom(Value.percentHeight(.2f)).padRight(Value.percentWidth(.2f));
         
         table.setBackground(skin.getDrawable("bg_blur"));
         table.setFillParent(true);
-        //table.debug();
+        table.debug();
         
         stage.addActor(table);
         stage.addActor(patch);
