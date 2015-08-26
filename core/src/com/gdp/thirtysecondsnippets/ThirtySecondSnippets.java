@@ -56,7 +56,6 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     int runtimeCounter = 0;
     int backgroundType = 2;
     
-    
     float width, height;
     int screen_top_height = 5;
     float bgx, bgcolorx, bgcloudx;
@@ -1474,24 +1473,23 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 //queueToRemove.add(new Point(i,2));
             }
         }
-        
-        for (int i = 0; i < threadSprites.size(); i++){
-            if (i == 0){
-                threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth()/2 ,
-                    (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) - threadSprites.get(i).getHeight()/2);
+        for (int i = 0; i < threadSprites.size(); i++) {
+            if (i == 0) {
+                threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth() / 2,
+                        (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) - threadSprites.get(i).getHeight() / 2);
             } else {
                 float diff = threadSprites.get(i).getY() - threadSprites.get(i - 1).getY();
-                if (diff > 10  || diff < -10){
-                threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth()/2 ,
-                    (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) + diff - threadSprites.get(i).getHeight()/2);
+                if (diff > 10 || diff < -10) {
+                    threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth() / 2,
+                            (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) + diff - threadSprites.get(i).getHeight() / 2);
                 }
-                threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth()/2 ,
-                    (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) - threadSprites.get(i).getHeight()/2);
+                threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth() / 2,
+                        (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) - threadSprites.get(i).getHeight() / 2);
             }
-            threadSprites.get(i).setRotation((float)Math.toDegrees(threadBodies.get(i).getAngle()));
-            
-            if (threadSprites.get(i).getX() <= -25 || threadBodies.get(i).getPosition().x <= -25){
-                queueToRemove.add(new Vector2(i,1));
+            threadSprites.get(i).setRotation((float) Math.toDegrees(threadBodies.get(i).getAngle()));
+
+            if (threadSprites.get(i).getX() <= -25 || threadBodies.get(i).getPosition().x <= -25) {
+                queueToRemove.add(new Vector2(i, 1));
             }
         }
         

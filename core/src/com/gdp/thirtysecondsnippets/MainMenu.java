@@ -120,9 +120,9 @@ public class MainMenu implements Screen{
             }
         });
 
-        table.add(achievement).top().left().width(Value.percentWidth(.18f, table)).height(Value.percentHeight(.27f, table)).padTop(20);
+        table.add(achievement).top().left().width(Value.percentWidth(.18f, table)).height(Value.percentWidth(.18f, table)).padTop(20);
         table.add(title).top().center().width(Value.percentWidth(.5f, table)).height(Value.percentHeight(.35f, table)).padTop(20);
-        table.add(patch).top().right().width(Value.percentWidth(.18f, table)).height(Value.percentHeight(.27f, table)).padTop(20);
+        table.add(patch).top().right().width(Value.percentWidth(.18f, table)).height(Value.percentWidth(.18f, table)).padTop(20);
         table.row();
         table.add(play).height(Value.percentHeight(.15f, table)).width(Value.percentWidth(.375f, table)).expandY().colspan(3);
         table.row();
@@ -132,7 +132,7 @@ public class MainMenu implements Screen{
         
         table.setBackground(skin.getDrawable("bg_blur"));
         table.setFillParent(true);
-        table.debug();
+        //table.debug();
         
         stage.addActor(table);
         
