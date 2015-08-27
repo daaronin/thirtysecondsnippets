@@ -1,14 +1,9 @@
 package com.gdp.thirtysecondsnippets;
 
 import analysis.SnippetAnalysis;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -19,31 +14,19 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Filter;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.Joint;
-import com.badlogic.gdx.physics.box2d.JointEdge;
-import com.badlogic.gdx.physics.box2d.Manifold;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RopeJoint;
 import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 import com.badlogic.gdx.utils.TimeUtils;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -51,8 +34,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
 public class ThirtySecondSnippets implements InputProcessor, Screen {
 
@@ -74,7 +55,6 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     int runtimeCounter = 0;
     int backgroundType = 2;
-    
     
     float width, height;
     int screen_top_height = 5;
@@ -154,6 +134,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     
     Box2DDebugRenderer debugRenderer;
     OrthographicCamera camera;
+    private Viewport viewport;
     Matrix4 debugMatrix;
     
     Vector2 mouseLoc;
@@ -302,9 +283,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
     @Override
     public void resize(int width, int height) {
-        camera.viewportWidth = width;
-        camera.viewportHeight = height;
-        camera.position.set(width/2f, height/2f, 0);
+        viewport.update(width, height);
     }
 
     @Override
@@ -395,12 +374,12 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             posX = screenX - player_sprite.getWidth();
             posY = Gdx.graphics.getHeight() - screenY - player_sprite.getHeight() / 2;
 
-            if (posY > (body.getPosition().y* PIXELS_TO_METERS)){
+            if (posY > (body.getPosition().y)){
                 body.applyForceToCenter(new Vector2(0f,2f), true);                
             } else {
                 body.applyForceToCenter(new Vector2(0f,-2f), true);
             }
-            body.setTransform(body.getPosition().x, posY/PIXELS_TO_METERS, 0);
+            body.setTransform(body.getPosition().x, posY/PIXELS_TO_METERS/1.15f, 0);
         }
         return true;
     }
@@ -492,8 +471,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             BodyDef particleDef = new BodyDef();
             particleDef.type = BodyType.DynamicBody;
             
-            particleDef.position.set(particle.getX()/PIXELS_TO_METERS + particle.getWidth()/2 / 
-                             PIXELS_TO_METERS, 
+            particleDef.position.set(particle.getX()/PIXELS_TO_METERS + particle.getWidth()/2 /
+                             PIXELS_TO_METERS,
                 particle.getY()/PIXELS_TO_METERS + particle.getHeight()/2 / PIXELS_TO_METERS);
         
             /*------------------------------------------------------  */
@@ -588,10 +567,10 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         needle_bodyDef.type = BodyDef.BodyType.KinematicBody;
 
         if ("down".equals(orientation)){
-            needle_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS, 
+            needle_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS,
                 (needle_sprite.getY() + needle_sprite.getHeight() - 80) / PIXELS_TO_METERS);
         } else if ("up".equals(orientation)){
-            needle_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS, 
+            needle_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS,
                 (needle_sprite.getY() + 80) / PIXELS_TO_METERS);
         } else {
             
@@ -600,7 +579,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         Body needle_body = world.createBody(needle_bodyDef);
         PolygonShape needle_shape = new PolygonShape();
 
-        needle_shape.setAsBox(needle_sprite.getWidth()/2 / PIXELS_TO_METERS,  
+        needle_shape.setAsBox(needle_sprite.getWidth()/2 / PIXELS_TO_METERS,
                 needle_sprite.getHeight() / 64 / PIXELS_TO_METERS);
         
         FixtureDef needle_fixtureDef = new FixtureDef();
@@ -625,10 +604,10 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
         
         if ("down".equals(orientation)){
-            needle_hole_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS, 
+            needle_hole_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS,
                 (needle_sprite.getY() + needle_sprite.getHeight()-50) / PIXELS_TO_METERS);
         } else if ("up".equals(orientation)){
-            needle_hole_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS, 
+            needle_hole_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS,
                 (needle_sprite.getY() + 50) / PIXELS_TO_METERS);
         } else {
             
@@ -637,7 +616,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         Body needle_hole_body = world.createBody(needle_hole_bodyDef);
         PolygonShape needle_hole_shape = new PolygonShape();
 
-        needle_hole_shape.setAsBox(needle_sprite.getWidth()/2 / PIXELS_TO_METERS,  
+        needle_hole_shape.setAsBox(needle_sprite.getWidth()/2 / PIXELS_TO_METERS,
                 needle_sprite.getHeight() / 16 / PIXELS_TO_METERS);
         
         FixtureDef needle_hole_fixtureDef = new FixtureDef();
@@ -661,10 +640,10 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         needle_top_bodyDef.type = BodyDef.BodyType.KinematicBody;
 
         if ("down".equals(orientation)){
-            needle_top_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS, 
+            needle_top_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS,
                 (needle_sprite.getY() + needle_sprite.getHeight() - 20) / PIXELS_TO_METERS);
         } else if ("up".equals(orientation)){
-            needle_top_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS, 
+            needle_top_bodyDef.position.set((needle_sprite.getX() + needle_sprite.getWidth()/2) / PIXELS_TO_METERS,
                 (needle_sprite.getY() + 20) / PIXELS_TO_METERS);
         } else {
             
@@ -673,7 +652,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         Body needle_top_body = world.createBody(needle_top_bodyDef);
         PolygonShape needle_top_shape = new PolygonShape();
 
-        needle_top_shape.setAsBox(needle_sprite.getWidth()/2 / PIXELS_TO_METERS,  
+        needle_top_shape.setAsBox(needle_sprite.getWidth()/2 / PIXELS_TO_METERS,
                 needle_sprite.getHeight() / 64 / PIXELS_TO_METERS);
         
         FixtureDef needle_top_fixtureDef = new FixtureDef();
@@ -743,13 +722,13 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         BodyDef scissors_bodyDef = new BodyDef();
         scissors_bodyDef.type = BodyDef.BodyType.KinematicBody;
 
-        scissors_bodyDef.position.set((scissors_sprite.getX() + scissors_sprite.getWidth()/2) / PIXELS_TO_METERS, 
+        scissors_bodyDef.position.set((scissors_sprite.getX() + scissors_sprite.getWidth()/2) / PIXELS_TO_METERS,
                 (scissors_sprite.getY() + scissors_sprite.getHeight()/2) / PIXELS_TO_METERS);
 
         Body scissors_body = world.createBody(scissors_bodyDef);
         PolygonShape scissors_shape = new PolygonShape();
 
-        scissors_shape.setAsBox(scissors_sprite.getWidth()/32 / PIXELS_TO_METERS,  
+        scissors_shape.setAsBox(scissors_sprite.getWidth()/32 / PIXELS_TO_METERS,
                 scissors_sprite.getHeight() / 4 / PIXELS_TO_METERS);
         
         FixtureDef scissors_fixtureDef = new FixtureDef();
@@ -841,8 +820,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         
         for (int i = 0; i < sprites.size(); i++){
             segments.add(world.createBody(segmentDef));
-            segmentDef.position.set((sprites.get(i).getX() + sprites.get(i).getWidth()/2) / 
-                             PIXELS_TO_METERS, 
+            segmentDef.position.set((sprites.get(i).getX() + sprites.get(i).getWidth()/2) /
+                             PIXELS_TO_METERS,
                 (sprites.get(i).getY() + sprites.get(i).getHeight()/2) / PIXELS_TO_METERS);
             FixtureDef threadDef = new FixtureDef();
             threadDef.shape = shape;
@@ -1080,8 +1059,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     public void show() {
         //Gets track from Spotify
         //gets height and width
-        width = Gdx.graphics.getWidth();
-        height = Gdx.graphics.getHeight();
+        width = 1280;
+        height = 720;
         //System.out.println("Width: " + width + ", Height: " + height);
         
         camera = new OrthographicCamera(width,height);
@@ -1089,7 +1068,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         //camera.viewportWidth = width/PIXELS_TO_METERS;
         //camera.viewportHeight = height/PIXELS_TO_METERS;
         camera.position.set(width/2f, height/2f, 0);
-       
+        viewport = new StretchViewport(width, height, camera);
+
         if (backgroundType == 1){
         bgx = 144;
         bgcolorx = 2016;
@@ -1307,8 +1287,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.KinematicBody;
 
-        bodyDef.position.set((player_sprite.getX() + player_sprite.getWidth()/2) / 
-                             PIXELS_TO_METERS, 
+        bodyDef.position.set((player_sprite.getX() + player_sprite.getWidth()/2) /
+                             PIXELS_TO_METERS,
                 (player_sprite.getY() + player_sprite.getHeight()/2) / PIXELS_TO_METERS);
 
         body = world.createBody(bodyDef);
@@ -1472,19 +1452,19 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             body.setLinearVelocity(0f, 0f);
         }
         
-        player_sprite.setPosition((body.getPosition().x * PIXELS_TO_METERS) - player_sprite.getWidth()/2, 
+        player_sprite.setPosition((body.getPosition().x * PIXELS_TO_METERS) - player_sprite.getWidth()/2,
                 (body.getPosition().y * PIXELS_TO_METERS) -player_sprite.getHeight()/2);
         
         player_sprite.setRotation((float)Math.toDegrees(body.getAngle()));
         for (int i = 0; i < scissorSprites.size(); i++){
-            scissorSprites.get(i).setPosition((scissorBodies.get(i).getPosition().x * PIXELS_TO_METERS) - scissorSprites.get(i).getWidth()/2 , 
+            scissorSprites.get(i).setPosition((scissorBodies.get(i).getPosition().x * PIXELS_TO_METERS) - scissorSprites.get(i).getWidth()/2 ,
                 (scissorSprites.get(i).getY()));
         
             scissorSprites.get(i).setRotation((float)Math.toDegrees(scissorBodies.get(i).getAngle()));
         }
         
         for (int i = 0; i < needleSprites.size(); i++){
-            needleSprites.get(i).setPosition((needleBodies.get(i).getPosition().x * PIXELS_TO_METERS) - needleSprites.get(i).getWidth()/2 , 
+            needleSprites.get(i).setPosition((needleBodies.get(i).getPosition().x * PIXELS_TO_METERS) - needleSprites.get(i).getWidth()/2 ,
                 (needleSprites.get(i).getY()));
         
             needleSprites.get(i).setRotation((float)Math.toDegrees(needleBodies.get(i).getAngle()));
@@ -1493,29 +1473,28 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 //queueToRemove.add(new Point(i,2));
             }
         }
-        
-        for (int i = 0; i < threadSprites.size(); i++){
-            if (i == 0){
-                threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth()/2 , 
-                    (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) - threadSprites.get(i).getHeight()/2);
+        for (int i = 0; i < threadSprites.size(); i++) {
+            if (i == 0) {
+                threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth() / 2,
+                        (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) - threadSprites.get(i).getHeight() / 2);
             } else {
                 float diff = threadSprites.get(i).getY() - threadSprites.get(i - 1).getY();
-                if (diff > 10  || diff < -10){
-                threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth()/2 , 
-                    (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) + diff - threadSprites.get(i).getHeight()/2);
+                if (diff > 10 || diff < -10) {
+                    threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth() / 2,
+                            (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) + diff - threadSprites.get(i).getHeight() / 2);
                 }
-                threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth()/2 , 
-                    (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) - threadSprites.get(i).getHeight()/2);
+                threadSprites.get(i).setPosition((threadBodies.get(i).getPosition().x * PIXELS_TO_METERS) - threadSprites.get(i).getWidth() / 2,
+                        (threadBodies.get(i).getPosition().y * PIXELS_TO_METERS) - threadSprites.get(i).getHeight() / 2);
             }
-            threadSprites.get(i).setRotation((float)Math.toDegrees(threadBodies.get(i).getAngle()));
-            
-            if (threadSprites.get(i).getX() <= -25 || threadBodies.get(i).getPosition().x <= -25){
-                queueToRemove.add(new Vector2(i,1));
+            threadSprites.get(i).setRotation((float) Math.toDegrees(threadBodies.get(i).getAngle()));
+
+            if (threadSprites.get(i).getX() <= -25 || threadBodies.get(i).getPosition().x <= -25) {
+                queueToRemove.add(new Vector2(i, 1));
             }
         }
         
         for (int i = 0; i < particleSprites.size(); i++){
-            particleSprites.get(i).setPosition((particleBodies.get(i).getPosition().x * PIXELS_TO_METERS) - particleSprites.get(i).getWidth()/2 , 
+            particleSprites.get(i).setPosition((particleBodies.get(i).getPosition().x * PIXELS_TO_METERS) - particleSprites.get(i).getWidth()/2 ,
                     (particleBodies.get(i).getPosition().y * PIXELS_TO_METERS) - particleSprites.get(i).getHeight()/2);
             
             particleSprites.get(i).setRotation((float)Math.toDegrees(particleBodies.get(i).getAngle()));
@@ -1714,7 +1693,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         }
         
         batch.setProjectionMatrix(camera.combined);
-        debugMatrix = batch.getProjectionMatrix().cpy().scale(PIXELS_TO_METERS, 
+        debugMatrix = batch.getProjectionMatrix().cpy().scale(PIXELS_TO_METERS,
                       PIXELS_TO_METERS, 0);
         
         if (jointDeletionList.size() > 0){

@@ -16,15 +16,13 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+
 import java.util.ArrayList;
 
 /**
@@ -34,7 +32,7 @@ import java.util.ArrayList;
 public class MainMenu implements Screen{
     
     private Game tss;
-    private Stage stage = new Stage();
+    private Stage stage = new Stage(new StretchViewport(TSS.WIDTH, TSS.HEIGHT));
     private Table table = new Table();
     
     TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons.pack"));
@@ -64,15 +62,8 @@ public class MainMenu implements Screen{
         TextButton about = new TextButton("?", skin.get("about", TextButtonStyle.class));
         TextButton stats = new TextButton("%", skin.get("back", TextButtonStyle.class));
         
-        ImageButton.ImageButtonStyle patchstyle = new ImageButton.ImageButtonStyle();
-        patchstyle.up = new SpriteDrawable(new Sprite( new Texture("patchlog.png")));
-        patchstyle.down = new SpriteDrawable(new Sprite( new Texture("patchlogpressed.png")));
-        ImageButton patch = new ImageButton(patchstyle);
-        
-        ImageButton.ImageButtonStyle achievementstyle = new ImageButton.ImageButtonStyle();
-        achievementstyle.up = new SpriteDrawable(new Sprite( new Texture("achievements.png")));
-        achievementstyle.down = new SpriteDrawable(new Sprite( new Texture("achievementspressed.png")));
-        ImageButton achievement = new ImageButton(achievementstyle);
+        TextButton patch = new TextButton("", skin.get("patch", TextButtonStyle.class));
+        TextButton achievement = new TextButton("", skin.get("achievement", TextButtonStyle.class));
         
         ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
         style.up = skin.getDrawable("sq_green_up");
@@ -121,30 +112,21 @@ public class MainMenu implements Screen{
                 }
             });
         
-        achievement.addListener(new ChangeListener(){
-                @Override
-                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                    ThemeMenu menu = new ThemeMenu(tss);
-                    tss.setScreen(menu);
-                }
-            });
-        
-        patch.setX(stage.getWidth()- stage.getHeight()/4 - 20);
-        patch.setY(stage.getHeight()-stage.getHeight()/4 - 20);
-        patch.setHeight(stage.getHeight()/4);
-        patch.setWidth(stage.getHeight()/4);
-        patch.right();
-        
-        achievement.setX(20);
-        achievement.setY(stage.getHeight()- stage.getHeight()/4 - 20);
-        achievement.setHeight(stage.getHeight()/4);
-        achievement.setWidth(stage.getHeight()/4);
-        
-        table.add(title).top().center().width(Value.percentWidth(.9f)).height(Value.percentHeight(.45f)).padTop(20).colspan(3);
+        achievement.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                ThemeMenu menu = new ThemeMenu(tss);
+                tss.setScreen(menu);
+            }
+        });
+
+        table.add(achievement).top().left().width(Value.percentWidth(.18f, table)).height(Value.percentWidth(.18f, table)).padTop(20);
+        table.add(title).top().center().width(Value.percentWidth(.5f, table)).height(Value.percentHeight(.35f, table)).padTop(20);
+        table.add(patch).top().right().width(Value.percentWidth(.18f, table)).height(Value.percentWidth(.18f, table)).padTop(20);
         table.row();
-        table.add(play).height(Value.percentHeight(.5f)).width(Value.percentWidth(.5f)).expandY().colspan(3);
+        table.add(play).height(Value.percentHeight(.15f, table)).width(Value.percentWidth(.375f, table)).expandY().colspan(3);
         table.row();
-        table.add(setting).height(Value.percentHeight(.3f)).width(Value.percentHeight(.3f)).bottom().center().padBottom(Value.percentHeight(.12f)).colspan(3);
+        table.add(setting).height(Value.percentHeight(.11f, table)).width(Value.percentWidth(.06f, table)).bottom().center().padBottom(Value.percentHeight(.12f, table)).colspan(3);
         //table.add(stats).height(Value.percentHeight(.3f)).width(Value.percentHeight(.3f)).bottom().center().padBottom(Value.percentHeight(.2f));
         //table.add(about).height(Value.percentHeight(.3f)).width(Value.percentHeight(.3f)).bottom().right().padBottom(Value.percentHeight(.2f)).padRight(Value.percentWidth(.2f));
         
@@ -153,8 +135,6 @@ public class MainMenu implements Screen{
         //table.debug();
         
         stage.addActor(table);
-        stage.addActor(patch);
-        stage.addActor(achievement);
         
         Gdx.input.setInputProcessor(stage);
    }
@@ -169,6 +149,7 @@ public class MainMenu implements Screen{
 
     @Override
     public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
