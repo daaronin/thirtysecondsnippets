@@ -59,9 +59,11 @@ public class ThemeMenu implements Screen{
         Table table_root = new Table();
         MusicDB db = new MusicDB();
         final User user = db.getUserByID(Installation.id());
-        
-        prefs.putInteger("unlocked", user.getSong_played()/10);
-        
+
+        if (prefs.getInteger("unlocked") < 5) {
+            prefs.putInteger("unlocked", user.getSong_played() / 10);
+        }
+
         Texture clicked = new Texture("clicked.png");
         Texture hover = new Texture("hover.png");
         Texture selected = new Texture("selected.png");

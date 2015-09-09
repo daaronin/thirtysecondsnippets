@@ -8,6 +8,7 @@ package com.gdp.thirtysecondsnippets;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -22,8 +23,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  *
@@ -34,10 +37,14 @@ public class MainMenu implements Screen{
     private Game tss;
     private Stage stage = new Stage(new StretchViewport(TSS.WIDTH, TSS.HEIGHT));
     private Table table = new Table();
-    
+
+    int clicks;
+
     TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons.pack"));
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
+
+    Preferences prefs = Gdx.app.getPreferences("30SSSettings");
 
     public MainMenu(Game tss){
         this.tss = tss;
@@ -45,9 +52,11 @@ public class MainMenu implements Screen{
     
     @Override
     public void show() {
-        MusicDB db = new MusicDB();
+        final MusicDB db = new MusicDB();
         ArrayList<Genre> genres = db.getGenres();
-        
+
+        clicks = 0;
+
         Json json = new Json();
         json.addClassTag("genre", Genre.class); // This may not be needed. I don't know how json deals with String
         FileHandle handle = Gdx.files.external("genre_list");
@@ -80,6 +89,17 @@ public class MainMenu implements Screen{
                     DifficultyMenu menu = new DifficultyMenu(tss);
                     tss.setScreen(menu);
                 }
+        });
+
+        title.addListener(new ChangeListener(){
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                clicks++;
+                if (clicks >= 5){
+                    prefs.putInteger("unlocked", 10);
+                    prefs.flush();
+                }
+            }
         });
         
         setting.addListener(new ChangeListener(){

@@ -268,22 +268,50 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == Buttons.LEFT) {
             posX = screenX - player_sprite.getWidth();
-            posY = Gdx.graphics.getHeight() - screenY - player_sprite.getHeight() / 2;
+            posY = height - screenY - player_sprite.getHeight() / 2f / PIXELS_TO_METERS;
             mouseLoc = new Vector2(posX, posY);
 
-            if (posY > (body.getPosition().y* PIXELS_TO_METERS)){
+            if (posY > (body.getPosition().y)){
                 body.applyForceToCenter(new Vector2(0f,2f), true);                
             } else {
                 body.applyForceToCenter(new Vector2(0f,-2f), true);
             }
             body.setTransform(body.getPosition().x, posY/PIXELS_TO_METERS, 0);
+            System.out.println("PIX - POSY/P2M: " + posY + ", screenY: " + screenY + ", height: " + height);
+            System.out.println("METERS - POSY/P2M: " + posY/PIXELS_TO_METERS + ", screenY: " + screenY/PIXELS_TO_METERS + ", height: " + height/PIXELS_TO_METERS);
         }
         return false;
     }
 
     @Override
-    public void resize(int width, int height) {
-        viewport.update(width, height);
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        if (pointer == Buttons.LEFT) {
+            posX = screenX - player_sprite.getWidth();
+            posY = height - screenY - player_sprite.getHeight() / 2f/PIXELS_TO_METERS;
+            mouseLoc = new Vector2(posX, posY);
+
+            if (posY > (body.getPosition().y)){
+                body.applyForceToCenter(new Vector2(0f,2f), true);
+            } else {
+                body.applyForceToCenter(new Vector2(0f,-2f), true);
+            }
+            body.setTransform(body.getPosition().x, posY/PIXELS_TO_METERS, 0);
+            System.out.println("PIX - POSY/P2M: " + posY + ", screenY: " + screenY + ", height: " + height);
+            System.out.println("METERS - POSY/P2M: " + posY/PIXELS_TO_METERS + ", screenY: " + screenY/PIXELS_TO_METERS + ", height: " + height/PIXELS_TO_METERS);
+        }
+        return true;
+    }
+
+    @Override
+    public void resize(int w, int h) {
+        width = w;
+        height = h;
+
+        viewport.update((int) width, (int) height);
+        //camera.setToOrtho(false, width, height);
+        camera.update();
+        viewport.apply();
+        //System.out.println("Resize Width: " + width + ", Resize Height: " + height);
     }
 
     @Override
@@ -365,22 +393,6 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        return true;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        if (pointer == Buttons.LEFT) {
-            posX = screenX - player_sprite.getWidth();
-            posY = Gdx.graphics.getHeight() - screenY - player_sprite.getHeight() / 2;
-
-            if (posY > (body.getPosition().y)){
-                body.applyForceToCenter(new Vector2(0f,2f), true);                
-            } else {
-                body.applyForceToCenter(new Vector2(0f,-2f), true);
-            }
-            body.setTransform(body.getPosition().x, posY/PIXELS_TO_METERS/1.15f, 0);
-        }
         return true;
     }
 
@@ -1070,6 +1082,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         camera.position.set(width/2f, height/2f, 0);
         viewport = new StretchViewport(width, height, camera);
 
+        viewport.update((int)width,(int)height,true);
+        viewport.apply();
+
         if (backgroundType == 1){
         bgx = 144;
         bgcolorx = 2016;
@@ -1350,6 +1365,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 
                 if ((contact.getFixtureA().getFilterData().categoryBits == HEAD_BIT 
                         && contact.getFixtureB().getFilterData().categoryBits == NEEDLE_HOLE_BIT)){
+                    System.out.println("CONTACT HAPPENED");
                     contact.getFixtureB().getFilterData().categoryBits = NO_COLLIDE_BIT;
                     contact.getFixtureB().getFilterData().maskBits = NO_COLLIDE_BIT;
                     if (growableAllowed && needle_hit >= GROWTH_SUPRESSOR && growthTimer <= 0){
@@ -1367,6 +1383,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     }
                 } else if ((contact.getFixtureB().getFilterData().categoryBits == HEAD_BIT 
                         && contact.getFixtureA().getFilterData().categoryBits == NEEDLE_HOLE_BIT)){
+                    System.out.println("CONTACT HAPPENED");
                     contact.getFixtureA().getFilterData().categoryBits = NO_COLLIDE_BIT;
                     contact.getFixtureA().getFilterData().maskBits = NO_COLLIDE_BIT;
                     if (growableAllowed && needle_hit >= GROWTH_SUPRESSOR && growthTimer <= 0){
@@ -1397,6 +1414,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             public void preSolve(Contact contact, Manifold oldManifold) {
                 //System.out.println("Presolve: #" + counter++);
                 if (contact.getFixtureB().getFilterData().categoryBits == THREAD_BIT && contact.getFixtureA().getFilterData().categoryBits == BLADE_BIT && jointDestroyable){
+                    //System.out.println("CONTACT HAPPENED");
                     for (int i = 0; i < contact.getFixtureB().getBody().getJointList().size; i++){
                         if (!jointDeletionList.contains(contact.getFixtureB().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureB().getBody().getJointList().get(i));
@@ -1407,6 +1425,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     
                 }
                 if (contact.getFixtureA().getFilterData().categoryBits == THREAD_BIT && contact.getFixtureB().getFilterData().categoryBits == BLADE_BIT&& jointDestroyable){
+                    //System.out.println("CONTACT HAPPENED");
                     for (int i = 0; i < contact.getFixtureA().getBody().getJointList().size; i++){
                         if (!jointDeletionList.contains(contact.getFixtureA().getBody().getJointList().get(i))){
                             jointDeletionList.add(contact.getFixtureA().getBody().getJointList().get(i));
@@ -1441,7 +1460,16 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
     @Override
     public void render(float f) {
+        width = Gdx.graphics.getWidth();
+        height = Gdx.graphics.getHeight();
+        //System.out.println("Gdx Width: " + width + ", Gdx Height: " + height);
+        viewport.update((int)width,(int)height);
+        viewport.setWorldHeight(height);
+        viewport.setWorldWidth(width);
+        //camera.setToOrtho(false,width, height);
+        viewport.apply(true);
         camera.update();
+
         world.step(1f/60f, 6, 2);
         
         body.applyTorque(torque,true);
@@ -1606,7 +1634,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             for (Body needleBody : needleBodies) {
                 needleBody.setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED,0f));
                 //System.out.println("needlex = " + needleBody.getPosition().x + " and " + width/5/PIXELS_TO_METERS);
-                if (needleBody.getPosition().x <= width/2.9f/PIXELS_TO_METERS) {
+                if (needleBody.getPosition().x <= width/4f/PIXELS_TO_METERS) {
                     for (int i = 0; i < needleBody.getFixtureList().size; i++){
                         Filter filt = needleBody.getFixtureList().get(i).getFilterData();
                         filt.maskBits = NO_COLLIDE_BIT;
