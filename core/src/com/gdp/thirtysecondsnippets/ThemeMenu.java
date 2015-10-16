@@ -178,6 +178,7 @@ public class ThemeMenu implements Screen{
             case 6:
                 bubblePic.setChecked(true);
             default:
+                basicPic.setChecked(true);
                 break;
         }
                 

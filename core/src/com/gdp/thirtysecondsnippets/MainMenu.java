@@ -97,6 +97,7 @@ public class MainMenu implements Screen{
                 clicks++;
                 if (clicks >= 5){
                     prefs.putInteger("unlocked", 10);
+                    prefs.putInteger("theme", 7);
                     prefs.flush();
                 }
             }
