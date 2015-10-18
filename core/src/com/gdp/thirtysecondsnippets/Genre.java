@@ -14,6 +14,11 @@ public class Genre {
     private int id;
     private String name;
 
+    public Genre(int ID, String NAME){
+        id = ID;
+        name = NAME;
+    }
+
     public int getId() {
         return id;
     }

@@ -52,19 +52,9 @@ public class MainMenu implements Screen{
     
     @Override
     public void show() {
-        final MusicDB db = new MusicDB();
-        ArrayList<Genre> genres = db.getGenres();
 
         clicks = 0;
 
-        Json json = new Json();
-        json.addClassTag("genre", Genre.class); // This may not be needed. I don't know how json deals with String
-        FileHandle handle = Gdx.files.external("genre_list");
-        if (handle.exists()) {
-            handle.delete();
-        }
-        json.toJson(genres, handle);
-        
         ImageButton title = new ImageButton(skin.getDrawable("title"));
         TextButton play = new TextButton("Play", skin.get("blue", TextButtonStyle.class));
         //TextButton setting = new TextButton("*", skin.get("setting", TextButtonStyle.class));

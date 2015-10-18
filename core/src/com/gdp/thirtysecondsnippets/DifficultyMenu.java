@@ -32,9 +32,9 @@ public class DifficultyMenu implements Screen{
     private Stage stage = new Stage(new StretchViewport(TSS.WIDTH, TSS.HEIGHT));
     private Table table = new Table();
     
-    static final int LEISURELY_DIFFICULTY = 7;
+    static final int LEISURELY_DIFFICULTY = 3;
     static final int BRISK_DIFFICULTY = 5;
-    static final int BREAKNECK_DIFFICULTY = 3;
+    static final int BREAKNECK_DIFFICULTY = 7;
     
     TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons.pack"));
 
@@ -46,17 +46,7 @@ public class DifficultyMenu implements Screen{
     
     @Override
     public void show() {
-        MusicDB db = new MusicDB();
-        ArrayList<Genre> genres = db.getGenres();
-        
-        Json json = new Json();
-        json.addClassTag("genre", Genre.class); // This may not be needed. I don't know how json deals with String
-        FileHandle handle = Gdx.files.external("genre_list");
-        if (handle.exists()) {
-            handle.delete();
-        }
-        json.toJson(genres, handle);
-        
+
         ImageButton title = new ImageButton(skin.getDrawable("title"));
         TextButton leisurely = new TextButton("Leisurely", skin.get("blue", TextButtonStyle.class));
         TextButton brisk = new TextButton("Brisk", skin.get("green", TextButtonStyle.class));

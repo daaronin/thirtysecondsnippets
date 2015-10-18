@@ -46,11 +46,16 @@ public class GenreMenu implements Screen{
     
     @Override
     public void show() {
-        Json json = new Json();
-        json.addClassTag("genre", Genre.class);
-        
-        final ArrayList<Genre> genres = json.fromJson(ArrayList.class, Gdx.files.external("genre_list"));
-        
+
+        final ArrayList<Genre> genres = new ArrayList();
+
+        genres.add(new Genre(0, "Rock"));
+        genres.add(new Genre(1, "Pop"));
+        genres.add(new Genre(2, "Indie"));
+        genres.add(new Genre(3, "Metal"));
+        genres.add(new Genre(4, "Electronic"));
+        genres.add(new Genre(5, "8-Bit"));
+
         final String[] colors = {"green", "orange", "blue"};
         
         for(int i = 0;i < genres.size();i++){

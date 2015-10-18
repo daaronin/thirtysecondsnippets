@@ -32,6 +32,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -70,6 +71,11 @@ public class LoadTrackData  implements Screen{
     int screen_top_height = 5;
     float bgx, bgcolorx;
     long lastTimeBg;
+
+    double timer = 0;
+    double time = 3;
+
+    String flavorText;
     
     float BACKGROUND_SPEED = 28.8f;    
     
@@ -166,76 +172,8 @@ public class LoadTrackData  implements Screen{
 //        yarn_sprite_g.setPosition(width/5 + width/2 -cat_sprite.getWidth()/2+1.5f*cat_sprite.getWidth(),height/2-cat_sprite.getHeight()/2);
         
         font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/font.png"),false);
-        
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                InputStream is = null;
-                try {
-                    // do something important here, asynchronously to the rendering threa
-                    loadGenreList();
-                    MusicDB db = new MusicDB();
-                    final Track t = db.getTrackByGenreID(genreId);
-                    t.setGenreId(genreId);
-                    
-                    //Fast
-//                    t.setArtist("Miss Kittin");
-//                    t.setName("Flashforward");
-//                    t.setPreview_url("https://p.scdn.co/mp3-preview/8cef07b9eecad74b412470b1233fbd732bd0d3f7");
-//                    t.setTempo(220);
-                    
-                    //Slow       
-//                    t.setPreview_url("https://p.scdn.co/mp3-preview/fcc74d3ce6a2d4f5017a776a30dc3cb3715e85c2");
-//                    t.setArtist("Skylar Grey");
-//                    t.setName("Coming Home - Part II / Bonus Track");
-//                    t.setTempo(110);
-                    
-                    String filename = "music.mp3";
-                    is = new URL(t.getPreview_url()).openStream();
-                    
-                    BufferedInputStream stream = new BufferedInputStream(is);
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                    FileHandle handle = Gdx.files.external(filename);
-                    if (handle.exists()) {
-                        handle.delete();
-                    }
-                    int current = 0;
-                    while ((current = stream.read()) != -1) {
-                        bytes.write(current);
-                    }
-                    FileOutputStream fos = new FileOutputStream(handle.file());
-                    bytes.writeTo(fos);
 
-                    fos.flush();
-                    fos.close();
-                    
-                     final Music m = Gdx.audio.newMusic(handle);
-                    
-                    final SnippetAnalysis analysis = new SnippetAnalysis(handle, 1024);
-                    analysis.doAnalysis();
-                    
-                    // post a Runnable to the rendering thread that processes the result
-                    Gdx.app.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            ThirtySecondSnippets game = new ThirtySecondSnippets(tss, t, analysis, m, difficulty);
-                            tss.setScreen(game);
-                        }
-                    });
-                } catch (MalformedURLException ex) {
-                    Logger.getLogger(LoadTrackData.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(LoadTrackData.class.getName()).log(Level.SEVERE, null, ex);
-                } finally {
-                    try {
-                        is.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(LoadTrackData.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-             }
-      }).start();
-        
+
 //        Label musicvol = new Label("Loading... ", skin.get("labelb", Label.LabelStyle.class));
 //        table.add(musicvol).center().expand();
 //        
@@ -246,6 +184,45 @@ public class LoadTrackData  implements Screen{
 //        stage.addActor(table);
 //        
 //        Gdx.input.setInputProcessor(stage);
+
+        Random rand = new Random();
+        int numerator = rand.nextInt(5);
+        switch (numerator){
+            case 0:
+                flavorText = "Collecting the yarn...";
+                break;
+            case 1:
+                flavorText = "Weaving a tangled skein...";
+                break;
+            case 2:
+                flavorText = "Developing sewing machine learning...";
+                break;
+            case 3:
+                flavorText = "Collecting the yarn...";
+                break;
+            case 4:
+                flavorText = "Collecting the yarn...";
+                break;
+            case 5:
+                flavorText = "Collecting the yarn...";
+                break;
+            case 6:
+                flavorText = "Collecting the yarn...";
+                break;
+            case 7:
+                flavorText = "Collecting the yarn...";
+                break;
+            case 8:
+                flavorText = "Collecting the yarn...";
+                break;
+            case 9:
+                flavorText = "Collecting the yarn...";
+                break;
+            default:
+                flavorText = "Collecting the yarn...";
+                break;
+        }
+
     }
 
     @Override
@@ -272,7 +249,13 @@ public class LoadTrackData  implements Screen{
         batch.setProjectionMatrix(camera.combined);
         debugMatrix = batch.getProjectionMatrix().cpy().scale(PIXELS_TO_METERS, 
                       PIXELS_TO_METERS, 0);
-        
+
+        timer+= delta;
+        if (timer > time){
+            ThirtySecondSnippets game = new ThirtySecondSnippets(tss, genreId, difficulty);
+            tss.setScreen(game);
+        }
+
         
         batch.begin();
         batch.draw(background, bgx + 144*17, 0);
@@ -424,7 +407,7 @@ public class LoadTrackData  implements Screen{
 //                   yarn_sprite_p.getOriginY(), yarn_sprite_p.getWidth(),yarn_sprite_p.getHeight(),
 //                   yarn_sprite_p.getScaleX(),yarn_sprite_p.getScaleY(),yarn_sprite_p.getRotation());
         
-        font.draw(batch, "Collecting the yarn...", 10,75);
+        font.draw(batch, flavorText, 10,75);
         
         batch.end();
         
