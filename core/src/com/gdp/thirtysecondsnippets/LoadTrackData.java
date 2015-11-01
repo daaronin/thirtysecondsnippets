@@ -47,8 +47,8 @@ public class LoadTrackData  implements Screen{
     private Stage stage = new Stage(new StretchViewport(TSS.WIDTH, TSS.HEIGHT));
     
     int difficulty = 0;
-    
-    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons.pack"));
+
+    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
     
@@ -59,11 +59,9 @@ public class LoadTrackData  implements Screen{
     final float PIXELS_TO_METERS = 100f;
     
     SpriteBatch batch;
-    Texture yarn_p, yarn_y, yarn_g, yarn_o, cat, background, threadedBackground, 
-            colorBackground, shadowBackground;
-    
-    Sprite cat_sprite;
-    Sprite yarn_sprite_o, yarn_sprite_p, yarn_sprite_g, yarn_sprite_y;
+    Sprite background, threadedBackground, colorBackground, shadowBackground,
+            cat_sprite, yarn_sprite_o, yarn_sprite_p, yarn_sprite_g, yarn_sprite_y;
+
     ArrayList<Sprite> sprites;
     World world;
     
@@ -118,40 +116,35 @@ public class LoadTrackData  implements Screen{
         
         batch = new SpriteBatch();
         
-        background = new Texture("tallback.png");
-        threadedBackground = new Texture("threadstall.png");
-        colorBackground = new Texture("rainbow.png");
-        shadowBackground = new Texture("shadowmap3.png");
+        background = skin.getSprite("tallback");
+        threadedBackground = skin.getSprite("threadstall");
+        colorBackground = skin.getSprite("rainbow");
+        shadowBackground = skin.getSprite("shadowmap3");
         
-        cat = new Texture("super_cat.png");
-        cat_sprite = new Sprite(cat);
+        cat_sprite = skin.getSprite("super_cat");
         
-        yarn_p = new Texture("yarn_purple.png");
-        yarn_sprite_p = new Sprite(yarn_p);
+        yarn_sprite_p = skin.getSprite("yarn_purple");
         sprites.add(yarn_sprite_p);
         
-        yarn_o = new Texture("yarn_orange.png");
-        yarn_sprite_o = new Sprite(yarn_o);
+        yarn_sprite_o = skin.getSprite("yarn_orange");
         sprites.add(yarn_sprite_o);
         
-        yarn_y = new Texture("yarn_yellow.png");
-        yarn_sprite_y = new Sprite(yarn_y);
+        yarn_sprite_y = skin.getSprite("yarn_yellow");
         sprites.add(yarn_sprite_y);
         
-        yarn_g = new Texture("yarn_green.png");
-        yarn_sprite_g = new Sprite(yarn_g);
+        yarn_sprite_g = skin.getSprite("yarn_green");
         sprites.add(yarn_sprite_g);
         
-        Sprite yarn_sprite_3 = new Sprite(yarn_g);
+        Sprite yarn_sprite_3 = skin.getSprite("yarn_green");
         sprites.add(yarn_sprite_3);
         
-        Sprite yarn_sprite_2 = new Sprite(yarn_y);
+        Sprite yarn_sprite_2 = skin.getSprite("yarn_yellow");
         sprites.add(yarn_sprite_2);
         
-        Sprite yarn_sprite_1 = new Sprite(yarn_p);
+        Sprite yarn_sprite_1 = skin.getSprite("yarn_purple");
         sprites.add(yarn_sprite_1);
         
-        Sprite yarn_sprite_0 = new Sprite(yarn_o);
+        Sprite yarn_sprite_0 = skin.getSprite("yarn_orange");
         sprites.add(yarn_sprite_0);
         
         

@@ -40,7 +40,7 @@ public class MainMenu implements Screen{
 
     int clicks;
 
-    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons.pack"));
+    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
 
@@ -67,7 +67,7 @@ public class MainMenu implements Screen{
         ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
         style.up = skin.getDrawable("sq_green_up");
         style.down = skin.getDrawable("sq_green_down");
-        style.imageUp = new SpriteDrawable(new Sprite(new Texture("settingsicon.png")));
+        style.imageUp = skin.getDrawable("settingsicon");
         ImageButton setting = new ImageButton(style);
         
         play.addListener(new ChangeListener(){

@@ -43,8 +43,8 @@ public class ThemeMenu implements Screen{
 
     private Stage stage = new Stage(new StretchViewport(TSS.WIDTH, TSS.HEIGHT));
     private Table table = new Table();
-    
-    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons.pack"));
+
+    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
     
@@ -64,9 +64,9 @@ public class ThemeMenu implements Screen{
             prefs.putInteger("unlocked", user.getSong_played() / 10);
         }
 
-        Texture clicked = new Texture("clicked.png");
-        Texture hover = new Texture("hover.png");
-        Texture selected = new Texture("selected.png");
+        Drawable clicked = skin.getDrawable("clicked");
+        Drawable hover = skin.getDrawable("hover");
+        Drawable selected = skin.getDrawable("selected");
         
         Label basiclbl = new Label("Standard", skin.get("labelb", Label.LabelStyle.class));
         Label folklbl = new Label("Folked Up", skin.get("labelb", Label.LabelStyle.class));
@@ -74,91 +74,91 @@ public class ThemeMenu implements Screen{
         Label jazzlbl = new Label("Jazztastic", skin.get("labelb", Label.LabelStyle.class));
         Label bubblelbl = new Label("Pop Art", skin.get("labelb", Label.LabelStyle.class));
         
-        Texture basic;
+        Drawable basic;
         
-        basic = new Texture("levelbasic.png");
+        basic = skin.getDrawable("levelbasic");
         
         ImageButtonStyle style = new ImageButtonStyle();
-        style.up = new SpriteDrawable(new Sprite(basic));
-        style.down = new SpriteDrawable(new Sprite(basic));
-        style.imageUp = new SpriteDrawable(new Sprite(basic));
-        style.imageOver = new SpriteDrawable(new Sprite(hover));
-        style.imageChecked = new SpriteDrawable(new Sprite(selected));
-        style.imageDown = new SpriteDrawable(new Sprite(clicked));
+        style.up = basic;
+        style.down = basic;
+        style.imageUp = basic;
+        style.imageOver = hover;
+        style.imageChecked = selected;
+        style.imageDown = clicked;
         basicPic = new ImageButton(style);
-        
-        Texture folk;
+
+        Drawable folk;
         if (prefs.getInteger("unlocked", 1) > 1){
-            folk = new Texture("levelfolk.png");
+            folk = skin.getDrawable("levelfolk");
         } else {
-            folk = new Texture("levelfolklocked.jpg");
+            folk = skin.getDrawable("levelfolklocked");
             folklbl.setText("*Play 20 Songs*");
         }
         
         ImageButtonStyle style2 = new ImageButtonStyle();
-        style2.up = new SpriteDrawable(new Sprite(folk));
-        style2.down = new SpriteDrawable(new Sprite(folk));
-        style2.imageUp = new SpriteDrawable(new Sprite(folk));
-        style2.imageOver = new SpriteDrawable(new Sprite(hover));
-        style2.imageChecked = new SpriteDrawable(new Sprite(selected));
-        style2.imageDown = new SpriteDrawable(new Sprite(clicked));
+        style2.up = folk;
+        style2.down = folk;
+        style2.imageUp = folk;
+        style2.imageOver = hover;
+        style2.imageChecked = selected;
+        style2.imageDown = clicked;
         folkPic = new ImageButton(style2);
         folkPic.setDisabled(true);
-        
-        Texture metal;
-        
+
+        Drawable metal;
+
         if (prefs.getInteger("unlocked", 1)  > 2){
-            metal = new Texture("levelmetal.png");
+            metal = skin.getDrawable("levelmetal");
         } else {
-            metal = new Texture("levelmetallocked.jpg");
+            metal = skin.getDrawable("levelmetallocked");
             metallbl.setText("*Play 30 Songs*");
         }
         
         ImageButtonStyle style3 = new ImageButtonStyle();
-        style3.up = new SpriteDrawable(new Sprite(metal));
-        style3.down = new SpriteDrawable(new Sprite(metal));
-        style3.imageUp = new SpriteDrawable(new Sprite(metal));
-        style3.imageOver = new SpriteDrawable(new Sprite(hover));
-        style3.imageChecked = new SpriteDrawable(new Sprite(selected));
-        style3.imageDown = new SpriteDrawable(new Sprite(clicked));
+        style3.up = metal;
+        style3.down = metal;
+        style3.imageUp = metal;
+        style3.imageOver = hover;
+        style3.imageChecked = selected;
+        style3.imageDown = clicked;
         metalPic = new ImageButton(style3);
         metalPic.setDisabled(true);
         
-        Texture jazz;
+        Drawable jazz;
         
         if (prefs.getInteger("unlocked", 1) > 3){
-            jazz = new Texture("leveljazz2.png");
+            jazz = skin.getDrawable("leveljazz2");
         } else {
-            jazz = new Texture("leveljazz2locked.jpg");
+            jazz = skin.getDrawable("leveljazz2locked");
             jazzlbl.setText("*Play 40 Songs*");
         }
         
         ImageButtonStyle style4 = new ImageButtonStyle();
-        style4.up = new SpriteDrawable(new Sprite(jazz));
-        style4.down = new SpriteDrawable(new Sprite(jazz));
-        style4.imageUp = new SpriteDrawable(new Sprite(jazz));
-        style4.imageOver = new SpriteDrawable(new Sprite(hover));
-        style4.imageChecked = new SpriteDrawable(new Sprite(selected));
-        style4.imageDown = new SpriteDrawable(new Sprite(clicked));
+        style4.up = jazz;
+        style4.down = jazz;
+        style4.imageUp = jazz;
+        style4.imageOver = hover;
+        style4.imageChecked = selected;
+        style4.imageDown = clicked;
         jazzPic = new ImageButton(style4);
         jazzPic.setDisabled(true);
         
-        Texture bubble;
+        Drawable bubble;
         
         if (prefs.getInteger("unlocked", 1) > 4){
-            bubble = new Texture("levelbubble.png");
+            bubble = skin.getDrawable("levelbubble");
         } else {
-            bubble = new Texture("levelbubblelocked.jpg");
+            bubble = skin.getDrawable("levelbubblelocked");
             bubblelbl.setText("*Play 50 Songs*");
         }
         
         ImageButtonStyle style5 = new ImageButtonStyle();
-        style5.up = new SpriteDrawable(new Sprite(bubble));
-        style5.down = new SpriteDrawable(new Sprite(bubble));
-        style5.imageUp = new SpriteDrawable(new Sprite(bubble));
-        style5.imageOver = new SpriteDrawable(new Sprite(hover));
-        style5.imageChecked = new SpriteDrawable(new Sprite(selected));
-        style5.imageDown = new SpriteDrawable(new Sprite(clicked));
+        style5.up = bubble;
+        style5.down = bubble;
+        style5.imageUp = bubble;
+        style5.imageOver = hover;
+        style5.imageChecked = selected;
+        style5.imageDown = clicked;
         bubblePic = new ImageButton(style5);
         bubblePic.setDisabled(true);
         

@@ -9,6 +9,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -32,11 +33,13 @@ public class SplashScreen implements Screen{
     private Stage stage = new Stage(new StretchViewport(TSS.WIDTH, TSS.HEIGHT));
     private Table table = new Table();
 
-    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons.pack"));
+    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
 
     Preferences prefs = Gdx.app.getPreferences("30SSSettings");
+
+    boolean skipping = false;
 
     public SplashScreen(Game tss){
         this.tss = tss;
@@ -45,16 +48,16 @@ public class SplashScreen implements Screen{
     @Override
     public void show() {
 
-        Texture white = new Texture("whiteblock.png");
-        Image whiteImg = new Image(white);
+        //Drawable white = skin.getDrawable("whiteblock");
+        //Image whiteImg = new Image(white);
 
-        Texture octoTex = new Texture("octopieinkhappyclear.png");
+        Drawable octoTex = skin.getDrawable("octopieinkhappyclear");
         Image octo = new Image(octoTex);
 
         table.add(octo).center().width(Value.percentHeight(.86f, table)).height(Value.percentHeight(.97f, table)).padTop(10);
         table.row();
 
-        table.setBackground(whiteImg.getDrawable());
+        //TODO fix background scaling
         table.setFillParent(true);
         //table.debug();
 
@@ -64,8 +67,13 @@ public class SplashScreen implements Screen{
                 , Actions.fadeIn(1f), Actions.delay(1f),Actions.fadeOut(.2f), Actions.delay(.1f), Actions.run(new Runnable() {
             @Override
             public void run() {
-                MainMenu menu = new MainMenu(tss);
-                tss.setScreen(menu);
+                if (skipping){
+                    ThirtySecondSnippets game = new ThirtySecondSnippets(tss, 4, 3);
+                    tss.setScreen(game);
+                } else {
+                    MainMenu menu = new MainMenu(tss);
+                    tss.setScreen(menu);
+                }
             }
         })));
 
@@ -75,7 +83,7 @@ public class SplashScreen implements Screen{
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(1, 1, 1, .5f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
         stage.draw();

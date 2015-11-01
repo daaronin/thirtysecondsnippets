@@ -35,8 +35,8 @@ public class DifficultyMenu implements Screen{
     static final int LEISURELY_DIFFICULTY = 3;
     static final int BRISK_DIFFICULTY = 5;
     static final int BREAKNECK_DIFFICULTY = 7;
-    
-    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("buttons.pack"));
+
+    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
 
@@ -58,8 +58,10 @@ public class DifficultyMenu implements Screen{
                     //Same way we moved here from the Splash Screen
                     //We set it to new Splash because we got no other screens
                     //otherwise you put the screen there where you want to go
-                    GenreMenu menu = new GenreMenu(tss, LEISURELY_DIFFICULTY);
-                    tss.setScreen(menu);
+                    //GenreMenu menu = new GenreMenu(tss, LEISURELY_DIFFICULTY);
+                    //tss.setScreen(menu);
+                    LoadTrackData load = new LoadTrackData(tss, 0, LEISURELY_DIFFICULTY);
+                    tss.setScreen(load);
                 }
         });
         brisk.addListener(new ChangeListener(){
@@ -68,8 +70,10 @@ public class DifficultyMenu implements Screen{
                     //Same way we moved here from the Splash Screen
                     //We set it to new Splash because we got no other screens
                     //otherwise you put the screen there where you want to go
-                    GenreMenu menu = new GenreMenu(tss, BRISK_DIFFICULTY);
-                    tss.setScreen(menu);
+                    //GenreMenu menu = new GenreMenu(tss, BRISK_DIFFICULTY);
+                    //tss.setScreen(menu);
+                    LoadTrackData load = new LoadTrackData(tss, 0, BRISK_DIFFICULTY);
+                    tss.setScreen(load);
                 }
         });
         breakneck.addListener(new ChangeListener(){
@@ -78,8 +82,10 @@ public class DifficultyMenu implements Screen{
                     //Same way we moved here from the Splash Screen
                     //We set it to new Splash because we got no other screens
                     //otherwise you put the screen there where you want to go
-                    GenreMenu menu = new GenreMenu(tss, BREAKNECK_DIFFICULTY);
-                    tss.setScreen(menu);
+                    //GenreMenu menu = new GenreMenu(tss, BREAKNECK_DIFFICULTY);
+                    //tss.setScreen(menu);
+                    LoadTrackData load = new LoadTrackData(tss, 0, BREAKNECK_DIFFICULTY);
+                    tss.setScreen(load);
                 }
         });
         
