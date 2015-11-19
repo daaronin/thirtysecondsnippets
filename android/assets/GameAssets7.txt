@@ -1,0 +1,11 @@
+GameAssets7.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+shadowmap3
+  rotate: false
+  xy: 2, 2
+  size: 2018, 1152
+  orig: 2018, 1152
+  offset: 0, 0
+  index: -1

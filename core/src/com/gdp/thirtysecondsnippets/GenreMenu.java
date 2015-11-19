@@ -8,6 +8,7 @@ package com.gdp.thirtysecondsnippets;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author George McDaid
+ * @author George and Dan
  */
 public class GenreMenu implements Screen{
     
@@ -36,8 +37,13 @@ public class GenreMenu implements Screen{
     private Table table = new Table();
 
     TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
+    TextureAtlas backgrounds = new TextureAtlas(Gdx.files.internal("Backgrounds.txt"));
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
+
+    Preferences prefs = Gdx.app.getPreferences("30SSSettings");
+
+    TextButton back;
 
     public GenreMenu(Game tss, int difficulty){
         this.tss = tss;
@@ -46,15 +52,15 @@ public class GenreMenu implements Screen{
     
     @Override
     public void show() {
-
+        skin.addRegions(backgrounds);
         final ArrayList<Genre> genres = new ArrayList();
 
-        genres.add(new Genre(0, "Rock"));
-        genres.add(new Genre(1, "Pop"));
-        genres.add(new Genre(2, "Indie"));
-        genres.add(new Genre(3, "Metal"));
-        genres.add(new Genre(4, "Electronic"));
-        genres.add(new Genre(5, "8-Bit"));
+        genres.add(new Genre(0, "Whispered"));
+        genres.add(new Genre(1, "Find a Way"));
+        genres.add(new Genre(2, "Lost Woods"));
+        genres.add(new Genre(3, "Handlebars"));
+        genres.add(new Genre(4, "8-bit"));
+        genres.add(new Genre(5, "Random"));
 
         final String[] colors = {"green", "orange", "blue"};
         
@@ -116,10 +122,17 @@ public class GenreMenu implements Screen{
         }
         
         Table table_root = new Table();
-        table_root.setBackground(skin.get("bg_blur", Drawable.class));
-        
-        TextButton back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
-        
+
+        String backgroundStr = prefs.getString("background", "halloween_blur");
+        table_root.setBackground(skin.get(backgroundStr, Drawable.class));
+
+        if (prefs.getString("background").equals("halloween_blur") || prefs.getString("background").equals("ocean_blur")
+                || prefs.getString("background").equals("woods_blur")){
+            back = new TextButton("<", skin.get("setting", TextButton.TextButtonStyle.class));
+        } else {
+            back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
+        }
+
         back.addListener(new ChangeListener(){
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
@@ -172,8 +185,10 @@ public class GenreMenu implements Screen{
     @Override
     public void dispose() {
         stage.dispose();
+        atlas.dispose();
+        backgrounds.dispose();
         skin.dispose();
-
+        table.clear();
     }
     
 }

@@ -2,339 +2,171 @@ Menus.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-slider
-  rotate: false
-  xy: 2, 2
-  size: 866, 21
-  orig: 866, 21
-  offset: 0, 0
-  index: -1
-slider_after
-  rotate: false
-  xy: 870, 2
-  size: 866, 21
-  orig: 866, 21
-  offset: 0, 0
-  index: -1
-yarn
-  rotate: false
-  xy: 1738, 2
-  size: 102, 52
-  orig: 102, 52
-  offset: 0, 0
-  index: 1
-yarn_green
-  rotate: false
-  xy: 1842, 2
-  size: 120, 70
-  orig: 120, 70
-  offset: 0, 0
-  index: -1
-yarn_orange
-  rotate: false
-  xy: 1964, 2
-  size: 120, 70
-  orig: 120, 70
-  offset: 0, 0
-  index: -1
-yarn_purple
-  rotate: false
-  xy: 2086, 2
-  size: 120, 70
-  orig: 120, 70
-  offset: 0, 0
-  index: -1
-yarn_yellow
-  rotate: false
-  xy: 2208, 2
-  size: 120, 70
-  orig: 120, 70
-  offset: 0, 0
-  index: -1
-checkoff
-  rotate: false
-  xy: 2330, 2
-  size: 79, 78
-  orig: 79, 78
-  offset: 0, 0
-  index: -1
-checkon
-  rotate: false
-  xy: 2411, 2
-  size: 79, 78
-  orig: 79, 78
-  offset: 0, 0
-  index: -1
 knob
   rotate: false
-  xy: 2492, 2
+  xy: 2, 2
   size: 74, 105
   orig: 74, 105
   offset: 0, 0
   index: -1
-super_cat
+checkon
   rotate: false
-  xy: 2568, 2
-  size: 100, 130
-  orig: 100, 130
+  xy: 78, 2
+  size: 79, 78
+  orig: 79, 78
+  offset: 0, 0
+  index: -1
+checkoff
+  rotate: false
+  xy: 159, 2
+  size: 79, 78
+  orig: 79, 78
   offset: 0, 0
   index: -1
 sq_green_up
   rotate: false
-  xy: 2670, 2
+  xy: 240, 2
   size: 227, 222
   orig: 227, 222
   offset: 0, 0
   index: -1
 sq_blue_down
   rotate: false
-  xy: 2899, 2
+  xy: 469, 2
   size: 227, 222
   orig: 227, 222
   offset: 0, 0
   index: -1
-orangeup
-  rotate: false
-  xy: 3128, 2
-  size: 800, 222
-  orig: 800, 222
-  offset: 0, 0
-  index: -1
 sq_blue_up
   rotate: false
-  xy: 3930, 2
+  xy: 698, 2
   size: 227, 222
   orig: 227, 222
   offset: 0, 0
   index: -1
 sq_green_down
   rotate: false
-  xy: 4159, 2
+  xy: 927, 2
   size: 227, 222
   orig: 227, 222
   offset: 0, 0
   index: -1
-orangedown
+settingsicon
   rotate: false
-  xy: 4388, 2
-  size: 800, 222
-  orig: 800, 222
+  xy: 1156, 2
+  size: 302, 302
+  orig: 302, 302
+  offset: 0, 0
+  index: -1
+achievementspressed
+  rotate: false
+  xy: 2, 306
+  size: 369, 370
+  orig: 369, 370
+  offset: 0, 0
+  index: -1
+achievements
+  rotate: false
+  xy: 373, 306
+  size: 370, 370
+  orig: 370, 370
+  offset: 0, 0
+  index: -1
+patchlog
+  rotate: false
+  xy: 745, 306
+  size: 400, 399
+  orig: 400, 399
+  offset: 0, 0
+  index: -1
+patchlogpressed
+  rotate: false
+  xy: 1147, 306
+  size: 400, 399
+  orig: 400, 399
+  offset: 0, 0
+  index: -1
+YourBasket
+  rotate: false
+  xy: 2, 707
+  size: 500, 375
+  orig: 500, 375
+  offset: 0, 0
+  index: -1
+YourBasket_down
+  rotate: false
+  xy: 504, 707
+  size: 500, 375
+  orig: 500, 375
+  offset: 0, 0
+  index: -1
+font
+  rotate: false
+  xy: 1006, 707
+  size: 512, 512
+  orig: 512, 512
   offset: 0, 0
   index: -1
 blueup
   rotate: false
-  xy: 5190, 2
-  size: 800, 222
-  orig: 800, 222
-  offset: 0, 0
-  index: -1
-greendown
-  rotate: false
-  xy: 5992, 2
+  xy: 2, 1221
   size: 800, 222
   orig: 800, 222
   offset: 0, 0
   index: -1
 bluedown
   rotate: false
-  xy: 6794, 2
+  xy: 804, 1221
+  size: 800, 222
+  orig: 800, 222
+  offset: 0, 0
+  index: -1
+orangedown
+  rotate: false
+  xy: 2, 1445
   size: 800, 222
   orig: 800, 222
   offset: 0, 0
   index: -1
 greenup
   rotate: false
-  xy: 2, 226
+  xy: 804, 1445
   size: 800, 222
   orig: 800, 222
   offset: 0, 0
   index: -1
+orangeup
+  rotate: false
+  xy: 2, 1669
+  size: 800, 222
+  orig: 800, 222
+  offset: 0, 0
+  index: -1
+greendown
+  rotate: false
+  xy: 804, 1669
+  size: 800, 222
+  orig: 800, 222
+  offset: 0, 0
+  index: -1
+slider
+  rotate: false
+  xy: 2, 1893
+  size: 866, 21
+  orig: 866, 21
+  offset: 0, 0
+  index: -1
+slider_after
+  rotate: false
+  xy: 2, 1916
+  size: 866, 21
+  orig: 866, 21
+  offset: 0, 0
+  index: -1
 settings
   rotate: false
-  xy: 804, 226
+  xy: 2, 1939
   size: 1409, 232
   orig: 1409, 232
-  offset: 0, 0
-  index: -1
-settingsicon
-  rotate: false
-  xy: 2215, 226
-  size: 302, 302
-  orig: 302, 302
-  offset: 0, 0
-  index: -1
-achievements
-  rotate: false
-  xy: 2519, 226
-  size: 370, 370
-  orig: 370, 370
-  offset: 0, 0
-  index: -1
-achievementspressed
-  rotate: false
-  xy: 2891, 226
-  size: 369, 370
-  orig: 369, 370
-  offset: 0, 0
-  index: -1
-patchlogpressed
-  rotate: false
-  xy: 3262, 226
-  size: 400, 399
-  orig: 400, 399
-  offset: 0, 0
-  index: -1
-patchlog
-  rotate: false
-  xy: 3664, 226
-  size: 400, 399
-  orig: 400, 399
-  offset: 0, 0
-  index: -1
-font
-  rotate: false
-  xy: 4066, 226
-  size: 512, 512
-  orig: 512, 512
-  offset: 0, 0
-  index: -1
-title
-  rotate: false
-  xy: 4580, 226
-  size: 1409, 654
-  orig: 1409, 654
-  offset: 0, 0
-  index: -1
-clicked
-  rotate: false
-  xy: 5991, 226
-  size: 1280, 720
-  orig: 1280, 720
-  offset: 0, 0
-  index: -1
-levelbasic
-  rotate: false
-  xy: 2, 948
-  size: 1280, 720
-  orig: 1280, 720
-  offset: 0, 0
-  index: -1
-hover
-  rotate: false
-  xy: 1284, 948
-  size: 1280, 720
-  orig: 1280, 720
-  offset: 0, 0
-  index: -1
-levelbasiclocked
-  rotate: false
-  xy: 2566, 948
-  size: 1280, 720
-  orig: 1280, 720
-  offset: 0, 0
-  index: -1
-levelbubblelocked
-  rotate: false
-  xy: 3848, 948
-  size: 1280, 720
-  orig: 1280, 720
-  offset: 0, 0
-  index: -1
-leveljazz2locked
-  rotate: false
-  xy: 5130, 948
-  size: 1280, 720
-  orig: 1280, 720
-  offset: 0, 0
-  index: -1
-levelmetal
-  rotate: false
-  xy: 6412, 948
-  size: 1280, 720
-  orig: 1280, 720
-  offset: 0, 0
-  index: -1
-leveljazz2
-  rotate: false
-  xy: 2, 1670
-  size: 1280, 720
-  orig: 1280, 720
-  offset: 0, 0
-  index: -1
-levelfolklocked
-  rotate: false
-  xy: 1284, 1670
-  size: 1280, 720
-  orig: 1280, 720
-  offset: 0, 0
-  index: -1
-levelmetallocked
-  rotate: false
-  xy: 2566, 1670
-  size: 1280, 720
-  orig: 1280, 720
-  offset: 0, 0
-  index: -1
-levelfolk
-  rotate: false
-  xy: 3848, 1670
-  size: 1280, 720
-  orig: 1280, 720
-  offset: 0, 0
-  index: -1
-selected
-  rotate: false
-  xy: 5130, 1670
-  size: 1280, 720
-  orig: 1280, 720
-  offset: 0, 0
-  index: -1
-levelbubble
-  rotate: false
-  xy: 6412, 1670
-  size: 1280, 720
-  orig: 1280, 720
-  offset: 0, 0
-  index: -1
-octopieinkhappyclear
-  rotate: false
-  xy: 2, 2392
-  size: 954, 1078
-  orig: 954, 1078
-  offset: 0, 0
-  index: -1
-threadstall
-  rotate: false
-  xy: 958, 2392
-  size: 144, 1152
-  orig: 144, 1152
-  offset: 0, 0
-  index: -1
-shadowmap3
-  rotate: false
-  xy: 1104, 2392
-  size: 2018, 1152
-  orig: 2018, 1152
-  offset: 0, 0
-  index: -1
-rainbow
-  rotate: false
-  xy: 3124, 2392
-  size: 2018, 1152
-  orig: 2018, 1152
-  offset: 0, 0
-  index: -1
-tallback
-  rotate: false
-  xy: 5144, 2392
-  size: 144, 1152
-  orig: 144, 1152
-  offset: 0, 0
-  index: -1
-bg_blur
-  rotate: false
-  xy: 5290, 2392
-  size: 2400, 1440
-  orig: 2400, 1440
   offset: 0, 0
   index: -1

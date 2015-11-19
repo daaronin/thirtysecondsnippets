@@ -1,0 +1,403 @@
+GameAssets0.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+background8bit
+  rotate: false
+  xy: 2, 2
+  size: 2, 2
+  orig: 2, 2
+  offset: 0, 0
+  index: -1
+bubblestick
+  rotate: false
+  xy: 6, 2
+  size: 108, 399
+  orig: 108, 399
+  offset: 0, 0
+  index: -1
+bubblestickpopped
+  rotate: false
+  xy: 116, 2
+  size: 108, 399
+  orig: 108, 399
+  offset: 0, 0
+  index: -1
+clubbackgroundsmall
+  rotate: false
+  xy: 226, 2
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1
+clubbackgroundsmall2
+  rotate: false
+  xy: 268, 2
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1
+desertsmallbackground
+  rotate: false
+  xy: 310, 2
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+gem1
+  rotate: false
+  xy: 322, 2
+  size: 38, 400
+  orig: 38, 400
+  offset: 0, 0
+  index: -1
+laser1
+  rotate: false
+  xy: 362, 2
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+laser2
+  rotate: false
+  xy: 738, 2
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+microphone
+  rotate: false
+  xy: 1114, 2
+  size: 38, 400
+  orig: 38, 400
+  offset: 0, 0
+  index: -1
+microphone2
+  rotate: false
+  xy: 1154, 2
+  size: 38, 400
+  orig: 38, 400
+  offset: 0, 0
+  index: -1
+needleblueoutline
+  rotate: false
+  xy: 1194, 2
+  size: 38, 400
+  orig: 38, 400
+  offset: 0, 0
+  index: -1
+needlegreenoutline
+  rotate: false
+  xy: 1234, 2
+  size: 38, 400
+  orig: 38, 400
+  offset: 0, 0
+  index: -1
+needleyellowoutline
+  rotate: false
+  xy: 1274, 2
+  size: 38, 400
+  orig: 38, 400
+  offset: 0, 0
+  index: -1
+ring1
+  rotate: false
+  xy: 1314, 2
+  size: 38, 400
+  orig: 38, 400
+  offset: 0, 0
+  index: -1
+ring1alt
+  rotate: false
+  xy: 1354, 2
+  size: 38, 400
+  orig: 38, 400
+  offset: 0, 0
+  index: -1
+ring2
+  rotate: false
+  xy: 1394, 2
+  size: 38, 400
+  orig: 38, 400
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast
+  rotate: false
+  xy: 1434, 2
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast2
+  rotate: false
+  xy: 1486, 2
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast2_alt
+  rotate: false
+  xy: 1538, 2
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast2_purp
+  rotate: false
+  xy: 1590, 2
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast2_snake
+  rotate: false
+  xy: 1642, 2
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast2_snake2
+  rotate: false
+  xy: 1694, 2
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast2_staff
+  rotate: false
+  xy: 1746, 2
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast2_staff2
+  rotate: false
+  xy: 1798, 2
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast2_wood
+  rotate: false
+  xy: 1850, 2
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast_alt
+  rotate: false
+  xy: 1902, 2
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast_fish
+  rotate: false
+  xy: 1954, 2
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast_purp
+  rotate: false
+  xy: 2, 552
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast_snake
+  rotate: false
+  xy: 54, 552
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast_snaketail
+  rotate: false
+  xy: 106, 552
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast_staff
+  rotate: false
+  xy: 158, 552
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast_staff2
+  rotate: false
+  xy: 210, 552
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+shortthreadhighcontrast_wood
+  rotate: false
+  xy: 262, 552
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+skeletonhand
+  rotate: false
+  xy: 314, 552
+  size: 38, 400
+  orig: 38, 400
+  offset: 0, 0
+  index: -1
+skeletonhand2
+  rotate: false
+  xy: 354, 552
+  size: 38, 400
+  orig: 38, 400
+  offset: 0, 0
+  index: -1
+skeletonhand3
+  rotate: false
+  xy: 394, 552
+  size: 38, 400
+  orig: 38, 400
+  offset: 0, 0
+  index: -1
+star1
+  rotate: false
+  xy: 434, 552
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+star2
+  rotate: false
+  xy: 446, 552
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+star3
+  rotate: false
+  xy: 458, 552
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+star4
+  rotate: false
+  xy: 470, 552
+  size: 9, 10
+  orig: 9, 10
+  offset: 0, 0
+  index: -1
+star5
+  rotate: false
+  xy: 481, 552
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+sword5
+  rotate: false
+  xy: 493, 552
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+sword6
+  rotate: false
+  xy: 869, 552
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+tallback
+  rotate: false
+  xy: 1245, 552
+  size: 144, 1152
+  orig: 144, 1152
+  offset: 0, 0
+  index: -1
+thread_8bit
+  rotate: false
+  xy: 1391, 552
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+thread_8bit2
+  rotate: false
+  xy: 1443, 552
+  size: 50, 20
+  orig: 50, 20
+  offset: 0, 0
+  index: -1
+threadstall
+  rotate: false
+  xy: 1495, 552
+  size: 144, 1152
+  orig: 144, 1152
+  offset: 0, 0
+  index: -1
+whiteblock
+  rotate: false
+  xy: 1641, 552
+  size: 2, 2
+  orig: 2, 2
+  offset: 0, 0
+  index: -1
+wood1
+  rotate: false
+  xy: 1645, 552
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+wood2alt
+  rotate: false
+  xy: 1657, 552
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+wood3alt
+  rotate: false
+  xy: 1669, 552
+  size: 9, 10
+  orig: 9, 10
+  offset: 0, 0
+  index: -1
+wood4
+  rotate: false
+  xy: 1680, 552
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+wood5
+  rotate: false
+  xy: 1692, 552
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+woodspinetree
+  rotate: false
+  xy: 1704, 552
+  size: 38, 400
+  orig: 38, 400
+  offset: 0, 0
+  index: -1
+woodspinetreebird
+  rotate: false
+  xy: 1744, 552
+  size: 38, 400
+  orig: 38, 400
+  offset: 0, 0
+  index: -1
+woodssmallbackground
+  rotate: false
+  xy: 1784, 552
+  size: 100, 107
+  orig: 100, 107
+  offset: 0, 0
+  index: -1

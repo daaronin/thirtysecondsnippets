@@ -1,11 +1,10 @@
 package com.gdp.thirtysecondsnippets;
 
-import analysis.SnippetAnalysis;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -16,31 +15,35 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
-import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+/**
+ *
+ * @author Dan
+ */
 public class ThirtySecondSnippets implements InputProcessor, Screen {
 
-    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("GameAssets.txt"));
+    TextureAtlas atlas0 = new TextureAtlas(Gdx.files.internal("GameAssets0.txt"));
+    TextureAtlas atlas1 = new TextureAtlas(Gdx.files.internal("GameAssets1.txt"));
+    TextureAtlas atlas2 = new TextureAtlas(Gdx.files.internal("GameAssets2.txt"));
+    TextureAtlas atlas3 = new TextureAtlas(Gdx.files.internal("GameAssets3.txt"));
+    TextureAtlas atlas4 = new TextureAtlas(Gdx.files.internal("GameAssets4.txt"));
+    TextureAtlas atlas5 = new TextureAtlas(Gdx.files.internal("GameAssets5.txt"));
+    TextureAtlas atlas6 = new TextureAtlas(Gdx.files.internal("GameAssets6.txt"));
+    TextureAtlas atlas7 = new TextureAtlas(Gdx.files.internal("GameAssets7.txt"));
 
-    private Skin skin = new Skin(Gdx.files.internal("skin2.json"), atlas);
+    private Skin skin = new Skin(Gdx.files.internal("skin2.json"), atlas0);
 
     Preferences prefs = Gdx.app.getPreferences("30SSSettings");
+
+    boolean changeMasks = false;
     
     SpriteBatch batch;
     Sprite threadlet, background, scissor1, scissor2, scissor3, scissor4,
@@ -55,15 +58,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     int timer = 0, timerpaceClosed = 20, timerpaceOpen = 4;
     float posX, posY;
 
-    //Sound backgroundMusic = Gdx.audio.newSound(Gdx.files.internal("8bitbackground.wav"));
-    Sound backgroundMusic = Gdx.audio.newSound(Gdx.files.internal("Whispered.mp3"));
-    Sound beepA = Gdx.audio.newSound(Gdx.files.internal("beepA.wav"));
-    Sound beepC = Gdx.audio.newSound(Gdx.files.internal("beepC.wav"));
-    Sound beepE = Gdx.audio.newSound(Gdx.files.internal("beepE.wav"));
-    Sound beepG = Gdx.audio.newSound(Gdx.files.internal("beepG.wav"));
-    Sound beepHiC = Gdx.audio.newSound(Gdx.files.internal("beepHiC.wav"));
-    Sound scissorSound = Gdx.audio.newSound(Gdx.files.internal("scissorSound.wav"));
-    Sound backgroundLayer = Gdx.audio.newSound(Gdx.files.internal("8bitlayer90.wav"));
+    Music backgroundMusic;
+    Sound beepA, beepC, beepE, beepG, scissorSound;
 
     int genreId = 0;
 
@@ -161,25 +157,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     boolean drawText = true;
     
     final float PIXELS_TO_METERS = 100f;
-    
+
     boolean dansTryingToGetWorkDone = true;
     private Game tss;
-
-    int beatIndex = 0;
-    
-    List<List<Float>> peaks = null;
-    
-    List<Float> spectralFluxBass = null;
-    
-    int lastDisplayed = 0;
-
-    int displayInterval = (int) (0.1 / (512.0/44100.0)); 
-    
-    private Track track;
-    
-    private SnippetAnalysis analysis;
-    
-    ArrayList<RevoluteJoint> joints = new ArrayList<RevoluteJoint>();
     
     int needles_thread = 0;
     int thread_cut = 0;
@@ -192,51 +172,17 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     ThreadPieces threads;
     Scissors scissor;
     Needle needle;
-    
-    public ThirtySecondSnippets(Game tss){
-        this.tss = tss;
-        
-        try {
-                
-                track = db.getTrackByGenre("rock");
-                System.out.println(track.getArtist() + " | " + track.getName() + " | " + track.getTempo());
-                songTitle = track.getName();
-                songArtist = track.getArtist();
-                
-                tempo = (int)track.getTempo();
-                timerpaceClosed = tempo/60 * 40; 
-                timerpaceOpen = tempo/60 * 12;
-                
-                String filename = "music.mp3";
-                InputStream is = new URL(track.getPreview_url()).openStream();
-                BufferedInputStream stream = new BufferedInputStream(is);
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                FileHandle handle = Gdx.files.external(filename);
-                if (handle.exists()) {
-                    handle.delete();
-                }
-                int current = 0;
-                while ((current = stream.read()) != -1) {
-                    bytes.write(current);
-                }
-                FileOutputStream fos = new FileOutputStream(handle.file());
-                bytes.writeTo(fos);
-
-                System.out.println(bytes.size());
-                
-                analysis = new SnippetAnalysis(handle);
-                peaks = analysis.doAnalysis();
-                spectralFluxBass = analysis.getSpectralFluxBass();
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(ThirtySecondSnippets.class.getName()).log(Level.SEVERE, null, ex);
-            } 
-    }
 
     public ThirtySecondSnippets(Game tss, int genre, int difficulty){
+        skin.addRegions(atlas1);
+        skin.addRegions(atlas2);
+        skin.addRegions(atlas3);
+        skin.addRegions(atlas4);
+        skin.addRegions(atlas5);
+        skin.addRegions(atlas6);
+        skin.addRegions(atlas7);
         this.tss = tss;
-        //genreId = genre;
+        genreId = genre;
         this.difficulty = difficulty;
         SPACER_AMOUNT = difficulty;
 
@@ -328,20 +274,39 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
         beatOffset = (endtime / ((float)tempo/2));
 
-//        if (difficulty == LEISURELY_DIFFICULTY){
-//            backgroundMusic = Gdx.audio.newSound(Gdx.files.internal("8bitbackgroundalt.wav"));
-//        } else if (difficulty == BRISK_DIFFICULTY){
-//            backgroundMusic = Gdx.audio.newSound(Gdx.files.internal("8bitbackground150.wav"));
-//        } else if (difficulty == BREAKNECK_DIFFICULTY){
-//            backgroundMusic = Gdx.audio.newSound(Gdx.files.internal("8bitbackground210.wav"));
-//        }
+        beepA = Gdx.audio.newSound(Gdx.files.internal("audio\\beepA.mp3"));
+        beepC = Gdx.audio.newSound(Gdx.files.internal("audio\\beepC.mp3"));
+        beepE = Gdx.audio.newSound(Gdx.files.internal("audio\\beepE.mp3"));
+        beepG = Gdx.audio.newSound(Gdx.files.internal("audio\\beepG.mp3"));
+        scissorSound = Gdx.audio.newSound(Gdx.files.internal("audio\\scissorSound.mp3"));
 
-        //backgroundLayer = Gdx.audio.newSound(Gdx.files.internal("8bitlayer90alt.wav"));
+        Random r = new Random();
+        int choice = r.nextInt(5);
+        if (genreId <= 4){
+            choice = genreId;
+        }
+        switch(choice){
+            case 0:
+                backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("audio\\Whispered.mp3"));
+                break;
+            case 1:
+                backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("audio\\FindaWay.mp3"));
+                break;
+            case 2:
+                backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("audio\\LostWoods2.mp3"));
+                break;
+            case 3:
+                backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("audio\\Handlebars.mp3"));
+                break;
+            case 4:
+                backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("audio\\8bit.mp3"));
+                break;
+            default:
+                break;
+        }
 
-        backgroundMusic.play(.8f,1,0);
-        //backgroundLayer.loop(.3f,.5f,0);
-
-
+        backgroundMusic.setVolume(prefs.getFloat("musicvol", 1));
+        backgroundMusic.play();
     }
     
     
@@ -384,6 +349,11 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         width = w;
         height = h;
 
+        //scissor.width = width;
+        //scissor.height = height;
+        //needle.width = width;
+        //needle.height = height;
+
         viewport.update((int) width, (int) height);
         //camera.setToOrtho(false, width, height);
         camera.update();
@@ -399,15 +369,6 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     @Override
     public void resume() {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void dispose() {
-        
-
-        world.dispose();
-
-        System.out.println("Good day kind sir.");
     }
 
     @Override
@@ -954,7 +915,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                             jointDeletionList.add(contact.getFixtureB().getBody().getJointList().get(i));
                             needle_combo = 0;
                             jointDestroyable = false;
-                            scissorSound.play(2,.5f,0);
+                            scissorSound.play(prefs.getFloat("soundsfxvol", 1),.5f,0);
                         }
                     }
                 }
@@ -965,7 +926,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                             jointDeletionList.add(contact.getFixtureA().getBody().getJointList().get(i));
                             needle_combo = 0;
                             jointDestroyable = false;
-                            scissorSound.play(2,.5f,0);
+                            scissorSound.play(prefs.getFloat("soundsfxvol", 1),.5f,0);
                         }
                     }
                 }
@@ -1034,7 +995,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                             jointDeletionList.add(contact.getFixtureB().getBody().getJointList().get(i));
                             needle_combo = 0;
                             jointDestroyable = false;
-                            scissorSound.play(2,.5f,0);
+                            scissorSound.play(prefs.getFloat("soundsfxvol", 1),.5f,0);
                         }
                     }
 
@@ -1046,7 +1007,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                             jointDeletionList.add(contact.getFixtureA().getBody().getJointList().get(i));
                             needle_combo = 0;
                             jointDestroyable = false;
-                            scissorSound.play(2,.5f,0);
+                            scissorSound.play(prefs.getFloat("soundsfxvol", 1),.5f,0);
                         }
                     }
                 }
@@ -1066,6 +1027,16 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     public void render(float f) {
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
+
+        scissor.width = width;
+        scissor.height = height;
+        scissor.world = world;
+
+        needle.width = width;
+        needle.height = height;
+        needle.world = world;
+
+
         //System.out.println("Gdx Width: " + width + ", Gdx Height: " + height);
         viewport.update((int) width, (int) height);
         viewport.setWorldHeight(height);
@@ -1091,20 +1062,11 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
         player_sprite.setRotation((float) Math.toDegrees(body.getAngle()));
 
-        for (int i = 0; i < particleSprites.size(); i++) {
-            particleSprites.get(i).setPosition((particleBodies.get(i).getPosition().x * PIXELS_TO_METERS) - particleSprites.get(i).getWidth() / 2,
-                    (particleBodies.get(i).getPosition().y * PIXELS_TO_METERS) - particleSprites.get(i).getHeight() / 2);
 
-            particleSprites.get(i).setRotation((float) Math.toDegrees(particleBodies.get(i).getAngle()));
-
-            if (particleSprites.get(i).getX() <= -50) {
-                queueToRemove.add(new Vector2(i, 3));
-            }
-        }
-
+        Gdx.gl.glUseProgram(0);
 
         Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         if (TimeUtils.nanoTime() - lastTimeBg > 50000000) {
 
@@ -1112,34 +1074,27 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
 
         //TODO Fix this shite
-        //System.out.println("Endtimer: " + endtimer);
-        //System.out.println("CurrentBeat: " + currentBeat);
         if(endtimer > 27){
 
         } else if (endtimer > currentBeat) {
             Random r = new Random();
             int rando = r.nextInt(4);
-            System.out.println("BEAT: " + rando);
             if (rando == 0) {
-                //System.out.println(peaks.get(0).get(i));
                 Random rand = new Random();
                 int randNum = rand.nextInt(3) + 2;
                 spawn(randNum);
             }
             if (rando == 1) {
-                //System.out.println(peaks.get(0).get(i));
                 Random rand = new Random();
                 int randNum = rand.nextInt(3) + 2;
                 spawn(randNum);
             }
             if (rando == 2) {
-                //System.out.println(peaks.get(0).get(i));
                 Random rand = new Random();
                 int randNum = rand.nextInt(2);
                 spawn(randNum);
             }
             if (rando == 3) {
-                //System.out.println(peaks.get(0).get(i));
                 Random rand = new Random();
                 int randNum = rand.nextInt(2);
                 spawn(randNum);
@@ -1155,8 +1110,6 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
             
         if (TimeUtils.nanoTime() - lastTimeTempo > (100000000 * 60)/tempo) {
-            //System.out.println("Spawn");
-            //spawn();
             lastTimeTempo = TimeUtils.nanoTime();
             ArrayList<Integer> nums = scissor.animateScissor(iterator, timer, timerpaceOpen, timerpaceClosed, lastiterator, scissorBodies);
             iterator = nums.get(0);
@@ -1165,9 +1118,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             timerpaceClosed = nums.get(3);
             lastiterator = nums.get(4);
 
-            for (Body scissorBod : scissorBodies){
-                scissor.changeMaskBits(scissorBod,iterator);
-            }
+            changeMasks = true;
         }
         
         if (TimeUtils.nanoTime() - lastTimeBg > 100000000) {
@@ -1193,58 +1144,49 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             } else if (backgroundType == 6 || backgroundType == 7){
                 if (HYPERTHREADING_MODE){
                     bgcolorx -= BACKGROUND_SPEED*2f;
-                    //bgcloudx -= BACKGROUND_SPEED*2f;
                     bgx -= BACKGROUND_SPEED;
                 } else {
                     bgcolorx -= BACKGROUND_SPEED;
-                    //bgcloudx -= BACKGROUND_SPEED;
                     bgx -= BACKGROUND_SPEED * .5f;
                 }
             }
-            for (int i = 0; i < scissorBodies.size(); i++){
-                scissorBodies.get(i).setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED,0f));
 
-                if (scissorBodies.get(i).getPosition().x <= -5) {
-                   queueToRemove.add(new Vector2(i,0));
-                }
-            }
-            
             if (particlesAllowed){
                 createParticles(15,body.getPosition().x*PIXELS_TO_METERS,body.getPosition().y*PIXELS_TO_METERS);
                 particlesAllowed = false;
             }
             
             if (growThread){
-                //System.out.println("Trying to grow Thread");
                 if (threadBodies.size() < MAX_THREAD_LENGTH){
-                    //System.out.println("Body Size before: " + threadBodies.size());
-                    //System.out.println("Sprite Size before: " + threadSprites.size());
                     threadBodies.addAll(threads.createRope(1, threadBodies.size(), body, threadBodies));
-                    //System.out.println("Body Size after: " + threadBodies.size());
-                    //System.out.println("Sprite Size after: " + threadSprites.size());
                 }
                 needles_thread++;
                 growThread = false;
                 growableAllowed = true;
             }
             if (queueToRemove.size() > 0){
-                //System.out.println("Queue Size: " + queueToRemove.size());
+                System.out.println("Queue Size: " + queueToRemove.size());
                 for (int i = queueToRemove.size()-1; i >= 0; i--){
-                    //System.out.println("Item in Queue: " + queueToRemove.get(i).x + "," + queueToRemove.get(i).y);
                     int ref = (int) queueToRemove.get(i).x;
                     if (queueToRemove.get(i).y == 0){
-                        scissorBodies.remove(scissorBodies.get(ref));
+                        if (ref < scissorBodies.size()) {
+                            System.out.println("Scissors: " + ref);
+                            scissorBodies.remove(scissorBodies.get(ref));
+                        }
                     } else if (queueToRemove.get(i).y == 1){
                         if (ref < threadBodies.size()){
+                            System.out.println("Thread: " + ref);
                             threadBodies.get(ref).getJointList().clear();
                             threadBodies.remove(threadBodies.get(ref));
                             this.thread_cut++;
                         }
                     } else if (queueToRemove.get(i).y == 2){
                         if (ref < needleBodies.size()){
-                            //needleBodies.remove(needleBodies.get(ref));
+                            System.out.println("Needle: " + ref);
+                            needleBodies.remove(needleBodies.get(ref));
                         }
                     } else if (queueToRemove.get(i).y == 3){
+                        System.out.println("Particle: " + ref);
                         if (ref < particleSprites.size()){
                             particleSprites.remove(particleSprites.get(ref));
                         }
@@ -1296,10 +1238,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             world.destroyJoint(body.getJointList().peek().joint);
         }
         
-        //System.out.println(threadBodies.size() + " + " + MAX_THREAD_LENGTH);
-        if ((int)threadBodies.size() == MAX_THREAD_LENGTH){
+        if (threadBodies.size() == MAX_THREAD_LENGTH){
             HYPERTHREADING_MODE = true;
-            //BACKGROUND_SPEED = tempo/60f*3f * 2f;
             BACKGROUND_SPEED = 28.8f;
             SCROLLING_FOREGROUND_SPEED = tempo/60f*-2f * 2f;
             if (needle_combo < 5){
@@ -1307,7 +1247,6 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             }
         } else {
             HYPERTHREADING_MODE = false;
-            //BACKGROUND_SPEED = tempo/60f*3f;
             BACKGROUND_SPEED = 14.4f;
             SCROLLING_FOREGROUND_SPEED = tempo/60f*-2f;
         }
@@ -1326,17 +1265,14 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 score_amount = lbl_score.toString() + score;
                 multiplier = "";
                 bonus = "BONUS: x" + needle_combo;
-                //hyperthreading = "HYPERTHREADING MODE";
             } else {
                 score += SCORE_CONSTANT * threadBodies.size();
                 score_amount = lbl_score.toString() + score;
                 multiplier = "x" + threadBodies.size();
                 bonus = "";
-                //hyperthreading = "";
             }
         }
-        //score_amount = lbl_score.toString() + score + "    x" + threadBodies.size();
-        
+
         batch.begin();
         if(drawSprite){
             if (backgroundType == 1){
@@ -1453,54 +1389,50 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 batch.draw(woodsFront, bgcolorx, 0);
                 batch.draw(woodsFront, bgcolorx - 1035, 0);
                 batch.draw(woodsFront, bgcolorx + 1035, 0);
-                
-                //batch.draw(woodsClouds, bgcloudx - 1400 , height - woodsClouds.getHeight());
             } else if (backgroundType == 4 || backgroundType == 5){
                 batch.draw(woodsBackground, -width, -height, width*2, height*2);
                 
                 batch.draw(woodsBack, bgx, 0);
                 batch.draw(woodsBack, bgx - 1035, 0);
                 batch.draw(woodsBack, bgx + 1035, 0);
-                
-//                batch.draw(woodsFront, bgcolorx, 0);
-//                batch.draw(woodsFront, bgcolorx - 1035, 0);
-//                batch.draw(woodsFront, bgcolorx + 1035, 0);
-                
-                //batch.draw(woodsClouds, bgcloudx - 1400 , height - woodsClouds.getHeight());
             }
             
             
             batch.draw(player_sprite, player_sprite.getX(), player_sprite.getY(),player_sprite.getOriginX(),
                        player_sprite.getOriginY(), player_sprite.getWidth(),player_sprite.getHeight(),
-                       player_sprite.getScaleX(),player_sprite.getScaleY(),player_sprite.getRotation());
-            
+                    player_sprite.getScaleX(), player_sprite.getScaleY(), player_sprite.getRotation());
+
             for (Body scissors_body : scissorBodies){
+                if (changeMasks) {
+                    scissor.changeMaskBits(scissors_body, iterator);
+                }
                 if (scissors_body.getUserData() instanceof Sprite) {
-
                     Sprite sprite = (Sprite) scissors_body.getUserData();
-
-                    sprite.setPosition(scissors_body.getPosition().x * PIXELS_TO_METERS - sprite.getWidth() / 2, scissors_body.getPosition().y * PIXELS_TO_METERS - sprite.getHeight() / 2);
-
-                    System.out.println("Scissor Position: " + scissors_body.getPosition().x + ", " + scissors_body.getPosition().y);
-
+                    sprite.setPosition(scissors_body.getPosition().x * PIXELS_TO_METERS - sprite.getWidth() / 2,
+                            scissors_body.getPosition().y * PIXELS_TO_METERS - sprite.getHeight() / 2);
                     sprite.setRotation((float) Math.toDegrees(scissors_body.getAngle()));
                     sprite.draw(batch);
+
+                    scissors_body.setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED, 0f));
+                }
+                if (scissors_body.getPosition().x <= -1 && !queueToRemove.contains(new Vector2(scissorBodies.indexOf(scissors_body),0))) {
+                    //System.out.println("SCISSOR ADDED TO REMOVE: " + scissorBodies.indexOf(scissors_body));
+                    queueToRemove.add(new Vector2(scissorBodies.indexOf(scissors_body), 0));
                 }
             }
+            changeMasks = false;
             
             for (Body needle_body : needleBodies){
                 needle_body.setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED,0f));
                 if (needle_body.getUserData() instanceof Sprite) {
-
                     Sprite sprite = (Sprite) needle_body.getUserData();
-
-                    sprite.setPosition(needle_body.getPosition().x * PIXELS_TO_METERS - sprite.getWidth() / 2, needle_body.getPosition().y * PIXELS_TO_METERS - sprite.getHeight() / 2);
+                    sprite.setPosition(needle_body.getPosition().x * PIXELS_TO_METERS - sprite.getWidth() / 2,
+                            needle_body.getPosition().y * PIXELS_TO_METERS - sprite.getHeight() / 2);
                     sprite.setRotation((float) Math.toDegrees(needle_body.getAngle()));
                     sprite.draw(batch);
-
-                    if (needle_body.getPosition().x <= -1) {
-                        queueToRemove.add(new Vector2(needleBodies.indexOf(needle_body), 2));
-                    }
+                }
+                if (needle_body.getPosition().x <= -1 && !queueToRemove.contains(new Vector2(needleBodies.indexOf(needle_body), 2))) {
+                    queueToRemove.add(new Vector2(needleBodies.indexOf(needle_body), 2));
                 }
             }
 
@@ -1512,10 +1444,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     sprite.setPosition(thread.getPosition().x * PIXELS_TO_METERS - sprite.getWidth() / 2, thread.getPosition().y * PIXELS_TO_METERS - sprite.getHeight() / 2);
                     sprite.setRotation((float) Math.toDegrees(thread.getAngle()));
                     sprite.draw(batch);
-
-                    if (thread.getPosition().x <= -1) {
-                        queueToRemove.add(new Vector2(threadBodies.indexOf(thread), 1));
-                    }
+                }
+                if (thread.getPosition().x <= -1 && !queueToRemove.contains(new Vector2(threadBodies.indexOf(thread), 1))) {
+                    queueToRemove.add(new Vector2(threadBodies.indexOf(thread), 1));
                 }
             }
             
@@ -1523,6 +1454,16 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 batch.draw(particleSprite, particleSprite.getX(), particleSprite.getY(), particleSprite.getOriginX(), 
                         particleSprite.getOriginY(), particleSprite.getWidth(), particleSprite.getHeight(), 
                         particleSprite.getScaleX(), particleSprite.getScaleY(), particleSprite.getRotation());
+                int index = particleSprites.indexOf(particleSprite);
+
+                particleSprite.setPosition((particleBodies.get(index).getPosition().x * PIXELS_TO_METERS) - particleSprite.getWidth() / 2,
+                        (particleBodies.get(index).getPosition().y * PIXELS_TO_METERS) - particleSprite.getHeight() / 2);
+
+                particleSprite.setRotation((float) Math.toDegrees(particleBodies.get(index).getAngle()));
+
+                if (particleSprite.getX() <= -50 && !queueToRemove.contains(new Vector2(index, 3))) {
+                    queueToRemove.add(new Vector2(index, 3));
+                }
             }
             if (backgroundType == 2 || backgroundType == 3){
                 font = blackfont;
@@ -1568,15 +1509,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         System.out.println("-------------------------------");
 
         backgroundMusic.stop();
-        //backgroundLayer.stop();
 
-        threadBodies.clear();
-        scissorBodies.clear();
-        needleBodies.clear();
-        queueToRemove.clear();
-        particleBodies.clear();
-        particleSprites.clear();
-        
         FinishScreen finish = new FinishScreen(tss, lbl_score.toString() + score, genreId, results, (String)titleDisplay,"By: " + (String)songArtist, difficulty);
         tss.setScreen(finish);
     }
@@ -1586,24 +1519,24 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         int sound = r.nextInt(5);
         switch (sound){
             case 0:
-                beepC.play(1.5f,2f,0);
-                beepA.play(1.5f,2f,0);
+                beepC.play(prefs.getFloat("soundsfxvol", 1),2f,0);
+                beepA.play(prefs.getFloat("soundsfxvol", 1),2f,0);
                 break;
             case 1:
-                beepC.play(1.5f,2f,0);
-                beepG.play(1.5f,2f,0);
+                beepC.play(prefs.getFloat("soundsfxvol", 1),2f,0);
+                beepG.play(prefs.getFloat("soundsfxvol", 1),2f,0);
                 break;
             case 2:
-                beepE.play(1.5f,2f,0);
-                beepA.play(1.5f,2f,0);
+                beepE.play(prefs.getFloat("soundsfxvol", 1),2f,0);
+                beepA.play(prefs.getFloat("soundsfxvol", 1),2f,0);
                 break;
             case 3:
-                beepC.play(1.5f,2f,0);
-                beepE.play(1.5f,2f,0);
+                beepC.play(prefs.getFloat("soundsfxvol", 1),2f,0);
+                beepE.play(prefs.getFloat("soundsfxvol", 1),2f,0);
                 break;
             case 4:
-                beepA.play(1.5f,2f,0);
-                beepE.play(1.5f,2f,0);
+                beepA.play(prefs.getFloat("soundsfxvol", 1),2f,0);
+                beepE.play(prefs.getFloat("soundsfxvol", 1),2f,0);
                 break;
         }
     }
@@ -1613,4 +1546,39 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         dispose();
     }
 
+    @Override
+    public void dispose() {
+        backgroundMusic.stop();
+       // batch.dispose();
+
+        backgroundMusic.dispose();
+        beepA.dispose();
+        beepC.dispose();
+        beepE.dispose();
+        beepG.dispose();
+        scissorSound.dispose();
+
+        threadBodies.clear();
+        scissorBodies.clear();
+        needleBodies.clear();
+        particleBodies.clear();
+        particleSprites.clear();
+        queueToRemove.clear();
+
+        skin.dispose();
+        atlas0.dispose();
+        atlas1.dispose();
+        atlas2.dispose();
+        atlas3.dispose();
+        atlas4.dispose();
+        atlas5.dispose();
+        atlas6.dispose();
+        atlas7.dispose();
+
+        world.dispose();
+        font.dispose();
+        blackfont.dispose();
+
+        System.out.println("Good day kind sir.");
+    }
 }

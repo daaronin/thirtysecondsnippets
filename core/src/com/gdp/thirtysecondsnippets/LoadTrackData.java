@@ -5,15 +5,11 @@
  */
 package com.gdp.thirtysecondsnippets;
 
-import analysis.SnippetAnalysis;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -22,23 +18,15 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
- * @author George
+ * @author George and Dan
  */
 public class LoadTrackData  implements Screen{
     private final Game tss;
@@ -48,9 +36,9 @@ public class LoadTrackData  implements Screen{
     
     int difficulty = 0;
 
-    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
+    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("LoadingScreen.txt"));
 
-    private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
+    //private Skin atlas = new Skin(Gdx.files.internal("atlas.json"), atlas);
     
     OrthographicCamera camera;
     
@@ -116,35 +104,35 @@ public class LoadTrackData  implements Screen{
         
         batch = new SpriteBatch();
         
-        background = skin.getSprite("tallback");
-        threadedBackground = skin.getSprite("threadstall");
-        colorBackground = skin.getSprite("rainbow");
-        shadowBackground = skin.getSprite("shadowmap3");
+        background = atlas.createSprite("tallback");
+        threadedBackground = atlas.createSprite("threadstall");
+        colorBackground = atlas.createSprite("rainbow");
+        shadowBackground = atlas.createSprite("shadowmap3");
         
-        cat_sprite = skin.getSprite("super_cat");
+        cat_sprite = atlas.createSprite("super_cat");
         
-        yarn_sprite_p = skin.getSprite("yarn_purple");
+        yarn_sprite_p = atlas.createSprite("yarn_purple");
         sprites.add(yarn_sprite_p);
         
-        yarn_sprite_o = skin.getSprite("yarn_orange");
+        yarn_sprite_o = atlas.createSprite("yarn_orange");
         sprites.add(yarn_sprite_o);
         
-        yarn_sprite_y = skin.getSprite("yarn_yellow");
+        yarn_sprite_y = atlas.createSprite("yarn_yellow");
         sprites.add(yarn_sprite_y);
         
-        yarn_sprite_g = skin.getSprite("yarn_green");
+        yarn_sprite_g = atlas.createSprite("yarn_green");
         sprites.add(yarn_sprite_g);
         
-        Sprite yarn_sprite_3 = skin.getSprite("yarn_green");
+        Sprite yarn_sprite_3 = atlas.createSprite("yarn_green");
         sprites.add(yarn_sprite_3);
         
-        Sprite yarn_sprite_2 = skin.getSprite("yarn_yellow");
+        Sprite yarn_sprite_2 = atlas.createSprite("yarn_yellow");
         sprites.add(yarn_sprite_2);
         
-        Sprite yarn_sprite_1 = skin.getSprite("yarn_purple");
+        Sprite yarn_sprite_1 = atlas.createSprite("yarn_purple");
         sprites.add(yarn_sprite_1);
         
-        Sprite yarn_sprite_0 = skin.getSprite("yarn_orange");
+        Sprite yarn_sprite_0 = atlas.createSprite("yarn_orange");
         sprites.add(yarn_sprite_0);
         
         
@@ -167,10 +155,10 @@ public class LoadTrackData  implements Screen{
         font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/font.png"),false);
 
 
-//        Label musicvol = new Label("Loading... ", skin.get("labelb", Label.LabelStyle.class));
+//        Label musicvol = new Label("Loading... ", atlas.get("labelb", Label.LabelStyle.class));
 //        table.add(musicvol).center().expand();
 //        
-//        table.setBackground(skin.getDrawable("bg_blur"));
+//        table.setBackground(atlas.getDrawable("bg_blur"));
 //        table.setFillParent(true);
 //        //table.debug();
 //        
@@ -429,22 +417,13 @@ public class LoadTrackData  implements Screen{
 
     @Override
     public void dispose() {
+        batch.dispose();
+        font.dispose();
+        table.clear();
         atlas.dispose();
-        skin.dispose();
-        stage.dispose();        
+        world.dispose();
+        stage.dispose();
+        sprites.clear();
+        font.dispose();
     }
-    
-    public void loadGenreList(){
-        MusicDB db = new MusicDB();
-        ArrayList<Genre> genres = db.getGenres();
-        
-        Json json = new Json();
-        json.addClassTag("genre", Genre.class); // This may not be needed. I don't know how json deals with String
-        FileHandle handle = Gdx.files.external("genre_list");
-        if (handle.exists()) {
-            handle.delete();
-        }
-        json.toJson(genres, Gdx.files.external("genre_list"));
-    }
-    
 }

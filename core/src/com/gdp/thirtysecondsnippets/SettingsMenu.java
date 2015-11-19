@@ -23,7 +23,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 /**
  *
- * @author George McDaid
+ * @author George and Dan
  */
 public class SettingsMenu implements Screen{
     
@@ -32,10 +32,13 @@ public class SettingsMenu implements Screen{
     private Table table = new Table();
 
     TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
+    TextureAtlas backgrounds = new TextureAtlas(Gdx.files.internal("Backgrounds.txt"));
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
 
     Preferences prefs = Gdx.app.getPreferences("30SSSettings");
+
+    TextButton back;
     
     public SettingsMenu(Game tss){
         this.tss = tss;
@@ -43,6 +46,8 @@ public class SettingsMenu implements Screen{
 
     @Override
     public void show() {
+        String fontColour = prefs.getString("fontcolor", "labelb");
+        skin.addRegions(backgrounds);
         ImageButton title = new ImageButton(skin.getDrawable("settings"));
         final Slider musicvolslider = new Slider(0f, 20f, 1f, false, skin.get("slider", SliderStyle.class));
         
@@ -82,12 +87,17 @@ public class SettingsMenu implements Screen{
                 }
         });
         
-        Label musicvol = new Label("Music Volume:", skin.get("labelb", LabelStyle.class));
-        Label soundfxvol = new Label("Sound FX Volume:", skin.get("labelb", LabelStyle.class));
-//        Label strobelabel = new Label("Strobe?", skin.get("labelb", LabelStyle.class));
-        Label guideelabel = new Label("Guide Thread?", skin.get("labelb", LabelStyle.class));
-        
-        TextButton back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
+        Label musicvol = new Label("Music Volume:", skin.get(fontColour, LabelStyle.class));
+        Label soundfxvol = new Label("Sound FX Volume:", skin.get(fontColour, LabelStyle.class));
+//        Label strobelabel = new Label("Strobe?", skin.get(fontColour, LabelStyle.class));
+        Label guideelabel = new Label("Guide Thread?", skin.get(fontColour, LabelStyle.class));
+
+        if (prefs.getString("background").equals("halloween_blur") || prefs.getString("background").equals("ocean_blur")
+                || prefs.getString("background").equals("woods_blur")){
+            back = new TextButton("<", skin.get("setting", TextButton.TextButtonStyle.class));
+        } else {
+            back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
+        }
         
         back.addListener(new ChangeListener(){
                 @Override
@@ -98,14 +108,14 @@ public class SettingsMenu implements Screen{
         });
         
         TextButton themeselect = new TextButton("Theme Select", skin.get("blue", TextButton.TextButtonStyle.class));
-        themeselect.addListener(new ChangeListener(){
-                @Override
-                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                    //Same way we moved here from the Splash Screen
-                    //We set it to new Splash because we got no other screens
-                    //otherwise you put the screen there where you want to go
-                    ThemeMenu menu = new ThemeMenu(tss);
-                    tss.setScreen(menu);
+        themeselect.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                //Same way we moved here from the Splash Screen
+                //We set it to new Splash because we got no other screens
+                //otherwise you put the screen there where you want to go
+                ThemeMenu menu = new ThemeMenu(tss);
+                tss.setScreen(menu);
                 }
         });
                 
@@ -123,8 +133,9 @@ public class SettingsMenu implements Screen{
         //table.add(themeselect).padTop(40).padBottom(20).center().colspan(2).width(Value.percentWidth(.8f)).height(Value.percentHeight(.4f));//label
         table.row();
         table.add(back).height(Value.percentHeight(.4f)).width(Value.percentHeight(.4f)).left().bottom().padLeft(Value.percentHeight(.20f)).padTop(Value.percentHeight(.40f)).padBottom(Value.percentHeight(.20f));
-        
-        table.setBackground(skin.getDrawable("bg_blur"));
+
+        String backgroundStr = prefs.getString("background", "halloween_blur");
+        table.setBackground(skin.getDrawable(backgroundStr));
         table.setFillParent(true);
         //table.debug();
         
@@ -162,8 +173,10 @@ public class SettingsMenu implements Screen{
     @Override
     public void dispose() {
         atlas.dispose();
+        backgrounds.dispose();
         skin.dispose();
-        stage.dispose();        
+        stage.dispose();
+        table.clear();
     }
     
 }

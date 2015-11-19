@@ -1,0 +1,74 @@
+LoadingScreen.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+rainbow
+  rotate: false
+  xy: 2, 2
+  size: 2018, 1152
+  orig: 2018, 1152
+  offset: 0, 0
+  index: -1
+shadowmap3
+  rotate: false
+  xy: 2, 1156
+  size: 2018, 1152
+  orig: 2018, 1152
+  offset: 0, 0
+  index: -1
+super_cat
+  rotate: false
+  xy: 2, 2310
+  size: 74, 119
+  orig: 100, 130
+  offset: 13, 3
+  index: -1
+tallback
+  rotate: false
+  xy: 78, 2310
+  size: 144, 1152
+  orig: 144, 1152
+  offset: 0, 0
+  index: -1
+threadstall
+  rotate: false
+  xy: 224, 2310
+  size: 125, 1133
+  orig: 144, 1152
+  offset: 9, 10
+  index: -1
+yarn
+  rotate: false
+  xy: 351, 2310
+  size: 102, 52
+  orig: 102, 52
+  offset: 0, 0
+  index: 1
+yarn_green
+  rotate: false
+  xy: 455, 2310
+  size: 102, 52
+  orig: 120, 70
+  offset: 6, 10
+  index: -1
+yarn_orange
+  rotate: false
+  xy: 559, 2310
+  size: 102, 52
+  orig: 120, 70
+  offset: 6, 10
+  index: -1
+yarn_purple
+  rotate: false
+  xy: 663, 2310
+  size: 102, 52
+  orig: 120, 70
+  offset: 6, 10
+  index: -1
+yarn_yellow
+  rotate: false
+  xy: 767, 2310
+  size: 102, 52
+  orig: 120, 70
+  offset: 6, 10
+  index: -1

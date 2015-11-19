@@ -27,8 +27,9 @@ import org.acra.sender.HttpSender;
 public class Reporter extends Application{
     @Override
     public void onCreate() {
-        super.onCreate();
         // The following line triggers the initialization of ACRA
         ACRA.init(this);
+        super.onCreate();
+
     }
 }

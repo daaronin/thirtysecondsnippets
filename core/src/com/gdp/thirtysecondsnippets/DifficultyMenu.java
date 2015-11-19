@@ -8,6 +8,7 @@ package com.gdp.thirtysecondsnippets;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author George McDaid
+ * @author George and Dan
  */
 public class DifficultyMenu implements Screen{
     
@@ -37,8 +38,13 @@ public class DifficultyMenu implements Screen{
     static final int BREAKNECK_DIFFICULTY = 7;
 
     TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
+    TextureAtlas backgrounds = new TextureAtlas(Gdx.files.internal("Backgrounds.txt"));
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
+
+    Preferences prefs = Gdx.app.getPreferences("30SSSettings");
+
+    TextButton back;
 
     public DifficultyMenu(Game tss){
         this.tss = tss;
@@ -46,7 +52,7 @@ public class DifficultyMenu implements Screen{
     
     @Override
     public void show() {
-
+        skin.addRegions(backgrounds);
         ImageButton title = new ImageButton(skin.getDrawable("title"));
         TextButton leisurely = new TextButton("Leisurely", skin.get("blue", TextButtonStyle.class));
         TextButton brisk = new TextButton("Brisk", skin.get("green", TextButtonStyle.class));
@@ -88,14 +94,18 @@ public class DifficultyMenu implements Screen{
                     tss.setScreen(load);
                 }
         });
-        
-        TextButton back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
-        
-        back.addListener(new ChangeListener(){
-                @Override
-                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                    MainMenu game = new MainMenu(tss);
-                    tss.setScreen(game);
+
+        if (prefs.getString("background").equals("halloween_blur") || prefs.getString("background").equals("ocean_blur")
+                || prefs.getString("background").equals("woods_blur")){
+            back = new TextButton("<", skin.get("setting", TextButton.TextButtonStyle.class));
+        } else {
+            back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
+        }
+        back.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                MainMenu game = new MainMenu(tss);
+                tss.setScreen(game);
                 }
         });
         
@@ -110,8 +120,9 @@ public class DifficultyMenu implements Screen{
         table.row();
         
         table.add(back).height(Value.percentHeight(.40f)).width(Value.percentHeight(.40f)).left().padLeft(Value.percentWidth(.2f)).padBottom(Value.percentHeight(.2f));
-        
-        table.setBackground(skin.getDrawable("bg_blur"));
+
+        String backgroundStr = prefs.getString("background", "halloween_blur");
+        table.setBackground(skin.getDrawable(backgroundStr));
         table.setFillParent(true);
         //table.debug();
         

@@ -37,6 +37,9 @@ public class SplashScreen implements Screen{
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
 
+    Texture octoTex;
+    Texture whiteTex;
+
     Preferences prefs = Gdx.app.getPreferences("30SSSettings");
 
     boolean skipping = false;
@@ -48,16 +51,16 @@ public class SplashScreen implements Screen{
     @Override
     public void show() {
 
-        //Drawable white = skin.getDrawable("whiteblock");
-        //Image whiteImg = new Image(white);
+        whiteTex = new Texture(Gdx.files.internal("whiteblock.png"));
+        Drawable white = new Image(whiteTex).getDrawable();
 
-        Drawable octoTex = skin.getDrawable("octopieinkhappyclear");
+        octoTex = new Texture(Gdx.files.internal("octopieinkhappyclear.png"));
         Image octo = new Image(octoTex);
 
         table.add(octo).center().width(Value.percentHeight(.86f, table)).height(Value.percentHeight(.97f, table)).padTop(10);
         table.row();
 
-        //TODO fix background scaling
+        table.setBackground(white);
         table.setFillParent(true);
         //table.debug();
 
@@ -111,6 +114,9 @@ public class SplashScreen implements Screen{
     public void dispose() {
         atlas.dispose();
         skin.dispose();
-        stage.dispose();        
+        table.clear();
+        stage.dispose();
+        octoTex.dispose();
+        whiteTex.dispose();
     }
 }

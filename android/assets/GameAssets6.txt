@@ -1,0 +1,18 @@
+GameAssets6.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+oceanforeground
+  rotate: false
+  xy: 2, 2
+  size: 1035, 600
+  orig: 1035, 600
+  offset: 0, 0
+  index: -1
+rainbow
+  rotate: false
+  xy: 2, 604
+  size: 2018, 1152
+  orig: 2018, 1152
+  offset: 0, 0
+  index: -1

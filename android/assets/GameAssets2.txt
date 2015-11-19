@@ -1,0 +1,109 @@
+GameAssets2.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+saw1
+  rotate: false
+  xy: 2, 2
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+saw2
+  rotate: false
+  xy: 378, 2
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+saw4
+  rotate: false
+  xy: 754, 2
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+saw5
+  rotate: false
+  xy: 1130, 2
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+saw6
+  rotate: false
+  xy: 1506, 2
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+scissor1
+  rotate: false
+  xy: 2, 552
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+scissor2
+  rotate: false
+  xy: 378, 552
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+scissor3
+  rotate: false
+  xy: 754, 552
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+scissor4
+  rotate: false
+  xy: 1130, 552
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+scissor5
+  rotate: false
+  xy: 1506, 552
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+scissor6
+  rotate: false
+  xy: 2, 1102
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+spear3
+  rotate: false
+  xy: 378, 1102
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+spear4
+  rotate: false
+  xy: 754, 1102
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+spear5
+  rotate: false
+  xy: 1130, 1102
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+spear6
+  rotate: false
+  xy: 1506, 1102
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1

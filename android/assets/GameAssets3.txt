@@ -1,0 +1,46 @@
+GameAssets3.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+clubback
+  rotate: false
+  xy: 2, 2
+  size: 1035, 535
+  orig: 1035, 535
+  offset: 0, 0
+  index: -1
+desertsky
+  rotate: false
+  xy: 1039, 2
+  size: 846, 665
+  orig: 846, 665
+  offset: 0, 0
+  index: -1
+spear1
+  rotate: false
+  xy: 2, 669
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+spear2
+  rotate: false
+  xy: 378, 669
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+woodsback
+  rotate: false
+  xy: 754, 669
+  size: 1035, 428
+  orig: 1035, 428
+  offset: 0, 0
+  index: -1
+woodsclouds
+  rotate: false
+  xy: 2, 1219
+  size: 945, 152
+  orig: 945, 152
+  offset: 0, 0
+  index: -1

@@ -1,0 +1,25 @@
+GameAssets4.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+desertback
+  rotate: false
+  xy: 2, 2
+  size: 1035, 535
+  orig: 1035, 535
+  offset: 0, 0
+  index: -1
+oceanbackground
+  rotate: false
+  xy: 2, 539
+  size: 1035, 1035
+  orig: 1035, 1035
+  offset: 0, 0
+  index: -1
+woodsfront
+  rotate: false
+  xy: 2, 1576
+  size: 1035, 294
+  orig: 1035, 294
+  offset: 0, 0
+  index: -1

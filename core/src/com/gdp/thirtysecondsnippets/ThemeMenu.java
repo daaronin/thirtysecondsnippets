@@ -11,8 +11,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -20,20 +18,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 /**
  *
- * @author George McDaid
+ * @author George and Dan
  */
 public class ThemeMenu implements Screen{
     
     private Game tss;
-    
-    int difficulty = 0;
-    
-    int selectedTheme = 1;
     
     ImageButton basicPic;
     ImageButton folkPic;
@@ -45,10 +38,14 @@ public class ThemeMenu implements Screen{
     private Table table = new Table();
 
     TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
+    TextureAtlas backgrounds = new TextureAtlas(Gdx.files.internal("Backgrounds.txt"));
+    TextureAtlas themes = new TextureAtlas(Gdx.files.internal("Themes.txt"));
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
     
     Preferences prefs = Gdx.app.getPreferences("30SSSettings");
+
+    TextButton back;
 
     public ThemeMenu(Game tss){
         this.tss = tss;
@@ -56,6 +53,9 @@ public class ThemeMenu implements Screen{
     
     @Override
     public void show() {
+        String fontColour = prefs.getString("fontcolor", "labelb");
+        skin.addRegions(backgrounds);
+        skin.addRegions(themes);
         Table table_root = new Table();
         MusicDB db = new MusicDB();
         final User user = db.getUserByID(Installation.id());
@@ -68,11 +68,11 @@ public class ThemeMenu implements Screen{
         Drawable hover = skin.getDrawable("hover");
         Drawable selected = skin.getDrawable("selected");
         
-        Label basiclbl = new Label("Standard", skin.get("labelb", Label.LabelStyle.class));
-        Label folklbl = new Label("Folked Up", skin.get("labelb", Label.LabelStyle.class));
-        Label metallbl = new Label("Hardcore", skin.get("labelb", Label.LabelStyle.class));
-        Label jazzlbl = new Label("Jazztastic", skin.get("labelb", Label.LabelStyle.class));
-        Label bubblelbl = new Label("Pop Art", skin.get("labelb", Label.LabelStyle.class));
+        Label basiclbl = new Label("Standard", skin.get(fontColour, Label.LabelStyle.class));
+        Label folklbl = new Label("Folked Up", skin.get(fontColour, Label.LabelStyle.class));
+        Label metallbl = new Label("Hardcore", skin.get(fontColour, Label.LabelStyle.class));
+        Label jazzlbl = new Label("Jazztastic", skin.get(fontColour, Label.LabelStyle.class));
+        Label bubblelbl = new Label("Pop Art", skin.get(fontColour, Label.LabelStyle.class));
         
         Drawable basic;
         
@@ -186,6 +186,8 @@ public class ThemeMenu implements Screen{
         basicPic.addListener(new ChangeListener(){
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                    prefs.putString("background", "bg_blur");
+                    prefs.putString("fontcolor", "labelb");
                     prefs.putInteger("theme", 1);
                     prefs.flush();
                     MainMenu menu = new MainMenu(tss);
@@ -199,6 +201,8 @@ public class ThemeMenu implements Screen{
             folkPic.addListener(new ChangeListener(){
                     @Override
                     public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        prefs.putString("background", "woods_blur");
+                        prefs.putString("fontcolor",  "labelb");
                         prefs.putInteger("theme", 2);
                         prefs.flush();
                         MainMenu menu = new MainMenu(tss);
@@ -212,6 +216,8 @@ public class ThemeMenu implements Screen{
             metalPic.addListener(new ChangeListener(){
                     @Override
                     public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        prefs.putString("background", "metal_blur");
+                        prefs.putString("fontcolor", "labelw");
                         prefs.putInteger("theme", 3);
                         prefs.flush();
                         MainMenu menu = new MainMenu(tss);
@@ -225,6 +231,8 @@ public class ThemeMenu implements Screen{
             jazzPic.addListener(new ChangeListener(){
                     @Override
                     public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        prefs.putString("background", "cave_blur");
+                        prefs.putString("fontcolor", "labelw");
                         prefs.putInteger("theme", 5);
                         prefs.flush();
                         MainMenu menu = new MainMenu(tss);
@@ -238,6 +246,8 @@ public class ThemeMenu implements Screen{
             bubblePic.addListener(new ChangeListener(){
                     @Override
                     public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        prefs.putString("background", "ocean_blur");
+                        prefs.putString("fontcolor",  "labelw");
                         prefs.putInteger("theme", 6);
                         prefs.flush();
                         MainMenu menu = new MainMenu(tss);
@@ -248,21 +258,27 @@ public class ThemeMenu implements Screen{
         }
         
         TextButton statselect = new TextButton("Stats", skin.get("blue", TextButton.TextButtonStyle.class));
-        statselect.addListener(new ChangeListener(){
-                @Override
-                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                    //Same way we moved here from the Splash Screen
-                    //We set it to new Splash because we got no other screens
-                    //otherwise you put the screen there where you want to go
-                    StatsScreen menu = new StatsScreen(tss);
-                    tss.setScreen(menu);
-                }
+        statselect.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                //Same way we moved here from the Splash Screen
+                //We set it to new Splash because we got no other screens
+                //otherwise you put the screen there where you want to go
+                StatsScreen menu = new StatsScreen(tss);
+                tss.setScreen(menu);
+            }
         });
-        
-        table_root.setBackground(skin.get("bg_blur", Drawable.class));
-        
-        TextButton back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
-        
+
+        String backgroundStr = prefs.getString("background", "halloween_blur");
+        table_root.setBackground(skin.get(backgroundStr, Drawable.class));
+
+        if (prefs.getString("background").equals("halloween_blur") || prefs.getString("background").equals("ocean_blur")
+                || prefs.getString("background").equals("woods_blur")){
+            back = new TextButton("<", skin.get("setting", TextButton.TextButtonStyle.class));
+        } else {
+            back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
+        }
+
         back.addListener(new ChangeListener(){
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
@@ -329,9 +345,12 @@ public class ThemeMenu implements Screen{
 
     @Override
     public void dispose() {
+        atlas.dispose();
+        backgrounds.dispose();
+        themes.dispose();
         stage.dispose();
         skin.dispose();
-
+        table.clear();
     }
     
 }

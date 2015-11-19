@@ -84,8 +84,8 @@ public class Scissors extends AnimatedObject {
 
         if ("down".equals(orientation)) {
             scissors_cutShape.setAsBox(scissors_sprite.getWidth() / 32 / PIXELS_TO_METERS,
-                    scissors_sprite.getHeight() / 4 / PIXELS_TO_METERS, new Vector2(0,
-                            -scissors_sprite.getY() / PIXELS_TO_METERS / 3.5f), (float)Math.toRadians(0));
+                    scissors_sprite.getHeight() / 6 / PIXELS_TO_METERS, new Vector2(0,
+                            -scissors_sprite.getY() / PIXELS_TO_METERS / 3.8f), (float)Math.toRadians(0));
         } else if ("up".equals(orientation)){
             scissors_cutShape.setAsBox(scissors_sprite.getWidth() / 32 / PIXELS_TO_METERS,
                     scissors_sprite.getHeight() / 4 / PIXELS_TO_METERS, new Vector2(0,

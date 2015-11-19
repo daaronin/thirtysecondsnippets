@@ -1,0 +1,46 @@
+Backgrounds.jpg
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+bg_blur
+  rotate: false
+  xy: 2, 2
+  size: 2000, 1200
+  orig: 2000, 1200
+  offset: 0, 0
+  index: -1
+cave_blur
+  rotate: false
+  xy: 2004, 2
+  size: 2000, 1200
+  orig: 2000, 1200
+  offset: 0, 0
+  index: -1
+halloween_blur
+  rotate: false
+  xy: 2, 1204
+  size: 2000, 1200
+  orig: 2000, 1200
+  offset: 0, 0
+  index: -1
+metal_blur
+  rotate: false
+  xy: 2004, 1204
+  size: 2000, 1200
+  orig: 2000, 1200
+  offset: 0, 0
+  index: -1
+ocean_blur
+  rotate: false
+  xy: 2, 2406
+  size: 2000, 1200
+  orig: 2000, 1200
+  offset: 0, 0
+  index: -1
+woods_blur
+  rotate: false
+  xy: 2004, 2406
+  size: 2000, 1200
+  orig: 2000, 1200
+  offset: 0, 0
+  index: -1

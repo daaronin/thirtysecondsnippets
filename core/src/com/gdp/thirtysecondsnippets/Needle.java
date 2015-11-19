@@ -107,7 +107,7 @@ public class Needle extends AnimatedObject {
         } else if ("up".equals(orientation)) {
             needle_bottom_shape.setAsBox(needle_sprite.getWidth() / 2 / PIXELS_TO_METERS,
                     needle_sprite.getHeight() / 64 / PIXELS_TO_METERS, new Vector2(0,
-                            needle_sprite.getY() / PIXELS_TO_METERS / 3f), (float)Math.toRadians(180));
+                            needle_sprite.getHeight() / PIXELS_TO_METERS / 3f), (float)Math.toRadians(180));
         }
 
         FixtureDef needle_bottom_fixtureDef = new FixtureDef();
@@ -127,7 +127,7 @@ public class Needle extends AnimatedObject {
         } else if ("up".equals(orientation)) {
             needle_hole_shape.setAsBox(needle_sprite.getWidth() / 2 / PIXELS_TO_METERS,
                     needle_sprite.getHeight() / 16 / PIXELS_TO_METERS, new Vector2(0,
-                            needle_sprite.getY() / PIXELS_TO_METERS / 3.5f), (float)Math.toRadians(180));
+                            needle_sprite.getHeight() / PIXELS_TO_METERS / 3f), (float)Math.toRadians(180));
         }
 
         FixtureDef needle_hole_fixtureDef = new FixtureDef();
@@ -147,7 +147,7 @@ public class Needle extends AnimatedObject {
         } else if ("up".equals(orientation)) {
             needle_top_shape.setAsBox(needle_sprite.getWidth() / 2 / PIXELS_TO_METERS,
                     needle_sprite.getHeight() / 64 / PIXELS_TO_METERS, new Vector2(0,
-                            needle_sprite.getY() / PIXELS_TO_METERS / 4f), (float)Math.toRadians(180));
+                            needle_sprite.getHeight() / PIXELS_TO_METERS / 3.2f), (float)Math.toRadians(180));
         }
 
         FixtureDef needle_top_fixtureDef = new FixtureDef();

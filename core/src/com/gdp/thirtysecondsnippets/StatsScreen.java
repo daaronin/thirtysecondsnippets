@@ -22,7 +22,7 @@ import java.text.DecimalFormatSymbols;
 
 /**
  *
- * @author George
+ * @author George and Dan
  */
 public class StatsScreen implements Screen{
     Game tss;
@@ -30,17 +30,22 @@ public class StatsScreen implements Screen{
     private Table table = new Table();
 
     TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
+    TextureAtlas backgrounds = new TextureAtlas(Gdx.files.internal("Backgrounds.txt"));
 
     private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
 
     Preferences prefs = Gdx.app.getPreferences("30SSSettings");
-    
+
+    TextButton back;
+
     public StatsScreen(Game tss){
         this.tss = tss;
     }
 
     @Override
     public void show() {
+        String fontColour = prefs.getString("fontcolor", "labelb");
+        skin.addRegions(backgrounds);
         MusicDB db = new MusicDB();
         final User user = db.getUserByID(Installation.id());
         //User user = new User();
@@ -52,29 +57,34 @@ public class StatsScreen implements Screen{
 
         df.setDecimalFormatSymbols(dfs);
         
-        Label statsLabel = new Label("Stats", skin.get("labelb", Label.LabelStyle.class));
+        Label statsLabel = new Label("Stats", skin.get(fontColour, Label.LabelStyle.class));
        
-        Label threaded  = new Label("Needles Threaded", skin.get("labelb", Label.LabelStyle.class));
-        Label threaded_val  = new Label(df.format(user.getNeedles_thread()), skin.get("labelb", Label.LabelStyle.class));
+        Label threaded  = new Label("Needles Threaded", skin.get(fontColour, Label.LabelStyle.class));
+        Label threaded_val  = new Label(df.format(user.getNeedles_thread()), skin.get(fontColour, Label.LabelStyle.class));
         
-        Label thread_cut  = new Label("Thread Cut", skin.get("labelb", Label.LabelStyle.class));
-        Label thread_cut_val  = new Label(df.format((int) (user.getThread_cut()/2.0))+" m", skin.get("labelb", Label.LabelStyle.class));
+        Label thread_cut  = new Label("Thread Cut", skin.get(fontColour, Label.LabelStyle.class));
+        Label thread_cut_val  = new Label(df.format((int) (user.getThread_cut()/2.0))+" m", skin.get(fontColour, Label.LabelStyle.class));
         
-        Label songs_played  = new Label("Songs Played", skin.get("labelb", Label.LabelStyle.class));
-        Label songs_played_val  = new Label(df.format(user.getSong_played()), skin.get("labelb", Label.LabelStyle.class));
+        Label songs_played  = new Label("Songs Played", skin.get(fontColour, Label.LabelStyle.class));
+        Label songs_played_val  = new Label(df.format(user.getSong_played()), skin.get(fontColour, Label.LabelStyle.class));
         
-        Label beats  = new Label("Beats Felt ", skin.get("labelb", Label.LabelStyle.class));
-        Label beats_val  = new Label(df.format(user.getBeats()), skin.get("labelb", Label.LabelStyle.class));
+        Label beats  = new Label("Beats Felt ", skin.get(fontColour, Label.LabelStyle.class));
+        Label beats_val  = new Label(df.format(user.getBeats()), skin.get(fontColour, Label.LabelStyle.class));
         
-        Label total_needles  = new Label("Needles Seen", skin.get("labelb", Label.LabelStyle.class));
-        Label total_needles_val  = new Label(df.format(user.getTotal_needles()), skin.get("labelb", Label.LabelStyle.class));
+        Label total_needles  = new Label("Needles Seen", skin.get(fontColour, Label.LabelStyle.class));
+        Label total_needles_val  = new Label(df.format(user.getTotal_needles()), skin.get(fontColour, Label.LabelStyle.class));
         
-        Label thread_rate  = new Label("Thread Rate", skin.get("labelb", Label.LabelStyle.class));
+        Label thread_rate  = new Label("Thread Rate", skin.get(fontColour, Label.LabelStyle.class));
         System.out.println((int)(((double)user.getNeedles_thread()/(double)user.getTotal_needles())));
-        Label thread_rate_val  = new Label(Integer.toString((int)(((double)user.getNeedles_thread()/(double)user.getTotal_needles())*100))+"%", skin.get("labelb", Label.LabelStyle.class));
-        
-        TextButton back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
-        
+        Label thread_rate_val  = new Label(Integer.toString((int)(((double)user.getNeedles_thread()/(double)user.getTotal_needles())*100))+"%", skin.get(fontColour, Label.LabelStyle.class));
+
+        if (prefs.getString("background").equals("halloween_blur") || prefs.getString("background").equals("ocean_blur")
+                || prefs.getString("background").equals("woods_blur")){
+            back = new TextButton("<", skin.get("setting", TextButton.TextButtonStyle.class));
+        } else {
+            back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
+        }
+
         back.addListener(new ChangeListener(){
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
@@ -85,19 +95,19 @@ public class StatsScreen implements Screen{
                 
         table.add(statsLabel).top().padTop(2).colspan(2).height(Value.percentHeight(.15f, table));
         table.row();
-        
+
         table.add(threaded).right();
         table.add(threaded_val).padLeft(35).left();
         table.row();
-        
+
         table.add(thread_cut).right();
         table.add(thread_cut_val).padLeft(35).left();
         table.row();
-        
+
         table.add(songs_played).right();
         table.add(songs_played_val).padLeft(35).left();
         table.row();
-        
+
         table.add(beats).right();
         table.add(beats_val).padLeft(35).left();
         table.row();
@@ -105,14 +115,15 @@ public class StatsScreen implements Screen{
         table.add(total_needles).right();
         table.add(total_needles_val).padLeft(35).left();
         table.row();
-        
+
         table.add(thread_rate).right();
         table.add(thread_rate_val).padLeft(35).left();
         table.row();
         
         table.add(back).height(Value.percentHeight(.40f)).width(Value.percentHeight(.40f)).padTop(20).left().colspan(3);
-        
-        table.setBackground(skin.getDrawable("bg_blur"));
+
+        String backgroundStr = prefs.getString("background", "halloween_blur");
+        table.setBackground(skin.getDrawable(backgroundStr));
         table.setFillParent(true);
         //table.debug();
         

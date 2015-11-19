@@ -1,0 +1,32 @@
+GameAssets5.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+back8bit
+  rotate: false
+  xy: 2, 2
+  size: 1035, 535
+  orig: 1035, 535
+  offset: 0, 0
+  index: -1
+desertfront
+  rotate: false
+  xy: 2, 539
+  size: 1035, 278
+  orig: 1035, 278
+  offset: 0, 0
+  index: -1
+mid8bit
+  rotate: false
+  xy: 2, 819
+  size: 1035, 276
+  orig: 1035, 276
+  offset: 0, 0
+  index: -1
+oceanmiddleground
+  rotate: false
+  xy: 2, 1097
+  size: 1035, 600
+  orig: 1035, 600
+  offset: 0, 0
+  index: -1

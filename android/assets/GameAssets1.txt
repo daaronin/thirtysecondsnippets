@@ -1,0 +1,109 @@
+GameAssets1.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+laser3
+  rotate: false
+  xy: 2, 2
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+laser4
+  rotate: false
+  xy: 378, 2
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+laser5
+  rotate: false
+  xy: 754, 2
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+laser6
+  rotate: false
+  xy: 1130, 2
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+saw3
+  rotate: false
+  xy: 1506, 2
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+sword1
+  rotate: false
+  xy: 2, 552
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+sword2
+  rotate: false
+  xy: 378, 552
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+sword3
+  rotate: false
+  xy: 754, 552
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+sword4
+  rotate: false
+  xy: 1130, 552
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+trombone1
+  rotate: false
+  xy: 1506, 552
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+trombone2
+  rotate: false
+  xy: 2, 1102
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+trombone3
+  rotate: false
+  xy: 378, 1102
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+trombone4
+  rotate: false
+  xy: 754, 1102
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+trombone5
+  rotate: false
+  xy: 1130, 1102
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
+trombone6
+  rotate: false
+  xy: 1506, 1102
+  size: 374, 548
+  orig: 374, 548
+  offset: 0, 0
+  index: -1
