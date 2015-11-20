@@ -1,0 +1,60 @@
+Menus3.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+sq_green_down
+  rotate: false
+  xy: 2, 2
+  size: 227, 222
+  orig: 227, 222
+  offset: 0, 0
+  index: -1
+sq_blue_up
+  rotate: false
+  xy: 231, 2
+  size: 227, 222
+  orig: 227, 222
+  offset: 0, 0
+  index: -1
+sq_blue_down
+  rotate: false
+  xy: 460, 2
+  size: 227, 222
+  orig: 227, 222
+  offset: 0, 0
+  index: -1
+sq_green_up
+  rotate: false
+  xy: 689, 2
+  size: 227, 222
+  orig: 227, 222
+  offset: 0, 0
+  index: -1
+settingsicon
+  rotate: false
+  xy: 918, 2
+  size: 302, 302
+  orig: 302, 302
+  offset: 0, 0
+  index: -1
+slider_after
+  rotate: false
+  xy: 2, 306
+  size: 866, 21
+  orig: 866, 21
+  offset: 0, 0
+  index: -1
+slider
+  rotate: false
+  xy: 2, 329
+  size: 866, 21
+  orig: 866, 21
+  offset: 0, 0
+  index: -1
+settings
+  rotate: false
+  xy: 2, 352
+  size: 1409, 232
+  orig: 1409, 232
+  offset: 0, 0
+  index: -1

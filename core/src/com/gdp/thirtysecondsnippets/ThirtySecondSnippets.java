@@ -30,14 +30,14 @@ import java.util.Random;
  */
 public class ThirtySecondSnippets implements InputProcessor, Screen {
 
-    TextureAtlas atlas0 = new TextureAtlas(Gdx.files.internal("GameAssets0.txt"));
-    TextureAtlas atlas1 = new TextureAtlas(Gdx.files.internal("GameAssets1.txt"));
-    TextureAtlas atlas2 = new TextureAtlas(Gdx.files.internal("GameAssets2.txt"));
-    TextureAtlas atlas3 = new TextureAtlas(Gdx.files.internal("GameAssets3.txt"));
-    TextureAtlas atlas4 = new TextureAtlas(Gdx.files.internal("GameAssets4.txt"));
-    TextureAtlas atlas5 = new TextureAtlas(Gdx.files.internal("GameAssets5.txt"));
-    TextureAtlas atlas6 = new TextureAtlas(Gdx.files.internal("GameAssets6.txt"));
-    TextureAtlas atlas7 = new TextureAtlas(Gdx.files.internal("GameAssets7.txt"));
+    TextureAtlas atlas0 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets0.txt"));
+    TextureAtlas atlas1 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets1.txt"));
+    TextureAtlas atlas2 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets2.txt"));
+    TextureAtlas atlas3 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets3.txt"));
+    TextureAtlas atlas4 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets4.txt"));
+    TextureAtlas atlas5 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets5.txt"));
+    TextureAtlas atlas6 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets6.txt"));
+    TextureAtlas atlas7 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets7.txt"));
 
     private Skin skin = new Skin(Gdx.files.internal("skin2.json"), atlas0);
 
@@ -1508,7 +1508,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         System.out.println("   Scissors: " + scissors);
         System.out.println("-------------------------------");
 
-        backgroundMusic.stop();
+        //backgroundMusic.stop();
 
         FinishScreen finish = new FinishScreen(tss, lbl_score.toString() + score, genreId, results, (String)titleDisplay,"By: " + (String)songArtist, difficulty);
         tss.setScreen(finish);
@@ -1549,7 +1549,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     @Override
     public void dispose() {
         backgroundMusic.stop();
-       // batch.dispose();
+        //batch.dispose();
 
         backgroundMusic.dispose();
         beepA.dispose();

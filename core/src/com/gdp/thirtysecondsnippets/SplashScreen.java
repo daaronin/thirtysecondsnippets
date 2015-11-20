@@ -33,10 +33,6 @@ public class SplashScreen implements Screen{
     private Stage stage = new Stage(new StretchViewport(TSS.WIDTH, TSS.HEIGHT));
     private Table table = new Table();
 
-    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
-
-    private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
-
     Texture octoTex;
     Texture whiteTex;
 
@@ -112,8 +108,6 @@ public class SplashScreen implements Screen{
 
     @Override
     public void dispose() {
-        atlas.dispose();
-        skin.dispose();
         table.clear();
         stage.dispose();
         octoTex.dispose();

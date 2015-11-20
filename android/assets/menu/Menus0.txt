@@ -1,0 +1,60 @@
+Menus0.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+YourBasket
+  rotate: false
+  xy: 2, 2
+  size: 500, 375
+  orig: 500, 375
+  offset: 0, 0
+  index: -1
+YourBasket_down
+  rotate: false
+  xy: 504, 2
+  size: 500, 375
+  orig: 500, 375
+  offset: 0, 0
+  index: -1
+achievements
+  rotate: false
+  xy: 1006, 2
+  size: 370, 370
+  orig: 370, 370
+  offset: 0, 0
+  index: -1
+achievementspressed
+  rotate: false
+  xy: 2, 379
+  size: 369, 370
+  orig: 369, 370
+  offset: 0, 0
+  index: -1
+bluedown
+  rotate: false
+  xy: 373, 379
+  size: 800, 222
+  orig: 800, 222
+  offset: 0, 0
+  index: -1
+blueup
+  rotate: false
+  xy: 2, 751
+  size: 800, 222
+  orig: 800, 222
+  offset: 0, 0
+  index: -1
+checkoff
+  rotate: false
+  xy: 804, 751
+  size: 79, 78
+  orig: 79, 78
+  offset: 0, 0
+  index: -1
+checkon
+  rotate: false
+  xy: 885, 751
+  size: 79, 78
+  orig: 79, 78
+  offset: 0, 0
+  index: -1

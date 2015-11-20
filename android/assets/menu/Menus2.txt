@@ -1,0 +1,25 @@
+Menus2.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+orangeup
+  rotate: false
+  xy: 2, 2
+  size: 800, 222
+  orig: 800, 222
+  offset: 0, 0
+  index: -1
+patchlog
+  rotate: false
+  xy: 2, 226
+  size: 400, 399
+  orig: 400, 399
+  offset: 0, 0
+  index: -1
+patchlogpressed
+  rotate: false
+  xy: 404, 226
+  size: 400, 399
+  orig: 400, 399
+  offset: 0, 0
+  index: -1

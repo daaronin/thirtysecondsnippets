@@ -417,7 +417,7 @@ public class LoadTrackData  implements Screen{
 
     @Override
     public void dispose() {
-        batch.dispose();
+        //batch.dispose();
         font.dispose();
         table.clear();
         atlas.dispose();

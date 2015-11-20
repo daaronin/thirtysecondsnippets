@@ -10,11 +10,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import java.text.DecimalFormat;
@@ -29,14 +32,18 @@ public class StatsScreen implements Screen{
     private Stage stage = new Stage(new StretchViewport(TSS.WIDTH, TSS.HEIGHT));
     private Table table = new Table();
 
-    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
-    TextureAtlas backgrounds = new TextureAtlas(Gdx.files.internal("Backgrounds.txt"));
+    TextureAtlas menu0 = new TextureAtlas(Gdx.files.internal("menu/Menus0.txt"));
+    TextureAtlas menu1 = new TextureAtlas(Gdx.files.internal("menu/Menus1.txt"));
+    TextureAtlas menu2 = new TextureAtlas(Gdx.files.internal("menu/Menus2.txt"));
+    TextureAtlas menu3 = new TextureAtlas(Gdx.files.internal("menu/Menus3.txt"));
 
-    private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
+    private Skin skin = new Skin( menu0);
 
     Preferences prefs = Gdx.app.getPreferences("30SSSettings");
 
     TextButton back;
+
+    Texture background;
 
     public StatsScreen(Game tss){
         this.tss = tss;
@@ -44,8 +51,11 @@ public class StatsScreen implements Screen{
 
     @Override
     public void show() {
-        String fontColour = prefs.getString("fontcolor", "labelb");
-        skin.addRegions(backgrounds);
+        skin.addRegions(menu1);
+        skin.addRegions(menu2);
+        skin.addRegions(menu3);
+        skin.load(Gdx.files.internal("skin.json"));
+        String fontColour = prefs.getString("fontcolor", "labelw");
         MusicDB db = new MusicDB();
         final User user = db.getUserByID(Installation.id());
         //User user = new User();
@@ -123,7 +133,10 @@ public class StatsScreen implements Screen{
         table.add(back).height(Value.percentHeight(.40f)).width(Value.percentHeight(.40f)).padTop(20).left().colspan(3);
 
         String backgroundStr = prefs.getString("background", "halloween_blur");
-        table.setBackground(skin.getDrawable(backgroundStr));
+        String url = "backgrounds/" + backgroundStr + ".jpg";
+        background = new Texture(Gdx.files.internal(url));
+        SpriteDrawable backspr = new SpriteDrawable(new Sprite(background));
+        table.setBackground(backspr);
         table.setFillParent(true);
         //table.debug();
         
@@ -160,8 +173,12 @@ public class StatsScreen implements Screen{
 
     @Override
     public void dispose() {
-        atlas.dispose();
+        menu0.dispose();
+        menu1.dispose();
+        menu2.dispose();
+        menu3.dispose();
         skin.dispose();
+        background.dispose();
         stage.dispose();        
     }
 }

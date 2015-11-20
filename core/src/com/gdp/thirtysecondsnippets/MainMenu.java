@@ -12,12 +12,14 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 /**
@@ -37,16 +39,18 @@ public class MainMenu implements Screen{
     int clicks;
     float blinkingTimer = 0;
 
-    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
-    TextureAtlas backgrounds = new TextureAtlas(Gdx.files.internal("Backgrounds.txt"));
+    TextureAtlas menu0 = new TextureAtlas(Gdx.files.internal("menu/Menus0.txt"));
+    TextureAtlas menu1 = new TextureAtlas(Gdx.files.internal("menu/Menus1.txt"));
+    TextureAtlas menu2 = new TextureAtlas(Gdx.files.internal("menu/Menus2.txt"));
+    TextureAtlas menu3 = new TextureAtlas(Gdx.files.internal("menu/Menus3.txt"));
 
-    private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
+    private Skin skin = new Skin(menu0);
 
     Preferences prefs = Gdx.app.getPreferences("30SSSettings");
 
     TextButton play;
 
-    Texture titleTex;
+    Texture titleTex, background;
 
     public MainMenu(Game tss){
         this.tss = tss;
@@ -54,7 +58,10 @@ public class MainMenu implements Screen{
     
     @Override
     public void show() {
-        skin.addRegions(backgrounds);
+        skin.addRegions(menu1);
+        skin.addRegions(menu2);
+        skin.addRegions(menu3);
+        skin.load(Gdx.files.internal("skin.json"));
         clicks = 0;
 
         titleTex = new Texture(Gdx.files.internal("title.png"));
@@ -156,7 +163,10 @@ public class MainMenu implements Screen{
         //table.add(about).height(Value.percentHeight(.3f)).width(Value.percentHeight(.3f)).bottom().right().padBottom(Value.percentHeight(.2f)).padRight(Value.percentWidth(.2f));
 
         String backgroundStr = prefs.getString("background", "halloween_blur");
-        table.setBackground(skin.getDrawable(backgroundStr));
+        String url = "backgrounds/" + backgroundStr + ".jpg";
+        background = new Texture(Gdx.files.internal(url));
+        SpriteDrawable backspr = new SpriteDrawable(new Sprite(background));
+        table.setBackground(backspr);
         table.setFillParent(true);
         //table.debug();
         
@@ -207,8 +217,11 @@ public class MainMenu implements Screen{
 
     @Override
     public void dispose() {
-        atlas.dispose();
-        backgrounds.dispose();
+        menu0.dispose();
+        menu1.dispose();
+        menu2.dispose();
+        menu3.dispose();
+        background.dispose();
         skin.dispose();
         stage.dispose();
         table.clear();

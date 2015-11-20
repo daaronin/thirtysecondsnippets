@@ -11,6 +11,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -18,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 /**
@@ -37,15 +40,19 @@ public class ThemeMenu implements Screen{
     private Stage stage = new Stage(new StretchViewport(TSS.WIDTH, TSS.HEIGHT));
     private Table table = new Table();
 
-    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
-    TextureAtlas backgrounds = new TextureAtlas(Gdx.files.internal("Backgrounds.txt"));
-    TextureAtlas themes = new TextureAtlas(Gdx.files.internal("Themes.txt"));
+    TextureAtlas menu0 = new TextureAtlas(Gdx.files.internal("menu/Menus0.txt"));
+    TextureAtlas menu1 = new TextureAtlas(Gdx.files.internal("menu/Menus1.txt"));
+    TextureAtlas menu2 = new TextureAtlas(Gdx.files.internal("menu/Menus2.txt"));
+    TextureAtlas menu3 = new TextureAtlas(Gdx.files.internal("menu/Menus3.txt"));
 
-    private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
+    private Skin skin = new Skin(menu0);
     
     Preferences prefs = Gdx.app.getPreferences("30SSSettings");
 
     TextButton back;
+
+    Texture background, cli, hov, sel, basic, basicLocked, bubble,
+            bubbleLocked, folk, folkLocked, jazz, jazzLocked, metal, metalLocked;
 
     public ThemeMenu(Game tss){
         this.tss = tss;
@@ -53,9 +60,41 @@ public class ThemeMenu implements Screen{
     
     @Override
     public void show() {
-        String fontColour = prefs.getString("fontcolor", "labelb");
-        skin.addRegions(backgrounds);
-        skin.addRegions(themes);
+        skin.addRegions(menu1);
+        skin.addRegions(menu2);
+        skin.addRegions(menu3);
+        skin.load(Gdx.files.internal("skin.json"));
+
+        cli = new Texture(Gdx.files.internal("themes/clicked.png"));
+        skin.add("clicked", cli );
+        hov = new Texture(Gdx.files.internal("themes/hover.png"));
+        skin.add("hover", hov);
+        sel = new Texture(Gdx.files.internal("themes/selected.png"));
+        skin.add("selected", sel);
+        basic = new Texture(Gdx.files.internal("themes/levelbasic.jpg"));
+        skin.add("levelbasic", basic);
+        basicLocked = new Texture(Gdx.files.internal("themes/levelbasiclocked.jpg"));
+        skin.add("levelbasiclocked", basicLocked);
+        bubble = new Texture(Gdx.files.internal("themes/levelbubble.jpg"));
+        skin.add("levelbubble", bubble);
+        bubbleLocked = new Texture(Gdx.files.internal("themes/levelbubblelocked.jpg"));
+        skin.add("levelbubblelocked", bubbleLocked);
+        folk = new Texture(Gdx.files.internal("themes/levelfolk.jpg"));
+        skin.add("levelfolk", folk);
+        folkLocked = new Texture(Gdx.files.internal("themes/levelfolklocked.jpg"));
+        skin.add("levelfolklocked", folkLocked);
+        jazz = new Texture(Gdx.files.internal("themes/leveljazz2.jpg"));
+        skin.add("leveljazz2", jazz);
+        jazzLocked = new Texture(Gdx.files.internal("themes/leveljazz2locked.jpg"));
+        skin.add("leveljazz2locked", jazzLocked);
+        metal = new Texture(Gdx.files.internal("themes/levelmetal.jpg"));
+        skin.add("levelmetal", metal);
+        metalLocked = new Texture(Gdx.files.internal("themes/levelmetallocked.jpg"));
+        skin.add("levelmetallocked", metalLocked);
+
+
+
+        String fontColour = prefs.getString("fontcolor", "labelw");
         Table table_root = new Table();
         MusicDB db = new MusicDB();
         final User user = db.getUserByID(Installation.id());
@@ -270,7 +309,10 @@ public class ThemeMenu implements Screen{
         });
 
         String backgroundStr = prefs.getString("background", "halloween_blur");
-        table_root.setBackground(skin.get(backgroundStr, Drawable.class));
+        String url = "backgrounds/" + backgroundStr + ".jpg";
+        background = new Texture(Gdx.files.internal(url));
+        SpriteDrawable backspr = new SpriteDrawable(new Sprite(background));
+        table_root.setBackground(backspr);
 
         if (prefs.getString("background").equals("halloween_blur") || prefs.getString("background").equals("ocean_blur")
                 || prefs.getString("background").equals("woods_blur")){
@@ -345,9 +387,24 @@ public class ThemeMenu implements Screen{
 
     @Override
     public void dispose() {
-        atlas.dispose();
-        backgrounds.dispose();
-        themes.dispose();
+        menu0.dispose();
+        menu1.dispose();
+        menu2.dispose();
+        menu3.dispose();
+        background.dispose();
+        cli.dispose();
+        hov.dispose();
+        sel.dispose();
+        basic.dispose();
+        basicLocked.dispose();
+        bubble.dispose();
+        bubbleLocked.dispose();
+        folk.dispose();
+        folkLocked.dispose();
+        jazz.dispose();
+        jazzLocked.dispose();
+        metal.dispose();
+        metalLocked.dispose();
         stage.dispose();
         skin.dispose();
         table.clear();

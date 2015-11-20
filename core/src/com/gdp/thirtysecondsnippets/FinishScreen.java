@@ -10,11 +10,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 /**
@@ -27,12 +30,16 @@ public class FinishScreen implements Screen{
     private Stage stage = new Stage(new StretchViewport(TSS.WIDTH, TSS.HEIGHT));
     private Table table = new Table();
 
-    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
-    TextureAtlas backgrounds = new TextureAtlas(Gdx.files.internal("Backgrounds.txt"));
+    TextureAtlas menu0 = new TextureAtlas(Gdx.files.internal("menu/Menus0.txt"));
+    TextureAtlas menu1 = new TextureAtlas(Gdx.files.internal("menu/Menus1.txt"));
+    TextureAtlas menu2 = new TextureAtlas(Gdx.files.internal("menu/Menus2.txt"));
+    TextureAtlas menu3 = new TextureAtlas(Gdx.files.internal("menu/Menus3.txt"));
 
-    private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
+    private Skin skin = new Skin(menu0);
 
     Preferences prefs = Gdx.app.getPreferences("30SSSettings");
+
+    Texture background;
 
     String score = "Score: 0";
     Track track = null;
@@ -72,8 +79,12 @@ public class FinishScreen implements Screen{
 
     @Override
     public void show() {
-        skin.addRegions(backgrounds);
-        String fontColour = prefs.getString("fontcolor", "labelb");
+        skin.addRegions(menu1);
+        skin.addRegions(menu2);
+        skin.addRegions(menu3);
+        skin.load(Gdx.files.internal("skin.json"));
+
+        String fontColour = prefs.getString("fontcolor", "labelw");
         Label titleLabel = new Label(title, skin.get(fontColour, Label.LabelStyle.class));
         Label artistLabel = new Label(artist, skin.get(fontColour, Label.LabelStyle.class));
 
@@ -119,7 +130,10 @@ public class FinishScreen implements Screen{
         table.add(genres).size(450,120).padBottom(10).padTop(30).padLeft(10);
 
         String backgroundStr = prefs.getString("background", "halloween_blur");
-        table.setBackground(skin.getDrawable(backgroundStr));
+        String url = "backgrounds/" + backgroundStr + ".jpg";
+        background = new Texture(Gdx.files.internal(url));
+        SpriteDrawable backspr = new SpriteDrawable(new Sprite(background));
+        table.setBackground(backspr);
         table.setFillParent(true);
         //table.debug();
 
@@ -159,8 +173,11 @@ public class FinishScreen implements Screen{
     @Override
     public void dispose() {
         stage.dispose();
-        atlas.dispose();
-        backgrounds.dispose();
+        menu0.dispose();
+        menu1.dispose();
+        menu2.dispose();
+        menu3.dispose();
+        background.dispose();
         skin.dispose();
         table.clear();
     }

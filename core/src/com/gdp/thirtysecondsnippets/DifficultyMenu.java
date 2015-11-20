@@ -12,12 +12,15 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
@@ -37,14 +40,18 @@ public class DifficultyMenu implements Screen{
     static final int BRISK_DIFFICULTY = 5;
     static final int BREAKNECK_DIFFICULTY = 7;
 
-    TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("Menus.txt"));
-    TextureAtlas backgrounds = new TextureAtlas(Gdx.files.internal("Backgrounds.txt"));
+    TextureAtlas menu0 = new TextureAtlas(Gdx.files.internal("menu/Menus0.txt"));
+    TextureAtlas menu1 = new TextureAtlas(Gdx.files.internal("menu/Menus1.txt"));
+    TextureAtlas menu2 = new TextureAtlas(Gdx.files.internal("menu/Menus2.txt"));
+    TextureAtlas menu3 = new TextureAtlas(Gdx.files.internal("menu/Menus3.txt"));
 
-    private Skin skin = new Skin(Gdx.files.internal("skin.json"), atlas);
+    private Skin skin = new Skin(menu0);
 
     Preferences prefs = Gdx.app.getPreferences("30SSSettings");
 
     TextButton back;
+
+    Texture background;
 
     public DifficultyMenu(Game tss){
         this.tss = tss;
@@ -52,7 +59,11 @@ public class DifficultyMenu implements Screen{
     
     @Override
     public void show() {
-        skin.addRegions(backgrounds);
+        skin.addRegions(menu1);
+        skin.addRegions(menu2);
+        skin.addRegions(menu3);
+        skin.load(Gdx.files.internal("skin.json"));
+
         ImageButton title = new ImageButton(skin.getDrawable("title"));
         TextButton leisurely = new TextButton("Leisurely", skin.get("blue", TextButtonStyle.class));
         TextButton brisk = new TextButton("Brisk", skin.get("green", TextButtonStyle.class));
@@ -122,7 +133,10 @@ public class DifficultyMenu implements Screen{
         table.add(back).height(Value.percentHeight(.40f)).width(Value.percentHeight(.40f)).left().padLeft(Value.percentWidth(.2f)).padBottom(Value.percentHeight(.2f));
 
         String backgroundStr = prefs.getString("background", "halloween_blur");
-        table.setBackground(skin.getDrawable(backgroundStr));
+        String url = "backgrounds/" + backgroundStr + ".jpg";
+        background = new Texture(Gdx.files.internal(url));
+        SpriteDrawable backspr = new SpriteDrawable(new Sprite(background));
+        table.setBackground(backspr);
         table.setFillParent(true);
         //table.debug();
         
@@ -159,7 +173,11 @@ public class DifficultyMenu implements Screen{
 
     @Override
     public void dispose() {
-        atlas.dispose();
+        menu0.dispose();
+        menu1.dispose();
+        menu2.dispose();
+        menu3.dispose();
+        background.dispose();
         skin.dispose();
         stage.dispose();        
     }
