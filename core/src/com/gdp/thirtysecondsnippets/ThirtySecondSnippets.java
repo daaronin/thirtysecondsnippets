@@ -30,16 +30,7 @@ import java.util.Random;
  */
 public class ThirtySecondSnippets implements InputProcessor, Screen {
 
-    TextureAtlas atlas0 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets0.txt"));
-    TextureAtlas atlas1 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets1.txt"));
-    TextureAtlas atlas2 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets2.txt"));
-    TextureAtlas atlas3 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets3.txt"));
-    TextureAtlas atlas4 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets4.txt"));
-    TextureAtlas atlas5 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets5.txt"));
-    TextureAtlas atlas6 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets6.txt"));
-    TextureAtlas atlas7 = new TextureAtlas(Gdx.files.internal("game-assets/GameAssets7.txt"));
 
-    private Skin skin = new Skin(Gdx.files.internal("skin2.json"), atlas0);
 
     Preferences prefs = Gdx.app.getPreferences("30SSSettings");
 
@@ -172,15 +163,13 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     ThreadPieces threads;
     Scissors scissor;
     Needle needle;
+    Collectible collectibles;
+    LevelController levelController;
+
+    ArrayList<Sprite> collectibleSprites = new ArrayList<Sprite>();
 
     public ThirtySecondSnippets(Game tss, int genre, int difficulty){
-        skin.addRegions(atlas1);
-        skin.addRegions(atlas2);
-        skin.addRegions(atlas3);
-        skin.addRegions(atlas4);
-        skin.addRegions(atlas5);
-        skin.addRegions(atlas6);
-        skin.addRegions(atlas7);
+
         this.tss = tss;
         genreId = genre;
         this.difficulty = difficulty;
@@ -190,80 +179,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
         String song = "";
 
-        Random rand = new Random();
-        switch (rand.nextInt(5)){
-            case 0:
-                song = "The Brilliant ";
-                break;
-            case 1:
-                song = "Freedom ";
-                break;
-            case 2:
-                song = "Funky ";
-                break;
-            case 3:
-                song = "Chill ";
-                break;
-            case 4:
-                song = "Binkity ";
-                break;
-        }
-
-        switch (rand.nextInt(5)){
-            case 0:
-                song += "Yarn";
-                break;
-            case 1:
-                song += "Bink";
-                break;
-            case 2:
-                song += "Fish";
-                break;
-            case 3:
-                song += "Sigh";
-                break;
-            case 4:
-                song += "Thing";
-                break;
-        }
-
         String artist = "";
-
-        switch (rand.nextInt(5)){
-            case 0:
-                artist = "Dahn ";
-                break;
-            case 1:
-                artist = "Dan ";
-                break;
-            case 2:
-                artist = "Daaronin ";
-                break;
-            case 3:
-                artist = "Danny ";
-                break;
-            case 4:
-                artist = "Daniel ";
-                break;
-        }
-
-        switch (rand.nextInt(5)){
-            case 0:
-                artist += "Fjord";
-                break;
-            case 1:
-                artist += "Ford";
-                break;
-            case 2:
-                artist += "4D";
-                break;
-            case 3:
-                artist += "Fourd";
-                break;
-            case 4:
-                artist += "the Great";
-                break;
-        }
 
         titleDisplay = songTitle = song;
         songArtist = artist;
@@ -628,226 +544,40 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         SCROLLING_FOREGROUND_SPEED = tempo/60f*-3f;
         
         batch = new SpriteBatch();
-        
-        Random rand = new Random();
-        int texType = rand.nextInt(3);
-        if (backgroundType == 2){
-            texType = 3;
-        } else if (backgroundType == 3){
-            texType = 4;
-        } else if (backgroundType == 4 || backgroundType == 5){
-            texType = 5;
-        }else if (backgroundType == 6){
-            texType = 6;
-        } else if (backgroundType == 7){
-            texType = 7;
-        }
-        switch (texType){
-            case 0:
-                shortthreadlet = skin.getSprite("shortthreadhighcontrast_alt");
-                threadlet = skin.getSprite("shortthreadhighcontrast2_alt");
-                break;
-            case 1:
-                shortthreadlet = skin.getSprite("shortthreadhighcontrast_purp");
-                threadlet = skin.getSprite("shortthreadhighcontrast2_purp");
-                break;
-            case 2:
-                shortthreadlet = skin.getSprite("shortthreadhighcontrast");
-                threadlet = skin.getSprite("shortthreadhighcontrast2");
-                break;
-            case 3:
-                shortthreadlet = skin.getSprite("shortthreadhighcontrast_wood");
-                threadlet = skin.getSprite("shortthreadhighcontrast2_wood");
-                break;
-            case 4:
-                shortthreadlet = skin.getSprite("shortthreadhighcontrast_snake");
-                threadlet = skin.getSprite("shortthreadhighcontrast2_snake2");
-                tail = skin.getSprite("shortthreadhighcontrast_snaketail");
-                break;
-            case 5:
-                shortthreadlet = skin.getSprite("shortthreadhighcontrast_staff2");
-                threadlet = skin.getSprite("shortthreadhighcontrast2_staff2");
-                break;
-            case 6:
-                shortthreadlet = skin.getSprite("shortthreadhighcontrast_fish");
-                threadlet = skin.getSprite("shortthreadhighcontrast_fish");
-                break;
-            case 7:
-                shortthreadlet = skin.getSprite("thread_8bit2");
-                threadlet = skin.getSprite("thread_8bit");
-                break;
-            default:
-                break;
-        }
 
+        levelController = new LevelController(backgroundType);
+        threadlet = levelController.threadlet;
+        background = levelController.background;
+        scissor1 = levelController.scissor1;
+        scissor2 = levelController.scissor2;
+        scissor3 = levelController.scissor3;
+        scissor4 = levelController.scissor4;
+        scissor5 = levelController.scissor5;
+        scissor6 = levelController.scissor6;
+        shortthreadlet = levelController.shortthreadlet;
+        threadedBackground = levelController.threadedBackground;
+        colorBackground = levelController.colorBackground;
+        shadowBackground = levelController.shadowBackground;
+        needleYellow = levelController.needleYellow;
+        needleGreen = levelController.needleGreen;
+        needleBlue = levelController.needleBlue;
+        star1 = levelController.star1;
+        star2 = levelController.star2;
+        star3 = levelController.star3;
+        star4 = levelController.star4;
+        star5 = levelController.star5;
+        woodsBack = levelController.woodsBack;
+        woodsFront = levelController.woodsFront;
+        woodsBackground = levelController.woodsBackground;
+        woodsClouds = levelController.woodsClouds;
+        emptyTree = levelController.emptyTree;
+        tail = levelController.tail;
 
-
-        //redlet = skin.getSprite("redthread");
-
-        background = skin.getSprite("tallback");
-        threadedBackground = skin.getSprite("threadstall");
-        colorBackground = skin.getSprite("rainbow");
-        shadowBackground = skin.getSprite("shadowmap3");
-
-        woodsBackground = skin.getSprite("woodssmallbackground");
-        woodsBack = skin.getSprite("woodsback");
-        woodsFront = skin.getSprite("woodsfront");
-        woodsClouds = skin.getSprite("woodsclouds");
-
-        if (backgroundType == 1){
-            needleGreen = skin.getSprite("needlegreenoutline");
-            needleBlue = skin.getSprite("needleblueoutline");
-            needleYellow = skin.getSprite("needleyellowoutline");
-            
-            scissor1 = skin.getSprite("scissor1");
-            scissor2 = skin.getSprite("scissor2");
-            scissor3 = skin.getSprite("scissor3");
-            scissor4 = skin.getSprite("scissor4");
-            scissor5 = skin.getSprite("scissor5");
-            scissor6 = skin.getSprite("scissor6");
-            
-            star1 = skin.getSprite("star1");
-            star2 = skin.getSprite("star2");
-            star3 = skin.getSprite("star3");
-            star4 = skin.getSprite("star4");
-            star5 = skin.getSprite("star5");
-        } else if (backgroundType == 2){
-            woodsBackground = skin.getSprite("woodssmallbackground");
-            woodsBack = skin.getSprite("woodsback");
-            woodsFront = skin.getSprite("woodsfront");
-            woodsClouds = skin.getSprite("woodsclouds");
-
-            needleGreen = skin.getSprite("woodspinetreebird");
-            needleBlue = skin.getSprite("woodspinetreebird");
-            needleYellow = skin.getSprite("woodspinetreebird");
-            emptyTree = skin.getSprite("woodspinetree");
-            
-            scissor1 = skin.getSprite("saw1");
-            scissor2 = skin.getSprite("saw2");
-            scissor3 = skin.getSprite("saw3");
-            scissor4 = skin.getSprite("saw4");
-            scissor5 = skin.getSprite("saw5");
-            scissor6 = skin.getSprite("saw6");
-            
-            star1 = skin.getSprite("wood1");
-            star2 = skin.getSprite("wood2alt");
-            star3 = skin.getSprite("wood3alt");
-            star4 = skin.getSprite("wood4");
-            star5 = skin.getSprite("wood5");
-        } else if (backgroundType == 3){
-            woodsBackground = skin.getSprite("desertsmallbackground");
-            woodsBack = skin.getSprite("desertback");
-            woodsFront = skin.getSprite("desertfront");
-            woodsClouds = skin.getSprite("desertsky");
-        
-            needleGreen = skin.getSprite("skeletonhand");
-            needleBlue = skin.getSprite("skeletonhand2");
-            needleYellow = skin.getSprite("skeletonhand3");
-            
-            scissor1 = skin.getSprite("sword1");
-            scissor2 = skin.getSprite("sword2");
-            scissor3 = skin.getSprite("sword3");
-            scissor4 = skin.getSprite("sword4");
-            scissor5 = skin.getSprite("sword5");
-            scissor6 = skin.getSprite("sword6");
-            
-            star1 = skin.getSprite("wood1");
-            star2 = skin.getSprite("wood2alt");
-            star3 = skin.getSprite("wood3alt");
-            star4 = skin.getSprite("wood4");
-            star5 = skin.getSprite("wood4");
-        } else if (backgroundType == 4){
-            woodsBackground = skin.getSprite("clubbackgroundsmall");
-            woodsBack = skin.getSprite("clubback");
-            woodsFront = skin.getSprite("clubback");
-            woodsClouds = skin.getSprite("desertsky");
-        
-            needleGreen = skin.getSprite("microphone");
-            needleBlue = skin.getSprite("microphone");
-            needleYellow = skin.getSprite("microphone");
-            
-            scissor1 = skin.getSprite("trombone1");
-            scissor2 = skin.getSprite("trombone2");
-            scissor3 = skin.getSprite("trombone3");
-            scissor4 = skin.getSprite("trombone4");
-            scissor5 = skin.getSprite("trombone5");
-            scissor6 = skin.getSprite("trombone6");
-            
-            star1 = skin.getSprite("wood1");
-            star2 = skin.getSprite("wood2alt");
-            star3 = skin.getSprite("wood3alt");
-            star4 = skin.getSprite("wood4");
-            star5 = skin.getSprite("wood4");
-        }else if (backgroundType == 5){
-            woodsBackground = skin.getSprite("clubbackgroundsmall2");
-            woodsBack = skin.getSprite("clubback");
-            woodsFront = skin.getSprite("clubback");
-            woodsClouds = skin.getSprite("desertsky");
-        
-            needleGreen = skin.getSprite("microphone");
-            needleBlue = skin.getSprite("microphone");
-            needleYellow = skin.getSprite("microphone");
-            
-            scissor1 = skin.getSprite("trombone1");
-            scissor2 = skin.getSprite("trombone2");
-            scissor3 = skin.getSprite("trombone3");
-            scissor4 = skin.getSprite("trombone4");
-            scissor5 = skin.getSprite("trombone5");
-            scissor6 = skin.getSprite("trombone6");
-            
-            star1 = skin.getSprite("wood1");
-            star2 = skin.getSprite("wood2alt");
-            star3 = skin.getSprite("wood3alt");
-            star4 = skin.getSprite("wood4");
-            star5 = skin.getSprite("wood4");
-        } else if (backgroundType == 6){
-            woodsBackground = skin.getSprite("oceanbackground");
-            woodsBack = skin.getSprite("oceanmiddleground");
-            woodsFront = skin.getSprite("oceanforeground");
-            
-            needleGreen = skin.getSprite("bubblestickpopped");
-            needleBlue = skin.getSprite("bubblestickpopped");
-            needleYellow = skin.getSprite("bubblestickpopped");
-            emptyTree = skin.getSprite("bubblestick");
-            
-            scissor1 = skin.getSprite("spear1");
-            scissor2 = skin.getSprite("spear2");
-            scissor3 = skin.getSprite("spear3");
-            scissor4 = skin.getSprite("spear4");
-            scissor5 = skin.getSprite("spear5");
-            scissor6 = skin.getSprite("spear6");
-            
-            star1 = skin.getSprite("star1");
-            star2 = skin.getSprite("star2");
-            star3 = skin.getSprite("star3");
-            star4 = skin.getSprite("star4");
-            star5 = skin.getSprite("star5");
-        } else if (backgroundType == 7){
-            woodsBackground = skin.getSprite("background8bit");
-            woodsBack = skin.getSprite("back8bit");
-            woodsFront = skin.getSprite("mid8bit");
-
-            needleGreen = skin.getSprite("ring1");
-            needleBlue = skin.getSprite("ring1");
-            needleYellow = skin.getSprite("ring1");
-            emptyTree = skin.getSprite("ring2");
-
-            scissor1 = skin.getSprite("laser6");
-            scissor2 = skin.getSprite("laser5");
-            scissor3 = skin.getSprite("laser4");
-            scissor4 = skin.getSprite("laser3");
-            scissor5 = skin.getSprite("laser2");
-            scissor6 = skin.getSprite("laser1");
-
-            star1 = skin.getSprite("star1");
-            star2 = skin.getSprite("star2");
-            star3 = skin.getSprite("star3");
-            star4 = skin.getSprite("star4");
-            star5 = skin.getSprite("star5");
-        }
         font = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/font.png"),false);
-        blackfont = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/blackfont.png"),false);
-        
+        blackfont = new BitmapFont(Gdx.files.internal("fonts/font.fnt"),Gdx.files.internal("fonts/font.png"),false);
+//        font.getData().setScale(0.8f,0.8f);
+//        blackfont.getData().setScale(0.8f,0.8f);
+
         timerpaceClosed = (300 - tempo)/60 * 1;
         timerpaceOpen = (300 - tempo)/60 * 12;
         
@@ -900,6 +630,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         scissor = new Scissors(width, height, world, scissor1, scissor2, scissor3, scissor4, scissor5, scissor6);
 
         needle = new Needle(world, needleGreen, needleBlue, needleYellow, width, height);
+
+        collectibles = new Collectible(world, collectibleSprites, width, height);
         
         world.setContactListener(new ContactListener() {
 
@@ -1065,7 +797,13 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
         Gdx.gl.glUseProgram(0);
 
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        if (backgroundType == 2){
+            Gdx.gl.glClearColor(1, 1, 1, 1);
+        } else if (backgroundType == 3){
+            Gdx.gl.glClearColor(136/256f, 36/256f, 38/256f, 1);
+        } else {
+            Gdx.gl.glClearColor(1, 1, 1, 1);
+        }
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         if (TimeUtils.nanoTime() - lastTimeBg > 50000000) {
@@ -1170,23 +908,23 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     int ref = (int) queueToRemove.get(i).x;
                     if (queueToRemove.get(i).y == 0){
                         if (ref < scissorBodies.size()) {
-                            System.out.println("Scissors: " + ref);
+//                            System.out.println("Scissors: " + ref);
                             scissorBodies.remove(scissorBodies.get(ref));
                         }
                     } else if (queueToRemove.get(i).y == 1){
                         if (ref < threadBodies.size()){
-                            System.out.println("Thread: " + ref);
+//                            System.out.println("Thread: " + ref);
                             threadBodies.get(ref).getJointList().clear();
                             threadBodies.remove(threadBodies.get(ref));
                             this.thread_cut++;
                         }
                     } else if (queueToRemove.get(i).y == 2){
                         if (ref < needleBodies.size()){
-                            System.out.println("Needle: " + ref);
+//                            System.out.println("Needle: " + ref);
                             needleBodies.remove(needleBodies.get(ref));
                         }
                     } else if (queueToRemove.get(i).y == 3){
-                        System.out.println("Particle: " + ref);
+//                        System.out.println("Particle: " + ref);
                         if (ref < particleSprites.size()){
                             particleSprites.remove(particleSprites.get(ref));
                         }
@@ -1240,7 +978,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         
         if (threadBodies.size() == MAX_THREAD_LENGTH){
             HYPERTHREADING_MODE = true;
-            BACKGROUND_SPEED = 28.8f;
+            BACKGROUND_SPEED = 28f;
             SCROLLING_FOREGROUND_SPEED = tempo/60f*-2f * 2f;
             if (needle_combo < 5){
                 needle_combo = 5;
@@ -1274,6 +1012,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         }
 
         batch.begin();
+        //batch.setColor(0,.4f,.4f,.2f);
         if(drawSprite){
             if (backgroundType == 1){
                 batch.draw(background, bgx + 144*17, 0);
@@ -1368,7 +1107,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 batch.draw(shadowBackground, bgcolorx, shadowBackground.getHeight());
                 batch.draw(shadowBackground, bgcolorx - 2016, shadowBackground.getHeight());
             } else if (backgroundType == 2){
-                batch.draw(woodsBackground, -width, -height, width*2, height*2);
+                //batch.draw(woodsBackground, -width, -height, width*2, height*2);
                 
                 batch.draw(woodsBack, bgx, 0);
                 batch.draw(woodsBack, bgx - 1035, 0);
@@ -1380,15 +1119,15 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 
                 batch.draw(woodsClouds, bgcloudx - 1000 , height - woodsClouds.getHeight());
             } else if (backgroundType == 3 || backgroundType == 6 || backgroundType == 7){
-                batch.draw(woodsBackground, -width, -height, width*2, height*2);
+                //batch.draw(woodsBackground, -width, -height, width*2, height*2);
                 
                 batch.draw(woodsBack, bgx, 0);
-                batch.draw(woodsBack, bgx - 1035, 0);
-                batch.draw(woodsBack, bgx + 1035, 0);
+                batch.draw(woodsBack, bgx - 1035f, 0);
+                batch.draw(woodsBack, bgx + 1035f, 0);
                 
                 batch.draw(woodsFront, bgcolorx, 0);
-                batch.draw(woodsFront, bgcolorx - 1035, 0);
-                batch.draw(woodsFront, bgcolorx + 1035, 0);
+                batch.draw(woodsFront, bgcolorx - 1035f, 0);
+                batch.draw(woodsFront, bgcolorx + 1035f, 0);
             } else if (backgroundType == 4 || backgroundType == 5){
                 batch.draw(woodsBackground, -width, -height, width*2, height*2);
                 
@@ -1469,11 +1208,11 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 font = blackfont;
             }
             if (drawText){
-                font.draw(batch, score_amount, 0, 50);
-                font.draw(batch, multiplier, 500, 50);
-                font.draw(batch, bonus, 500, 50);
-                font.draw(batch, hyperthreading, 0, height);
-                font.draw(batch, songTitle, 0, height);
+                font.draw(batch, score_amount, 10, 65);
+                font.draw(batch, multiplier, 510, 65);
+                font.draw(batch, bonus, 510, 65);
+                font.draw(batch, hyperthreading, 0, height-5);
+                font.draw(batch, songTitle, 0, height-5);
             }
         }
 
@@ -1551,6 +1290,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         backgroundMusic.stop();
         //batch.dispose();
 
+        levelController.dispose();
         backgroundMusic.dispose();
         beepA.dispose();
         beepC.dispose();
@@ -1564,16 +1304,6 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         particleBodies.clear();
         particleSprites.clear();
         queueToRemove.clear();
-
-        skin.dispose();
-        atlas0.dispose();
-        atlas1.dispose();
-        atlas2.dispose();
-        atlas3.dispose();
-        atlas4.dispose();
-        atlas5.dispose();
-        atlas6.dispose();
-        atlas7.dispose();
 
         world.dispose();
         font.dispose();

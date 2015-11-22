@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
@@ -83,6 +84,8 @@ public class FinishScreen implements Screen{
         skin.addRegions(menu2);
         skin.addRegions(menu3);
         skin.load(Gdx.files.internal("skin.json"));
+        skin.getFont("font").getData().setScale(0.8f,0.8f);
+        skin.getFont("bfont").getData().setScale(0.8f,0.8f);
 
         String fontColour = prefs.getString("fontcolor", "labelw");
         Label titleLabel = new Label(title, skin.get(fontColour, Label.LabelStyle.class));
@@ -98,8 +101,13 @@ public class FinishScreen implements Screen{
                 //Same way we moved here from the Splash Screen
                 //We set it to new Splash because we got no other screens
                 //otherwise you put the screen there where you want to go
-                LoadTrackData load = new LoadTrackData(tss, genreId, difficulty);
-                tss.setScreen(load);
+                stage.addAction(Actions.sequence( Actions.fadeOut(.5f), Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        LoadTrackData load = new LoadTrackData(tss, genreId, difficulty);
+                        tss.setScreen(load);
+                    }
+                })));
             }
         });
 
@@ -111,13 +119,18 @@ public class FinishScreen implements Screen{
                 //Same way we moved here from the Splash Screen
                 //We set it to new Splash because we got no other screens
                 //otherwise you put the screen there where you want to go
-                GenreMenu menu = new GenreMenu(tss, LEISURELY_DIFFICULTY);
-                tss.setScreen(menu);
+                stage.addAction(Actions.sequence( Actions.fadeOut(.5f), Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        GenreMenu menu = new GenreMenu(tss, LEISURELY_DIFFICULTY);
+                        tss.setScreen(menu);
+                    }
+                })));
             }
         });
-        table.add(titleLabel).top().center().height(Value.percentHeight(.15f, table)).colspan(2);
+        //table.add(titleLabel).top().center().height(Value.percentHeight(.15f, table)).colspan(2);
         table.row();
-        table.add(artistLabel).top().center().height(Value.percentHeight(.15f, table)).colspan(2);
+        //table.add(artistLabel).top().center().height(Value.percentHeight(.15f, table)).colspan(2);
         table.row();
         table.add(scoreLabel).top().center().height(Value.percentHeight(.15f, table)).colspan(2);
         for(int i = 0;i<results.getResults().size();i++){
@@ -138,6 +151,15 @@ public class FinishScreen implements Screen{
         //table.debug();
 
         stage.addActor(table);
+
+        stage.addAction(Actions.sequence(Actions.alpha(0)
+                , Actions.fadeIn(.5f), Actions.run(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        })));
+
 
         Gdx.input.setInputProcessor(stage);
     }

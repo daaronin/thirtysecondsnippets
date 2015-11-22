@@ -10,6 +10,6 @@
     },
     "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle":{
         "labelw" : { "font": font , "fontColor": white},
-        "labelb" : { "font": font , "fontColor": black}
+        "labelb" : { "font": font , "fontColor": white}
     }
 }

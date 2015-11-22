@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -36,6 +37,14 @@ public class MainMenu implements Screen{
     static final int BRISK_DIFFICULTY = 5;
     static final int BREAKNECK_DIFFICULTY = 7;
 
+    /**
+     * Controls the Main Menu Style
+     * 1: Large rectangle play button
+     * 2: Large circle play button
+     * 3: Old style menu
+     */
+    int buttonOption = 2;
+
     int clicks;
     float blinkingTimer = 0;
 
@@ -48,7 +57,8 @@ public class MainMenu implements Screen{
 
     Preferences prefs = Gdx.app.getPreferences("30SSSettings");
 
-    TextButton play;
+    Texture play, playdown;
+    ImageButton playbutton;
 
     Texture titleTex, background;
 
@@ -62,13 +72,45 @@ public class MainMenu implements Screen{
         skin.addRegions(menu2);
         skin.addRegions(menu3);
         skin.load(Gdx.files.internal("skin.json"));
+        skin.getFont("font").getData().setScale(0.9f,0.9f);
         clicks = 0;
 
-        titleTex = new Texture(Gdx.files.internal("title.png"));
+        titleTex = new Texture(Gdx.files.internal("title2.png"));
         ImageButton title = new ImageButton(new Image(titleTex).getDrawable());
-        play = new TextButton("Play", skin.get("blue", TextButtonStyle.class));
+        //play = new TextButton("PLAY", skin.get("blue", TextButtonStyle.class));
+        if (buttonOption == 1 || buttonOption == 3) {
+            play = new Texture(Gdx.files.internal("newplay.png"));
+            SpriteDrawable ply = new SpriteDrawable(new Sprite(play));
+
+            playdown = new Texture(Gdx.files.internal("newplaydown.png"));
+            SpriteDrawable plydown = new SpriteDrawable(new Sprite(playdown));
+
+            ImageButton.ImageButtonStyle style3 = new ImageButton.ImageButtonStyle();
+            style3.up = ply;
+            style3.down = plydown;
+//        style3.imageUp = metal;
+//        style3.imageOver = hover;
+//        style3.imageChecked = selected;
+//        style3.imageDown = clicked;
+            playbutton = new ImageButton(style3);
+        } else if (buttonOption == 2){
+            play = new Texture(Gdx.files.internal("roundplaybuttonalt.png"));
+            SpriteDrawable ply = new SpriteDrawable(new Sprite(play));
+
+            playdown = new Texture(Gdx.files.internal("roundplaybuttonaltdown.png"));
+            SpriteDrawable plydown = new SpriteDrawable(new Sprite(playdown));
+
+            ImageButton.ImageButtonStyle style3 = new ImageButton.ImageButtonStyle();
+            style3.up = ply;
+            style3.down = plydown;
+//        style3.imageUp = metal;
+//        style3.imageOver = hover;
+//        style3.imageChecked = selected;
+//        style3.imageDown = clicked;
+            playbutton = new ImageButton(style3);
+        }
+
         //TextButton setting = new TextButton("*", skin.get("setting", TextButtonStyle.class));
-        TextButton about = new TextButton("?", skin.get("about", TextButtonStyle.class));
         TextButton stats = new TextButton("%", skin.get("back", TextButtonStyle.class));
         
         TextButton patch = new TextButton("", skin.get("patch", TextButtonStyle.class));
@@ -86,7 +128,7 @@ public class MainMenu implements Screen{
         style.imageUp = skin.getDrawable("settingsicon");
         ImageButton setting = new ImageButton(style);
         
-        play.addListener(new ChangeListener(){
+        playbutton.addListener(new ChangeListener(){
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                     //Same way we moved here from the Splash Screen
@@ -94,8 +136,14 @@ public class MainMenu implements Screen{
                     //otherwise you put the screen there where you want to go
                     //DifficultyMenu menu = new DifficultyMenu(tss);
                     //tss.setScreen(menu);
-                    GenreMenu menu = new GenreMenu(tss, LEISURELY_DIFFICULTY);
-                    tss.setScreen(menu);
+                    stage.addAction(Actions.sequence( Actions.fadeOut(.5f), Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            GenreMenu menu = new GenreMenu(tss, LEISURELY_DIFFICULTY);
+                            tss.setScreen(menu);
+                        }
+                    })));
+
 
                 }
         });
@@ -130,13 +178,6 @@ public class MainMenu implements Screen{
                 }
             });
         
-        about.addListener(new ChangeListener(){
-                @Override
-                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                    Gdx.net.openURI("http://www.30secondsnippets.com/");
-                }
-            });
-        
         patch.addListener(new ChangeListener(){
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
@@ -152,13 +193,26 @@ public class MainMenu implements Screen{
             }
         });
 
-        table.add(basket).top().left().width(Value.percentWidth(.18f, table)).height(Value.percentWidth(.135f, table)).padTop(10).padRight(7);
-        table.add(title).top().center().width(Value.percentWidth(.5f, table)).height(Value.percentHeight(.35f, table)).padTop(20);
-        table.add(patch).top().right().width(Value.percentWidth(.18f, table)).height(Value.percentWidth(.18f, table)).padTop(10).padLeft(7);
+        //table.add(basket).bottom().left().width(Value.percentWidth(.18f, table)).height(Value.percentWidth(.135f, table)).padTop(10).padRight(7); //Acts as a spacer
+        table.add(title).top().center().width(Value.percentWidth(.5f, table)).height(Value.percentHeight(.35f, table)).padTop(20).colspan(12);
+        //table.add(setting).height(Value.percentHeight(.11f, table)).width(Value.percentHeight(.11f, table)).bottom().right().padBottom(20).colspan(3);
+
+        //table.add(basket).top().right().width(Value.percentWidth(.18f, table)).height(Value.percentWidth(.18f, table)).padTop(10).padLeft(7); //Acts as a spacer, PATCH LOG GOES HERE
         table.row();
-        table.add(play).height(Value.percentHeight(.15f, table)).width(Value.percentWidth(.375f, table)).expandY().colspan(3);
+        //table.add(play).height(Value.percentHeight(.15f, table)).width(Value.percentWidth(.375f, table)).expandY().colspan(3);
+        if (buttonOption == 1) {
+            table.add(playbutton).height(Value.percentHeight(.341f, table)).width(Value.percentHeight(1.229f, table)).expandY().center().colspan(12);
+        } else if (buttonOption == 2){
+            table.add(playbutton).height(Value.percentHeight(.6f, table)).width(Value.percentHeight(.6f, table)).center().colspan(12);
+        } else if (buttonOption == 3){
+            table.add(playbutton).height(Value.percentHeight(.244f, table)).width(Value.percentHeight(.878f, table)).expandY().center().colspan(12);
+            table.row();
+            table.add(basket).bottom().left().width(Value.percentWidth(.18f, table)).height(Value.percentWidth(.135f, table)).padBottom(10).padRight(7).colspan(9);
+            table.add(setting).height(Value.percentHeight(.11f, table)).width(Value.percentHeight(.11f, table)).bottom().right().padBottom(20).colspan(3);
+        }
         table.row();
-        table.add(setting).height(Value.percentHeight(.11f, table)).width(Value.percentWidth(.06f, table)).bottom().center().padBottom(Value.percentHeight(.12f, table)).colspan(3);
+//        table.add(basket).bottom().left().width(Value.percentWidth(.18f, table)).height(Value.percentWidth(.135f, table)).padBottom(10).padRight(7);
+//        table.add(setting).height(Value.percentHeight(.11f, table)).width(Value.percentHeight(.11f, table)).bottom().right().padBottom(20).colspan(3);
         //table.add(stats).height(Value.percentHeight(.3f)).width(Value.percentHeight(.3f)).bottom().center().padBottom(Value.percentHeight(.2f));
         //table.add(about).height(Value.percentHeight(.3f)).width(Value.percentHeight(.3f)).bottom().right().padBottom(Value.percentHeight(.2f)).padRight(Value.percentWidth(.2f));
 
@@ -169,9 +223,24 @@ public class MainMenu implements Screen{
         table.setBackground(backspr);
         table.setFillParent(true);
         //table.debug();
-        
         stage.addActor(table);
-        
+
+//        title.addAction(Actions.sequence(Actions.moveBy(0, 2000, 3f)
+//                , Actions.delay(1f), Actions.run(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//            }
+//        })));
+
+        stage.addAction(Actions.sequence(Actions.alpha(0)
+                , Actions.fadeIn(.5f), Actions.run(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        })));
+
         Gdx.input.setInputProcessor(stage);
    }
 
@@ -180,17 +249,17 @@ public class MainMenu implements Screen{
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-        blinkingTimer += delta;
-        if (blinkingTimer > 1.1){
-            if (play.getBackground().equals(skin.getDrawable("blueup"))){
-                play.setStyle(skin.get("green", TextButtonStyle.class));
-            } else if (play.getBackground().equals( skin.getDrawable("greenup"))){
-                play.setStyle(skin.get("orange", TextButtonStyle.class));
-            } else if (play.getBackground().equals( skin.getDrawable("orangeup"))){
-                play.setStyle(skin.get("blue", TextButtonStyle.class));
-            }
-            blinkingTimer = 0;
-        }
+//        blinkingTimer += delta;
+//        if (blinkingTimer > 1.1){
+//            if (play.getBackground().equals(skin.getDrawable("blueup"))){
+//                play.setStyle(skin.get("green", TextButtonStyle.class));
+//            } else if (play.getBackground().equals( skin.getDrawable("greenup"))){
+//                play.setStyle(skin.get("orange", TextButtonStyle.class));
+//            } else if (play.getBackground().equals( skin.getDrawable("orangeup"))){
+//                play.setStyle(skin.get("blue", TextButtonStyle.class));
+//            }
+//            blinkingTimer = 0;
+//        }
 
 
         stage.act();
@@ -223,6 +292,8 @@ public class MainMenu implements Screen{
         menu3.dispose();
         background.dispose();
         skin.dispose();
+        play.dispose();
+        playdown.dispose();
         stage.dispose();
         table.clear();
         titleTex.dispose();

@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -63,6 +64,8 @@ public class DifficultyMenu implements Screen{
         skin.addRegions(menu2);
         skin.addRegions(menu3);
         skin.load(Gdx.files.internal("skin.json"));
+        skin.getFont("bfont").getData().setScale(0.8f,0.8f);
+        skin.getFont("font").getData().setScale(0.8f,0.8f);
 
         ImageButton title = new ImageButton(skin.getDrawable("title"));
         TextButton leisurely = new TextButton("Leisurely", skin.get("blue", TextButtonStyle.class));
@@ -141,7 +144,16 @@ public class DifficultyMenu implements Screen{
         //table.debug();
         
         stage.addActor(table);
-        
+
+        stage.addAction(Actions.sequence(Actions.alpha(0)
+                , Actions.fadeIn(1f), Actions.delay(1f), Actions.run(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        })));
+
+
         Gdx.input.setInputProcessor(stage);
    }
 

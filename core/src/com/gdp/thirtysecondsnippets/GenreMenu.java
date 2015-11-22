@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -49,6 +50,7 @@ public class GenreMenu implements Screen{
     Preferences prefs = Gdx.app.getPreferences("30SSSettings");
 
     TextButton back;
+    TextButton basket;
 
     Texture background;
 
@@ -63,6 +65,8 @@ public class GenreMenu implements Screen{
         skin.addRegions(menu2);
         skin.addRegions(menu3);
         skin.load(Gdx.files.internal("skin.json"));
+        skin.getFont("font").getData().setScale(0.75f,0.75f);
+        skin.getFont("bfont").getData().setScale(0.75f,0.75f);
 
         final ArrayList<Genre> genres = new ArrayList();
 
@@ -120,8 +124,14 @@ public class GenreMenu implements Screen{
                     //Same way we moved here from the Splash Screen
                     //We set it to new Splash because we got no other screens
                     //otherwise you put the screen there where you want to go
-                    LoadTrackData load = new LoadTrackData(tss, genres.get(current).getId(), difficulty);
-                    tss.setScreen(load);
+                    stage.addAction(Actions.sequence( Actions.fadeOut(.5f), Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            LoadTrackData load = new LoadTrackData(tss, genres.get(current).getId(), difficulty);
+                            tss.setScreen(load);
+                        }
+                    })));
+
                 }
             });
 
@@ -147,22 +157,49 @@ public class GenreMenu implements Screen{
             back = new TextButton("<", skin.get("back", TextButton.TextButtonStyle.class));
         }
 
+        basket = new TextButton("", skin.get("basket", TextButtonStyle.class));
+
         back.addListener(new ChangeListener(){
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+            stage.addAction(Actions.sequence( Actions.fadeOut(.5f), Actions.run(new Runnable() {
+                @Override
+                public void run() {
                     MainMenu game = new MainMenu(tss);
                     tss.setScreen(game);
                 }
+            })));
+                }
+        });
+
+        basket.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                ThemeMenu menu = new ThemeMenu(tss);
+                tss.setScreen(menu);
+            }
         });
         
         ScrollPane pane = new ScrollPane(table);
         table_root.add(pane).expand();
         table_root.row();
         table_root.add(back).height(Value.percentHeight(.40f)).width(Value.percentHeight(.40f)).left().padLeft(Value.percentWidth(.2f)).padBottom(Value.percentHeight(.2f));
-       
+        //table_root.add(basket).height(Value.percentWidth(.27f)).width(Value.percentWidth(.36f)).right().padRight(Value.percentWidth(.4f)).padBottom(Value.percentHeight(.2f));
+        //table_root.add(basket).left().width(Value.percentWidth(.18f, table)).height(Value.percentWidth(.135f, table)).padBottom(Value.percentHeight(.2f)).padLeft(Value.percentWidth(.2f));
+
         stage.addActor(table_root);
-        
+
         table_root.setFillParent(true);
+
+        stage.addAction(Actions.sequence(Actions.alpha(0)
+                , Actions.fadeIn(.5f), Actions.run(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        })));
+
+
         //table_root.setDebug(true);
 
         Gdx.input.setInputProcessor(stage);

@@ -19,6 +19,7 @@ public class GenericObject {
     static final short NEEDLE_HOLE_BIT = 64;
     static final short NO_COLLIDE_BIT = 128;
     static final short PARTICLE_BIT = 256;
+    static final short COLLECTIBLE_BIT = 512;
 
     final float PIXELS_TO_METERS = 100f;
 

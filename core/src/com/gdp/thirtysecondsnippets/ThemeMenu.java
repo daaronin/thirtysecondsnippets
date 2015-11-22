@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -30,6 +31,10 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 public class ThemeMenu implements Screen{
     
     private Game tss;
+
+    static final int LEISURELY_DIFFICULTY = 3;
+    static final int BRISK_DIFFICULTY = 5;
+    static final int BREAKNECK_DIFFICULTY = 7;
     
     ImageButton basicPic;
     ImageButton folkPic;
@@ -64,6 +69,8 @@ public class ThemeMenu implements Screen{
         skin.addRegions(menu2);
         skin.addRegions(menu3);
         skin.load(Gdx.files.internal("skin.json"));
+        skin.getFont("font").getData().setScale(0.8f,0.8f);
+        skin.getFont("bfont").getData().setScale(0.8f,0.8f);
 
         cli = new Texture(Gdx.files.internal("themes/clicked.png"));
         skin.add("clicked", cli );
@@ -165,11 +172,11 @@ public class ThemeMenu implements Screen{
         
         Drawable jazz;
         
-        if (prefs.getInteger("unlocked", 1) > 3){
+        if (prefs.getInteger("unlocked", 1) > 3  && prefs.getInteger("releaseVersion", 1) > 1){
             jazz = skin.getDrawable("leveljazz2");
         } else {
             jazz = skin.getDrawable("leveljazz2locked");
-            jazzlbl.setText("*Play 40 Songs*");
+            jazzlbl.setText("Coming Soon");
         }
         
         ImageButtonStyle style4 = new ImageButtonStyle();
@@ -184,11 +191,11 @@ public class ThemeMenu implements Screen{
         
         Drawable bubble;
         
-        if (prefs.getInteger("unlocked", 1) > 4){
+        if (prefs.getInteger("unlocked", 1) > 4  && prefs.getInteger("releaseVersion", 1) > 1){
             bubble = skin.getDrawable("levelbubble");
         } else {
             bubble = skin.getDrawable("levelbubblelocked");
-            bubblelbl.setText("*Play 50 Songs*");
+            bubblelbl.setText("Coming Soon");
         }
         
         ImageButtonStyle style5 = new ImageButtonStyle();
@@ -265,7 +272,7 @@ public class ThemeMenu implements Screen{
             });
         
         }
-        if (prefs.getInteger("unlocked", 1) > 3) {
+        if (prefs.getInteger("unlocked", 1) > 3 && prefs.getInteger("releaseVersion", 1) > 1) {
             jazzPic.setDisabled(false);
             jazzPic.addListener(new ChangeListener(){
                     @Override
@@ -280,7 +287,7 @@ public class ThemeMenu implements Screen{
             });
         
         }
-        if (prefs.getInteger("unlocked", 1) > 4) {
+        if (prefs.getInteger("unlocked", 1) > 4  && prefs.getInteger("releaseVersion", 1) > 1) {
             bubblePic.setDisabled(false);
             bubblePic.addListener(new ChangeListener(){
                     @Override
@@ -324,8 +331,13 @@ public class ThemeMenu implements Screen{
         back.addListener(new ChangeListener(){
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                    MainMenu menu = new MainMenu(tss);
+            stage.addAction(Actions.sequence( Actions.fadeOut(.5f), Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    GenreMenu menu = new GenreMenu(tss, LEISURELY_DIFFICULTY);
                     tss.setScreen(menu);
+                }
+            })));
                 }
         });
         
@@ -350,7 +362,16 @@ public class ThemeMenu implements Screen{
         table_root.add(back).height(Value.percentHeight(.40f)).width(Value.percentHeight(.40f)).center().padLeft(Value.percentHeight(.20f)).padBottom(Value.percentHeight(.20f)).colspan(1);
         table_root.add(statselect).padRight(Value.percentHeight(.20f)).padBottom(Value.percentHeight(.20f)).center().colspan(1).width(Value.percentWidth(.5f)).height(Value.percentHeight(.4f)).center();//label
         stage.addActor(table_root);
-        
+
+        stage.addAction(Actions.sequence(Actions.alpha(0)
+                , Actions.fadeIn(.5f), Actions.run(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        })));
+
+
         table_root.setFillParent(true);
         //table_root.setDebug(true);
 

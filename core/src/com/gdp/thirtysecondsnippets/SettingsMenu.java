@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox.CheckBoxStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -45,7 +46,7 @@ public class SettingsMenu implements Screen{
 
     TextButton back;
 
-    Texture background;
+    Texture background, settings;
     
     public SettingsMenu(Game tss){
         this.tss = tss;
@@ -57,8 +58,11 @@ public class SettingsMenu implements Screen{
         skin.addRegions(menu2);
         skin.addRegions(menu3);
         skin.load(Gdx.files.internal("skin.json"));
+        skin.getFont("font").getData().setScale(0.8f,0.8f);
+        skin.getFont("bfont").getData().setScale(0.8f,0.8f);
         String fontColour = prefs.getString("fontcolor", "labelw");
-        ImageButton title = new ImageButton(skin.getDrawable("settings"));
+        settings = new Texture(Gdx.files.internal("settings.png"));
+        ImageButton title = new ImageButton(new SpriteDrawable(new Sprite(settings)));
         final Slider musicvolslider = new Slider(0f, 20f, 1f, false, skin.get("slider", SliderStyle.class));
         
         musicvolslider.setValue(prefs.getFloat("musicvol", 10));
@@ -112,8 +116,13 @@ public class SettingsMenu implements Screen{
         back.addListener(new ChangeListener(){
                 @Override
                 public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                    MainMenu game = new MainMenu(tss);
-                    tss.setScreen(game);
+                    stage.addAction(Actions.sequence( Actions.fadeOut(.5f), Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            MainMenu game = new MainMenu(tss);
+                            tss.setScreen(game);
+                        }
+                    })));
                 }
         });
         
@@ -129,7 +138,7 @@ public class SettingsMenu implements Screen{
                 }
         });
                 
-        table.add(title).top().padTop(2).colspan(2).width(Value.percentWidth(.5f, table)).height(Value.percentHeight(.15f, table)).padBottom(40);
+        table.add(title).top().padTop(2).colspan(2).width(Value.percentWidth(.5f, table)).height(Value.percentHeight(.15f, table)).padBottom(20);
         table.row();
         table.add(musicvol).right();//label
         table.add(musicvolslider).center().width(Value.percentWidth(5f)).height(Value.percentHeight(.5f)).padLeft(20);
@@ -137,9 +146,8 @@ public class SettingsMenu implements Screen{
         table.add(soundfxvol).padTop(40).right();//label
         table.add(soundfxslider).center().width(Value.percentWidth(5f)).height(Value.percentHeight(.5f)).padLeft(20).padTop(45);
         table.row();
-        table.add(guideelabel).padBottom(20).padTop(20).right();//label
-        table.add(guidecheck).center().width(Value.percentWidth(1f)).height(Value.percentHeight(1f)).padLeft(20).padTop(15).padBottom(20);
-        table.row();
+        table.add(guideelabel).padBottom(10).padTop(10).right();//label
+        table.add(guidecheck).center().width(Value.percentWidth(1f)).height(Value.percentHeight(1f)).padLeft(20).padTop(20).padBottom(2);
         //table.add(themeselect).padTop(40).padBottom(20).center().colspan(2).width(Value.percentWidth(.8f)).height(Value.percentHeight(.4f));//label
         table.row();
         table.add(back).height(Value.percentHeight(.4f)).width(Value.percentHeight(.4f)).left().bottom().padLeft(Value.percentHeight(.20f)).padTop(Value.percentHeight(.40f)).padBottom(Value.percentHeight(.20f));
@@ -153,7 +161,16 @@ public class SettingsMenu implements Screen{
         //table.debug();
         
         stage.addActor(table);
-        
+
+        stage.addAction(Actions.sequence(Actions.alpha(0)
+                , Actions.fadeIn(.5f), Actions.run(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        })));
+
+
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -190,6 +207,7 @@ public class SettingsMenu implements Screen{
         menu2.dispose();
         menu3.dispose();
         background.dispose();
+        settings.dispose();
         skin.dispose();
         stage.dispose();
         table.clear();
