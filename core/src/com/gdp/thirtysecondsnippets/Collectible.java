@@ -1,5 +1,7 @@
 package com.gdp.thirtysecondsnippets;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -12,13 +14,24 @@ import java.util.Random;
  */
 public class Collectible extends AnimatedObject {
     World world;
-    ArrayList<Sprite> sprites;
+    ArrayList<Sprite> sprites = new ArrayList<Sprite>();
     float width, height;
-    public Collectible(World WORLD, ArrayList<Sprite> SPRITES, float WIDTH, float HEIGHT){
+
+    Texture pill,goodjob;
+
+
+    public Collectible(World WORLD, float WIDTH, float HEIGHT){
         world = WORLD;
-        sprites = SPRITES;
         width = WIDTH;
         height = HEIGHT;
+        loadSprites();
+    }
+
+    public void loadSprites(){
+        pill = new Texture(Gdx.files.internal("largerpill.png"));
+        sprites.add(new Sprite(pill));
+        goodjob = new Texture(Gdx.files.internal("goodjobbutton.png"));
+        sprites.add(new Sprite(goodjob));
     }
 
 
@@ -26,15 +39,17 @@ public class Collectible extends AnimatedObject {
 
         Sprite newCollectibleSprite;
         newCollectibleSprite = sprites.get(type);
+        newCollectibleSprite.setSize(100,100);
         if ("up".equals(orientation)){
-            newCollectibleSprite.setPosition(posX - newCollectibleSprite.getWidth() / 2, posY - newCollectibleSprite.getHeight() / 2);
+            newCollectibleSprite.setPosition(posX - newCollectibleSprite.getWidth() / 2, posY - newCollectibleSprite.getHeight() * 2);
             newCollectibleSprite.setRotation(0);
         } else if ("down".equals(orientation)){
-            newCollectibleSprite.setPosition(posX - newCollectibleSprite.getWidth() / 2, 0 - newCollectibleSprite.getHeight() / 2);
-            newCollectibleSprite.setRotation(180);
+            newCollectibleSprite.setPosition(posX - newCollectibleSprite.getWidth() / 2, 0 + newCollectibleSprite.getHeight() / 2);
+            newCollectibleSprite.setRotation(0);
         } else {
-            newCollectibleSprite.setPosition(posX - newCollectibleSprite.getWidth() / 2, posY - newCollectibleSprite.getHeight() / 2);
-            newCollectibleSprite.setRotation(90);
+            Random rand = new Random();
+            newCollectibleSprite.setPosition(posX - newCollectibleSprite.getWidth() / 2, posY-((float)rand.nextInt((int)posY)) - newCollectibleSprite.getHeight() / 2);
+            newCollectibleSprite.setRotation(0);
         }
         return newCollectibleSprite;
     }
@@ -70,11 +85,11 @@ public class Collectible extends AnimatedObject {
         collectible_fixtureDef.filter.maskBits = THREAD_BIT | HEAD_BIT;
 
         if ("up".equals(orientation)){
-            collectible_body.setTransform(collectible_body.getTransform().getPosition(), ((float)Math.toRadians(180)));
+            collectible_body.setTransform(collectible_body.getTransform().getPosition(), ((float)Math.toRadians(0)));
         } else if ("down".equals(orientation)){
             collectible_body.setTransform(collectible_body.getTransform().getPosition(), ((float)Math.toRadians(0)));
         } else {
-            collectible_body.setTransform(collectible_body.getTransform().getPosition(), 90);
+            collectible_body.setTransform(collectible_body.getTransform().getPosition(), ((float)Math.toRadians(0)));
         }
 
         collectible_body.createFixture(collectible_fixtureDef);
@@ -84,5 +99,19 @@ public class Collectible extends AnimatedObject {
         collectible_shape.dispose();
 
         return collectible_body;
+    }
+
+    public void updateWidthHeight(float WIDTH, float HEIGHT){
+        width = WIDTH;
+        height = HEIGHT;
+    }
+
+    public void dispose(){
+        pill.dispose();
+        goodjob.dispose();
+    }
+
+    public int getCollectibleType(Body body){
+       return sprites.indexOf(body.getUserData());
     }
 }

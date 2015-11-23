@@ -92,7 +92,7 @@ public class ThreadPieces extends GenericObject {
             threadDef.shape = shape;
             threadDef.density = .1f;
             threadDef.filter.categoryBits = THREAD_BIT;
-            threadDef.filter.maskBits = SCISSOR_BIT | BLADE_BIT | NEEDLE_BIT;
+            threadDef.filter.maskBits = SCISSOR_BIT | BLADE_BIT | NEEDLE_BIT | COLLECTIBLE_BIT;
 
             segments.get(i).createFixture(threadDef);
             if(guided){

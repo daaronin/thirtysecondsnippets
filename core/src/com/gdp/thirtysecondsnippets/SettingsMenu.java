@@ -61,7 +61,7 @@ public class SettingsMenu implements Screen{
         skin.getFont("font").getData().setScale(0.8f,0.8f);
         skin.getFont("bfont").getData().setScale(0.8f,0.8f);
         String fontColour = prefs.getString("fontcolor", "labelw");
-        settings = new Texture(Gdx.files.internal("settings.png"));
+        settings = new Texture(Gdx.files.internal("settings2.png"));
         ImageButton title = new ImageButton(new SpriteDrawable(new Sprite(settings)));
         final Slider musicvolslider = new Slider(0f, 20f, 1f, false, skin.get("slider", SliderStyle.class));
         

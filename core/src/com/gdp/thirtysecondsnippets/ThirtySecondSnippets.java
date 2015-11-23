@@ -105,6 +105,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     static final short NEEDLE_HOLE_BIT = 64;
     static final short NO_COLLIDE_BIT = 128;
     static final short PARTICLE_BIT = 256;
+    static final short COLLECTIBLE_BIT = 512;
     
     float BACKGROUND_SPEED = 28.8f;
     static final int STARTING_LENGTH = 2;
@@ -129,6 +130,8 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     ArrayList<Body> scissorBodies = new ArrayList<Body>();
     
     ArrayList<Body> needleBodies = new ArrayList<Body>();
+
+    ArrayList<Body> collectibleBodies = new ArrayList();
     
     ArrayList<Vector2> queueToRemove = new ArrayList<Vector2>();
     
@@ -165,8 +168,6 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     Needle needle;
     Collectible collectibles;
     LevelController levelController;
-
-    ArrayList<Sprite> collectibleSprites = new ArrayList<Sprite>();
 
     public ThirtySecondSnippets(Game tss, int genre, int difficulty){
 
@@ -318,6 +319,18 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         }
         if (keycode == Input.Keys.A){
             needleBodies.add(needle.createNeedleBody("down"));
+        }
+        if (keycode == Keys.NUMPAD_9){
+            collectibleBodies.add(collectibles.createCollectibleBody("up", 0));
+        }
+        if (keycode == Keys.NUMPAD_6){
+            collectibleBodies.add(collectibles.createCollectibleBody("middle", 0));
+        }
+        if (keycode == Keys.NUMPAD_5){
+            collectibleBodies.add(collectibles.createCollectibleBody("middle", 1));
+        }
+        if (keycode == Keys.NUMPAD_3){
+            collectibleBodies.add(collectibles.createCollectibleBody("down", 0));
         }
         if (keycode == Input.Keys.R){
             
@@ -507,10 +520,23 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 topSpacer--;
                 bottomSpacer--;
                 break;
+            case 5:
+                collectibleBodies.add(collectibles.createCollectibleBody("middle", 0));
+                break;
             default:
                 break;
         }
         
+    }
+
+    public void activateEffect(int result){
+        switch (result){
+            case 0:
+                //body.getFixtureList().get(0).getShape().setRadius(((Sprite)body.getUserData()).getWidth()*2);
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -604,7 +630,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         fixtureDef.shape = shape;
         fixtureDef.density = .1f;
         fixtureDef.filter.categoryBits = HEAD_BIT;
-        fixtureDef.filter.maskBits = NEEDLE_HOLE_BIT;
+        fixtureDef.filter.maskBits = NEEDLE_HOLE_BIT | COLLECTIBLE_BIT;
 
         body.createFixture(fixtureDef);
         body.setLinearDamping(.5f);
@@ -631,7 +657,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
         needle = new Needle(world, needleGreen, needleBlue, needleYellow, width, height);
 
-        collectibles = new Collectible(world, collectibleSprites, width, height);
+        collectibles = new Collectible(world, width, height);
         
         world.setContactListener(new ContactListener() {
 
@@ -640,6 +666,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
             @Override
             public void beginContact(Contact contact) {
 
+                //CUTTING LISTENERS
                 if ((contact.getFixtureB().getFilterData().categoryBits == THREAD_BIT)
                         && contact.getFixtureA().getFilterData().categoryBits == BLADE_BIT && jointDestroyable) {
                     for (int i = 0; i < contact.getFixtureB().getBody().getJointList().size; i++) {
@@ -663,6 +690,25 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     }
                 }
 
+                //COLLECTIBLE LISTENERS
+                if ((contact.getFixtureB().getFilterData().categoryBits == THREAD_BIT || contact.getFixtureB().getFilterData().categoryBits == HEAD_BIT)
+                        && contact.getFixtureA().getFilterData().categoryBits == COLLECTIBLE_BIT) {
+                    int result = collectibles.getCollectibleType(contact.getFixtureA().getBody());
+                    activateEffect(result);
+                    if (!queueToRemove.contains(new Vector2(collectibleBodies.indexOf(contact.getFixtureA().getBody()), 4))) {
+                        queueToRemove.add(new Vector2(collectibleBodies.indexOf(contact.getFixtureA().getBody()), 4));
+                    }
+                }
+                if ((contact.getFixtureA().getFilterData().categoryBits == THREAD_BIT || contact.getFixtureA().getFilterData().categoryBits == HEAD_BIT)
+                        && contact.getFixtureB().getFilterData().categoryBits == COLLECTIBLE_BIT) {
+                    int result = collectibles.getCollectibleType(contact.getFixtureB().getBody());
+                    activateEffect(result);
+                    if (!queueToRemove.contains(new Vector2(collectibleBodies.indexOf(contact.getFixtureB().getBody()), 4))) {
+                        queueToRemove.add(new Vector2(collectibleBodies.indexOf(contact.getFixtureB().getBody()), 4));
+                    }
+                }
+
+                //THREADED LISTENERS
                 if ((contact.getFixtureA().getFilterData().categoryBits == HEAD_BIT)
                         && needleBodies.indexOf(contact.getFixtureB().getBody()) > -1
                         && needleBodies.get(needleBodies.indexOf(contact.getFixtureB().getBody())).getFixtureList().size > 2
@@ -759,6 +805,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
     public void render(float f) {
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
+        collectibles.updateWidthHeight(width,height);
 
         scissor.width = width;
         scissor.height = height;
@@ -816,7 +863,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
 
         } else if (endtimer > currentBeat) {
             Random r = new Random();
-            int rando = r.nextInt(4);
+            int rando = r.nextInt(5);
             if (rando == 0) {
                 Random rand = new Random();
                 int randNum = rand.nextInt(3) + 2;
@@ -836,6 +883,9 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                 Random rand = new Random();
                 int randNum = rand.nextInt(2);
                 spawn(randNum);
+            }
+            if (rando == 4){
+                spawn(5);
             }
 
             float amount = (float)r.nextInt(7);
@@ -930,6 +980,11 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                         }
                         if (ref < particleBodies.size()){
                             particleBodies.remove(particleBodies.get(ref));
+                        }
+                    } else if (queueToRemove.get(i).y == 4){
+                        if (ref < collectibleBodies.size() && ref >= 0){
+//                            System.out.println("Needle: " + ref);
+                            collectibleBodies.remove(collectibleBodies.get(ref));
                         }
                     }
                 }
@@ -1188,6 +1243,20 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
                     queueToRemove.add(new Vector2(threadBodies.indexOf(thread), 1));
                 }
             }
+
+            for (Body collectible_body : collectibleBodies){
+                collectible_body.setLinearVelocity(new Vector2(SCROLLING_FOREGROUND_SPEED,0f));
+                if (collectible_body.getUserData() instanceof Sprite) {
+                    Sprite sprite = (Sprite) collectible_body.getUserData();
+                    sprite.setPosition(collectible_body.getPosition().x * PIXELS_TO_METERS - sprite.getWidth() / 2,
+                            collectible_body.getPosition().y * PIXELS_TO_METERS - sprite.getHeight() / 2);
+                    sprite.setRotation((float) Math.toDegrees(collectible_body.getAngle()));
+                    sprite.draw(batch);
+                }
+                if (collectible_body.getPosition().x <= -1 && !queueToRemove.contains(new Vector2(collectibleBodies.indexOf(collectible_body), 4))) {
+                    queueToRemove.add(new Vector2(collectibleBodies.indexOf(collectible_body), 4));
+                }
+            }
             
             for (Sprite particleSprite : particleSprites){
                 batch.draw(particleSprite, particleSprite.getX(), particleSprite.getY(), particleSprite.getOriginX(), 
@@ -1291,6 +1360,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         //batch.dispose();
 
         levelController.dispose();
+        collectibles.dispose();
         backgroundMusic.dispose();
         beepA.dispose();
         beepC.dispose();
@@ -1301,6 +1371,7 @@ public class ThirtySecondSnippets implements InputProcessor, Screen {
         threadBodies.clear();
         scissorBodies.clear();
         needleBodies.clear();
+        collectibleBodies.clear();
         particleBodies.clear();
         particleSprites.clear();
         queueToRemove.clear();
